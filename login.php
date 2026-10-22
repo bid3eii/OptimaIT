@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!empty($_SESSION['novadesk_user'])) {
+if (!empty($_SESSION['optimait_user'])) {
     header('Location: tecnico.php');
     exit;
 }

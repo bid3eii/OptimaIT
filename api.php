@@ -113,10 +113,17 @@ switch ($action) {
         ];
         saveSessions($sessions);
         
+        $host = $_SERVER['HTTP_HOST'] ?? '10.4.4.40';
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/OptimaIT/api.php');
+        $scriptDir = str_replace('\\', '/', $scriptDir);
+        $basePath = ($scriptDir === '/' || $scriptDir === '.') ? '' : rtrim($scriptDir, '/');
+        $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $joinUrl = "{$proto}://{$host}{$basePath}/asistencia.php?sesion={$sessionId}";
+
         echo json_encode([
             'success' => true,
             'session' => $sessions[$sessionId],
-            'join_url' => "http://10.4.4.40/NovaDesk/asistencia.php?sesion={$sessionId}"
+            'join_url' => $joinUrl
         ]);
         break;
 
@@ -344,7 +351,7 @@ switch ($action) {
                 $exe = 'C:\\Program Files\\RustDesk\\rustdesk.exe';
             }
             if (!file_exists($exe)) {
-                $exe = 'c:\\xampp\\htdocs\\NovaDesk\\OptimaIT.exe';
+                $exe = __DIR__ . DIRECTORY_SEPARATOR . 'OptimaIT.exe';
             }
             $cmd = "start \"\" \"{$exe}\" {$mode} {$id}";
             if (!empty($pwd)) {
@@ -376,14 +383,14 @@ switch ($action) {
                     $users[$uKey]['password'] = password_hash($password, PASSWORD_DEFAULT);
                     saveUsers($users);
                 }
-                $_SESSION['novadesk_user'] = [
+                $_SESSION['optimait_user'] = [
                     'username' => $user['username'],
                     'name' => $user['name'] ?? $user['username'],
                     'role' => $user['role'] ?? 'tecnico'
                 ];
                 echo json_encode([
                     'success' => true,
-                    'user' => $_SESSION['novadesk_user']
+                    'user' => $_SESSION['optimait_user']
                 ]);
                 exit;
             }
@@ -392,17 +399,17 @@ switch ($action) {
         break;
 
     case 'logout':
-        unset($_SESSION['novadesk_user']);
+        unset($_SESSION['optimait_user']);
         session_destroy();
         echo json_encode(['success' => true]);
         break;
 
     case 'get_current_user':
-        if (!empty($_SESSION['novadesk_user'])) {
+        if (!empty($_SESSION['optimait_user'])) {
             echo json_encode([
                 'success' => true,
                 'logged_in' => true,
-                'user' => $_SESSION['novadesk_user']
+                'user' => $_SESSION['optimait_user']
             ]);
         } else {
             echo json_encode([
@@ -413,7 +420,7 @@ switch ($action) {
         break;
 
     case 'list_users':
-        if (empty($_SESSION['novadesk_user']) || ($_SESSION['novadesk_user']['role'] ?? '') !== 'admin') {
+        if (empty($_SESSION['optimait_user']) || ($_SESSION['optimait_user']['role'] ?? '') !== 'admin') {
             echo json_encode(['success' => false, 'error' => 'Acceso denegado. Se requieren permisos de administrador.']);
             exit;
         }
@@ -431,7 +438,7 @@ switch ($action) {
         break;
 
     case 'create_user':
-        if (empty($_SESSION['novadesk_user']) || ($_SESSION['novadesk_user']['role'] ?? '') !== 'admin') {
+        if (empty($_SESSION['optimait_user']) || ($_SESSION['optimait_user']['role'] ?? '') !== 'admin') {
             echo json_encode(['success' => false, 'error' => 'Acceso denegado. Se requieren permisos de administrador.']);
             exit;
         }
@@ -471,7 +478,7 @@ switch ($action) {
         break;
 
     case 'delete_user':
-        if (empty($_SESSION['novadesk_user']) || ($_SESSION['novadesk_user']['role'] ?? '') !== 'admin') {
+        if (empty($_SESSION['optimait_user']) || ($_SESSION['optimait_user']['role'] ?? '') !== 'admin') {
             echo json_encode(['success' => false, 'error' => 'Acceso denegado. Se requieren permisos de administrador.']);
             exit;
         }
@@ -483,7 +490,7 @@ switch ($action) {
             exit;
         }
 
-        if ($uKey === strtolower($_SESSION['novadesk_user']['username'] ?? '')) {
+        if ($uKey === strtolower($_SESSION['optimait_user']['username'] ?? '')) {
             echo json_encode(['success' => false, 'error' => 'No puedes eliminar tu propia cuenta']);
             exit;
         }

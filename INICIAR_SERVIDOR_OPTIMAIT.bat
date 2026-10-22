@@ -27,7 +27,7 @@ echo  SERVIDOR OPTIMAIT ACTIVO Y ESCUCHANDO EN 10.4.4.40
 echo ========================================================
 echo.
 echo Los clientes pueden descargarse desde tu red local en:
-echo    http://10.4.4.40/NovaDesk/
+echo    http://10.4.4.40/OptimaIT/
 echo.
 echo Clave Publica (Key):
 type id_ed25519.pub

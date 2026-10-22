@@ -2,11 +2,11 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (empty($_SESSION['novadesk_user'])) {
+if (empty($_SESSION['optimait_user'])) {
     header('Location: login.php');
     exit;
 }
-$currentUser = $_SESSION['novadesk_user'];
+$currentUser = $_SESSION['optimait_user'];
 $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 ?>
 <!DOCTYPE html>

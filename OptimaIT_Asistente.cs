@@ -16,7 +16,7 @@ namespace OptimaIT
         private string sessionId = "";
         private string rustdeskId = "";
         private string clientType = "personal"; // "personal" o "empresa"
-        private string serverUrl = "http://10.4.4.40/NovaDesk";
+        private string serverUrl = "http://10.4.4.40/OptimaIT";
         private System.Windows.Forms.Timer timer;
         private Label lblStatus;
         private Label lblId;
@@ -455,7 +455,7 @@ namespace OptimaIT
 
                 this.rustdeskId = capturedId;
 
-                // 4. Register with NovaDesk API & Set Unattended Password
+                // 4. Register with OptimaIT API & Set Unattended Password
                 if (!string.IsNullOrEmpty(capturedId))
                 {
                     string registerUrl = serverUrl + "/api.php?action=register_client&session_id=" + 
@@ -481,7 +481,7 @@ namespace OptimaIT
                                     if (!string.IsNullOrEmpty(sPwd))
                                     {
                                         // 1. Determine salt and compute RustDesk hash (00 + base64(sha256(pwd + salt)))
-                                        string salt = "novadesk" + Guid.NewGuid().ToString("N");
+                                        string salt = "optimait" + Guid.NewGuid().ToString("N");
                                         string[] tomlPaths = new string[] {
                                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"RustDesk\config\RustDesk.toml"),
                                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"RustDesk\config\RustDesk.toml"),
@@ -786,7 +786,7 @@ namespace OptimaIT
                     {
                         using (WebClient wc = new WebClient())
                         {
-                            wc.DownloadString("http://10.4.4.40/NovaDesk/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId));
+                            wc.DownloadString("http://10.4.4.40/OptimaIT/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId));
                         }
                     }
                     catch { }
