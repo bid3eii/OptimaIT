@@ -1,0 +1,15 @@
+{
+    "OPT-7113": {
+        "session_id": "OPT-7113",
+        "client_name": "test",
+        "client_type": "empresa",
+        "group_name": "Maistro",
+        "password": "Optima7991",
+        "status": "online",
+        "rustdesk_id": "206581221",
+        "client_ip": "10.4.4.45",
+        "created_at": "22:09:12",
+        "last_seen": 1792686643,
+        "installed": true
+    }
+}

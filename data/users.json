@@ -1,0 +1,16 @@
+{
+    "admin": {
+        "username": "admin",
+        "name": "Administrador",
+        "password": "$2y$12$nKBbd\/nR\/y5RV5CIASJac.i2Njx.h3cnXtaga04unK4mf4YpdO99O",
+        "role": "admin",
+        "created_at": "2026-10-22 15:19:37"
+    },
+    "carlostech": {
+        "username": "carlostech",
+        "name": "Carlos Soporte",
+        "password": "$2y$10$vdLdFsouEEgqmRyUbCW7G.APCsTyWQT48WSryY175zWbnjP73WfLe",
+        "role": "tecnico",
+        "created_at": "2026-10-22 17:28:50"
+    }
+}

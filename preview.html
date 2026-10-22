@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptimaIT - Vista Previa del Cliente de Soporte</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-blue: #3874CC;
+      --primary-blue-hover: #2E62B0;
+      --brand-orange: #E77222;
+      --brand-orange-light: #FFF1E8;
+      --bg-canvas: #E9ECEF;
+      --window-bg: #FFFFFF;
+      --panel-bg: #F8F9FA;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+      --green-online: #10B981;
+    }
+
+    [data-theme="dark"] {
+      --bg-canvas: #0F172A;
+      --window-bg: #181C24;
+      --panel-bg: #13161C;
+      --card-bg: #1F242D;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border-color: #2D3748;
+      --brand-orange-light: rgba(231, 114, 34, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-canvas);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      transition: background 0.3s ease;
+    }
+
+    .top-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      background: var(--window-bg);
+      padding: 10px 20px;
+      border-radius: 999px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border: 1px solid var(--border-color);
+    }
+
+    .theme-btn {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .theme-btn:hover {
+      background: var(--primary-blue-hover);
+    }
+
+    /* Window Container */
+    .app-window {
+      width: 360px;
+      background: var(--window-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.2), 0 0 0 1px var(--border-color);
+      display: flex;
+      flex-direction: column;
+      animation: floatIn 0.4s ease-out;
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Title Bar */
+    .window-header {
+      height: 38px;
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+
+    .window-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .window-title img {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+    }
+
+    .window-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #CBD5E1;
+      cursor: pointer;
+    }
+    .control-dot.close { background: #FF5F56; }
+    .control-dot.min { background: #FFBD2E; }
+    .control-dot.max { background: #27C93F; }
+
+    /* Window Body */
+    .window-body {
+      padding: 24px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .brand-logo-wrap {
+      max-width: 250px;
+      padding: 4px 0 8px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .brand-logo-wrap img {
+      width: 100%;
+      max-height: 80px;
+      object-fit: contain;
+    }
+
+    .support-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 116, 204, 0.1);
+      color: var(--primary-blue);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .instruction-text {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      max-width: 280px;
+    }
+
+    /* Cards */
+    .info-card {
+      width: 100%;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .info-card:hover {
+      border-color: var(--primary-blue);
+      box-shadow: 0 4px 12px rgba(56, 116, 204, 0.08);
+    }
+
+    .card-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .val-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .id-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--brand-orange);
+      letter-spacing: 1.5px;
+    }
+
+    .pwd-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-main);
+      letter-spacing: 1px;
+    }
+
+    .action-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .icon-action-btn:hover {
+      background: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+      transform: translateY(-1px);
+    }
+
+    /* Footer status */
+    .window-footer {
+      width: 100%;
+      border-top: 1px solid var(--border-color);
+      background: var(--panel-bg);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green-online);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      background: #1E293B;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.25s ease;
+      pointer-events: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls -->
+  <div class="top-toolbar">
+    <span style="font-size: 13px; font-weight: 600; color: var(--text-main);">Simulador OptimaIT Quick Support</span>
+    <button class="theme-btn" onclick="toggleTheme()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+      Modo Claro / Oscuro
+    </button>
+  </div>
+
+  <!-- App Window -->
+  <div class="app-window" id="appWindow">
+    
+    <!-- Titlebar -->
+    <div class="window-header">
+      <div class="window-title">
+        <img src="flutter/assets/icon.png" alt="OptimaIT Icon" onerror="this.style.display='none'">
+        <span>OptimaIT</span>
+      </div>
+      <div class="window-controls">
+        <div class="control-dot min"></div>
+        <div class="control-dot max"></div>
+        <div class="control-dot close"></div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="window-body">
+      
+      <div class="support-badge">
+        <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+        Soporte Rápido
+      </div>
+
+      <!-- Brand Logo -->
+      <div class="brand-logo-wrap">
+        <img id="brandLogo" src="flutter/assets/logo.png" alt="Optima IT Logo" onerror="this.onerror=null; this.src='flutter/assets/icon.png';">
+      </div>
+
+      <p class="instruction-text">
+        Proporcione su <strong>ID</strong> y <strong>Contraseña</strong> al especialista técnico para permitir el acceso a su equipo.
+      </p>
+
+      <!-- ID Card -->
+      <div class="info-card">
+        <div class="card-label-row">
+          <span class="card-label">Su ID de Conexión</span>
+          <span style="font-size: 10px; color: var(--primary-blue); font-weight: 600;">LISTO</span>
+        </div>
+        <div class="val-row">
+          <span class="id-display" id="myId">849 203 115</span>
+          <div class="action-btn-group">
+            <button class="icon-action-btn" title="Copiar ID" onclick="copyValue('myId', 'ID copiado al portapapeles')">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Card -->
+      <div class="info-card">
+        <div class="card-label-row">
+          <span class="card-label">Contraseña Temporal</span>
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: 500;">Un solo uso</span>
+        </div>
+        <div class="val-row">
+          <span class="pwd-display" id="myPwd">x9k2p7</span>
+          <div class="action-btn-group">
+            <button class="icon-action-btn" title="Generar nueva contraseña" onclick="generateNewPassword()">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </button>
+            <button class="icon-action-btn" title="Copiar Contraseña" onclick="copyValue('myPwd', 'Contraseña copiada al portapapeles')">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="window-footer">
+      <div class="status-indicator">
+        <div class="pulse-dot"></div>
+        <span>Listo para conectar</span>
+      </div>
+      <span style="color: var(--text-muted); font-size: 11px;">v1.5.1 OptimaIT</span>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toastMsg">Texto copiado</div>
+
+  <script>
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      const logo = document.getElementById('brandLogo');
+      logo.src = isDark ? 'flutter/assets/logo_light.png' : 'flutter/assets/logo_dark.png';
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastMsg');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    function copyValue(elemId, toastText) {
+      const text = document.getElementById(elemId).innerText.replace(/\s+/g, '');
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(toastText);
+      }).catch(() => {
+        showToast(toastText);
+      });
+    }
+
+    function generateNewPassword() {
+      const chars = 'abcdefghijkmnpqrstuvwxyz23456789';
+      let newPwd = '';
+      for (let i = 0; i < 6; i++) {
+        newPwd += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      document.getElementById('myPwd').innerText = newPwd;
+      showToast('Nueva contraseña generada');
+    }
+  </script>
+</body>
+</html>

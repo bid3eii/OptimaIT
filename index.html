@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OptimaIT - Portal de Asistencia Técnica Remota</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #F8FAFC;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .portal-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .logo-container {
+      margin-bottom: 24px;
+    }
+    .logo-container img {
+      max-height: 110px;
+      width: auto;
+      object-fit: contain;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      font-size: 14px;
+      color: #94A3B8;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #E77222;
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 16px 28px;
+      border-radius: 12px;
+      width: 100%;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 20px -5px rgba(231, 114, 34, 0.4);
+    }
+    .btn-download:hover {
+      background: #D56216;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 24px -5px rgba(231, 114, 34, 0.5);
+    }
+    .steps-container {
+      margin-top: 32px;
+      text-align: left;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #CBD5E1;
+    }
+    .step-item:last-child { margin-bottom: 0; }
+    .step-badge {
+      background: #3874CC;
+      color: white;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .footer-note {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #64748B;
+    }
+    .server-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #10B981;
+      margin-bottom: 16px;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .server-dot {
+      width: 6px;
+      height: 6px;
+      background: #10B981;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="portal-card">
+    <div class="logo-container">
+      <img src="flutter/assets/logo_dark.png" alt="OptimaIT Logo">
+    </div>
+
+    <div class="server-status">
+      <div class="server-dot"></div>
+      <span>Servidor Local Activo (10.4.4.40)</span>
+    </div>
+
+    <h1>Asistencia Técnica Remota</h1>
+    <p class="subtitle">Descargue el cliente oficial para permitir que nuestro equipo técnico atienda y resuelva su incidencia.</p>
+
+    <!-- Download configured executable -->
+    <a href="OptimaIT-host=10.4.4.40,key=wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=.exe" class="btn-download" download="OptimaIT.exe">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+      Descargar OptimaIT Soporte
+    </a>
+
+    <div class="steps-container">
+      <div class="step-item">
+        <div class="step-badge">1</div>
+        <div>Descargue y ejecute <strong>OptimaIT.exe</strong> (no requiere instalación).</div>
+      </div>
+      <div class="step-item">
+        <div class="step-badge">2</div>
+        <div>Indique su <strong>ID</strong> y <strong>Contraseña Temporal</strong> al técnico.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-badge">3</div>
+        <div>Haga clic en <strong>"Aceptar"</strong> cuando comience la sesión de soporte.</div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      Servidor Privado: <strong>10.4.4.40</strong> &bull; Conexión Cifrada E2EE
+    </div>
+  </div>
+
+</body>
+</html>
