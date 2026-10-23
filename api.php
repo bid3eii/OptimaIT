@@ -113,7 +113,7 @@ switch ($action) {
         ];
         saveSessions($sessions);
         
-        $host = $_SERVER['HTTP_HOST'] ?? '10.4.4.40';
+        $host = $_SERVER['HTTP_HOST'] ?? '178.156.246.205';
         $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/OptimaIT/api.php');
         $scriptDir = str_replace('\\', '/', $scriptDir);
         $basePath = ($scriptDir === '/' || $scriptDir === '.') ? '' : rtrim($scriptDir, '/');
@@ -136,7 +136,11 @@ switch ($action) {
         // Auto-detect active RustDesk client connections to hbbs (port 21116)
         $establishedIps = [];
         $netOut = [];
-        @exec('netstat -ano -p tcp | findstr 21116 | findstr ESTABLISHED', $netOut);
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            @exec('netstat -ano -p tcp | findstr 21116 | findstr ESTABLISHED', $netOut);
+        } else {
+            @exec('ss -nt 2>/dev/null | grep :21116 | grep ESTAB || netstat -tn 2>/dev/null | grep :21116 | grep ESTABLISHED', $netOut);
+        }
         foreach ($netOut as $nLine) {
             if (preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTABLISHED/', $nLine, $m)) {
                 $establishedIps[$m[1]] = true;

@@ -1175,7 +1175,8 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       <div class="header-right-tools">
         <div class="server-badge">
           <div class="pulse-dot"></div>
-          <span>Servidor Relay: 10.4.4.40 (En línea)</span>
+          <?php $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : '178.156.246.205'; ?>
+          <span>Servidor Relay: <?= htmlspecialchars($relayHost) ?> (En línea)</span>
         </div>
 
         <!-- User Profile Chip -->

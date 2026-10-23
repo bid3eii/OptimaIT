@@ -24,7 +24,11 @@ if (isset($_GET['descargar'])) {
     
     // Prefix determines self-elevation in C# launcher
     $prefix = ($clientType === 'empresa') ? "OptimaIT_Empresa" : "OptimaIT_Asistente";
-    $downloadName = "{$prefix}_{$sessionId},host=10.4.4.40,key=wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=.exe";
+    $serverHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : '178.156.246.205';
+    if ($serverHost === 'localhost' || $serverHost === '127.0.0.1') {
+        $serverHost = '178.156.246.205';
+    }
+    $downloadName = "{$prefix}_{$sessionId},host={$serverHost},key=wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=.exe";
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="' . $downloadName . '"');
