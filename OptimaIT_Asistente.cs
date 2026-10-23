@@ -16,17 +16,35 @@ namespace OptimaIT
         private string sessionId = "";
         private string rustdeskId = "";
         private string clientType = "personal"; // "personal" o "empresa"
-        private string serverUrl = "http://10.4.4.40/OptimaIT";
+        private string serverUrl = "https://cbw2jckkmefgprrsgruiuq00.178.156.246.205.sslip.io";
+        private string serverIp = "178.156.246.205";
+        private string serverKey = "wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=";
         private System.Windows.Forms.Timer timer;
         private Label lblStatus;
         private Label lblId;
         private Label lblBadgeType;
         private Button btnDisconnect;
 
-        public AssistantForm(string sId, string cType)
+        public AssistantForm(string sId, string cType, string sHost = "", string sKey = "")
         {
             this.sessionId = sId;
             this.clientType = cType;
+            if (!string.IsNullOrEmpty(sHost))
+            {
+                this.serverIp = sHost;
+                if (!sHost.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !sHost.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.serverUrl = "https://" + sHost;
+                }
+                else
+                {
+                    this.serverUrl = sHost;
+                }
+            }
+            if (!string.IsNullOrEmpty(sKey))
+            {
+                this.serverKey = sKey;
+            }
             InitUI();
             this.Load += AssistantForm_Load;
             this.FormClosing += AssistantForm_FormClosing;
@@ -181,6 +199,12 @@ namespace OptimaIT
 
         private void AssistantForm_Load(object sender, EventArgs e)
         {
+            try
+            {
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | (SecurityProtocolType)768 | SecurityProtocolType.Tls;
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            }
+            catch { }
             Thread t = new Thread(BackgroundConnect);
             t.IsBackground = true;
             t.Start();
@@ -194,8 +218,6 @@ namespace OptimaIT
                 string currentExePath = Application.ExecutablePath;
                 string localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 // Server config parameters
-                string serverIp = "10.4.4.40";
-                string serverKey = "wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=";
                 string encodedEngineName = "OptimaIT-host=" + serverIp + ",key=" + serverKey + ".exe";
 
                 // Target engine paths
@@ -458,14 +480,38 @@ namespace OptimaIT
                 // 4. Register with OptimaIT API & Set Unattended Password
                 if (!string.IsNullOrEmpty(capturedId))
                 {
-                    string registerUrl = serverUrl + "/api.php?action=register_client&session_id=" + 
-                        Uri.EscapeDataString(sessionId) + "&rustdesk_id=" + Uri.EscapeDataString(capturedId) +
-                        (wasInstalled ? "&installed=1" : "");
-
+                    string jsonResp = "";
                     using (WebClient client = new WebClient())
                     {
                         client.Encoding = Encoding.UTF8;
-                        string jsonResp = client.DownloadString(registerUrl);
+                        string queryParams = "?action=register_client&session_id=" + 
+                            Uri.EscapeDataString(sessionId) + "&rustdesk_id=" + Uri.EscapeDataString(capturedId) +
+                            (wasInstalled ? "&installed=1" : "");
+
+                        string[] tryUrls = new string[] {
+                            serverUrl + "/api.php" + queryParams,
+                            "https://" + serverIp + "/api.php" + queryParams,
+                            "http://" + serverIp + "/api.php" + queryParams,
+                            serverUrl + "/OptimaIT/api.php" + queryParams
+                        };
+
+                        foreach (string u in tryUrls)
+                        {
+                            try
+                            {
+                                jsonResp = client.DownloadString(u);
+                                if (!string.IsNullOrEmpty(jsonResp) && jsonResp.IndexOf("\"success\"", StringComparison.OrdinalIgnoreCase) >= 0)
+                                {
+                                    int apiIdx = u.IndexOf("/api.php", StringComparison.OrdinalIgnoreCase);
+                                    if (apiIdx > 0)
+                                    {
+                                        serverUrl = u.Substring(0, apiIdx);
+                                    }
+                                    break;
+                                }
+                            }
+                            catch { }
+                        }
                         
                         // Extract password from response: {"success":true,"message":"...","password":"..."}
                         try
@@ -652,11 +698,11 @@ namespace OptimaIT
             {
                 this.Invoke(new Action(() =>
                 {
-                    lblStatus.Text = "Conectado al servidor local";
-                    lblStatus.ForeColor = Color.FromArgb(16, 185, 129);
+                    lblStatus.Text = "⚠️ Esperando conexión con el servidor";
+                    lblStatus.ForeColor = Color.FromArgb(231, 114, 34);
                     if (!string.IsNullOrEmpty(rustdeskId))
                     {
-                        lblId.Text = "ID: " + rustdeskId;
+                        lblId.Text = "ID de Soporte: " + rustdeskId;
                     }
                 }));
             }
@@ -777,19 +823,54 @@ namespace OptimaIT
                 sId = "OPT-" + new Random().Next(1000, 9999);
             }
 
+            string sHost = "178.156.246.205";
+            string sKey = "wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=";
+
+            // Extract host and key from exeName if present
+            int hostIdx = exeName.IndexOf(",host=", StringComparison.OrdinalIgnoreCase);
+            if (hostIdx >= 0)
+            {
+                int endH = exeName.IndexOf(",", hostIdx + 6);
+                sHost = (endH > hostIdx) ? exeName.Substring(hostIdx + 6, endH - (hostIdx + 6)) : exeName.Substring(hostIdx + 6);
+            }
+
+            int keyIdx = exeName.IndexOf(",key=", StringComparison.OrdinalIgnoreCase);
+            if (keyIdx >= 0)
+            {
+                int endK = exeName.IndexOf(",", keyIdx + 5);
+                sKey = (endK > keyIdx) ? exeName.Substring(keyIdx + 5, endK - (keyIdx + 5)) : exeName.Substring(keyIdx + 5);
+            }
+
             // Silent background heartbeat mode for persistent startup
             if (isSilent)
             {
+                try
+                {
+                    ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | (SecurityProtocolType)768 | SecurityProtocolType.Tls;
+                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                }
+                catch { }
+
                 while (true)
                 {
                     try
                     {
                         using (WebClient wc = new WebClient())
                         {
-                            wc.DownloadString("http://10.4.4.40/OptimaIT/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId));
+                            wc.DownloadString("https://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId));
                         }
                     }
-                    catch { }
+                    catch
+                    {
+                        try
+                        {
+                            using (WebClient wc = new WebClient())
+                            {
+                                wc.DownloadString("http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId));
+                            }
+                        }
+                        catch { }
+                    }
                     Thread.Sleep(12000);
                 }
             }
@@ -804,7 +885,7 @@ namespace OptimaIT
                 // If UAC was rejected or failed, do NOT exit! Fall back to running normal form!
             }
 
-            Application.Run(new AssistantForm(sId, cType));
+            Application.Run(new AssistantForm(sId, cType, sHost, sKey));
         }
     }
 }

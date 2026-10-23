@@ -138,11 +138,10 @@ switch ($action) {
         $netOut = [];
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             @exec('netstat -ano -p tcp | findstr 21116 | findstr ESTABLISHED', $netOut);
-        } else {
             @exec('ss -nt 2>/dev/null | grep :21116 | grep ESTAB || netstat -tn 2>/dev/null | grep :21116 | grep ESTABLISHED', $netOut);
         }
         foreach ($netOut as $nLine) {
-            if (preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTABLISHED/', $nLine, $m)) {
+            if (preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTAB/', $nLine, $m) || preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTABLISHED/', $nLine, $m)) {
                 $establishedIps[$m[1]] = true;
             }
         }
