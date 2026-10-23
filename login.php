@@ -523,6 +523,13 @@ if (!empty($_SESSION['optimait_user'])) {
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           <span>Acceso restringido y cifrado para soporte técnico</span>
         </div>
+
+        <div style="margin-top: 14px; text-align: center;">
+          <a href="descargar.html" style="color: #94A3B8; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;" onmouseover="this.style.color='#E77222'" onmouseout="this.style.color='#94A3B8'">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>¿Eres cliente? Descargar aplicación de asistencia</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
