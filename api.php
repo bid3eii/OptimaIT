@@ -113,7 +113,7 @@ switch ($action) {
         ];
         saveSessions($sessions);
         
-        $host = $_SERVER['HTTP_HOST'] ?? '178.156.246.205';
+        $host = $_SERVER['HTTP_HOST'] ?? '155.133.197.176';
         $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/OptimaIT/api.php');
         $scriptDir = str_replace('\\', '/', $scriptDir);
         $basePath = ($scriptDir === '/' || $scriptDir === '.') ? '' : rtrim($scriptDir, '/');

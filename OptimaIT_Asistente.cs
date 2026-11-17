@@ -16,8 +16,8 @@ namespace OptimaIT
         private string sessionId = "";
         private string rustdeskId = "";
         private string clientType = "personal"; // "personal" o "empresa"
-        private string serverUrl = "https://cbw2jckkmefgprrsgruiuq00.178.156.246.205.sslip.io";
-        private string serverIp = "178.156.246.205";
+        private string serverUrl = "http://155.133.197.176";
+        private string serverIp = "155.133.197.176";
         private string serverKey = "wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=";
         private System.Windows.Forms.Timer timer;
         private Label lblStatus;
@@ -823,7 +823,7 @@ namespace OptimaIT
                 sId = "OPT-" + new Random().Next(1000, 9999);
             }
 
-            string sHost = "178.156.246.205";
+            string sHost = "155.133.197.176";
             string sKey = "wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=";
 
             // Extract host and key from exeName if present

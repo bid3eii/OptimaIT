@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  hbbs:
+    image: rustdesk/rustdesk-server:latest
+    container_name: optimait-hbbs
+    command: hbbs -r 155.133.197.176:21117 -k _
+    network_mode: "host"
+    volumes:
+      - /opt/rustdesk-data:/root
+    restart: always
+    depends_on:
+      - hbbr
+
+  hbbr:
+    image: rustdesk/rustdesk-server:latest
+    container_name: optimait-hbbr
+    command: hbbr -k _
+    network_mode: "host"
+    volumes:
+      - /opt/rustdesk-data:/root
+    restart: always
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: optimait-web
+    network_mode: "host"
+    volumes:
+      - ./data:/var/www/html/data
+    restart: always
