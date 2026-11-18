@@ -38,7 +38,14 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       --red: #EF4444;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.16) rgba(9, 13, 22, 0.4);
+    }
     
     body {
       background: radial-gradient(circle at 15% 10%, rgba(56, 116, 204, 0.14) 0%, transparent 45%),
@@ -524,7 +531,11 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 
     /* Sessions Table */
     .table-container {
+      container-type: inline-size;
+      container-name: tableContainer;
       overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.16) rgba(0, 0, 0, 0.2);
       border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       background: rgba(9, 13, 22, 0.45);
@@ -543,6 +554,42 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
     }
     .table-container::-webkit-scrollbar-thumb:hover {
       background: rgba(255, 255, 255, 0.22);
+    }
+
+    /* Container Queries for Adaptive Split-Window & Ultrawide Layouts */
+    @container tableContainer (max-width: 780px) {
+      th, td {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+      .actions-wrap {
+        gap: 4px;
+      }
+      .btn-act {
+        height: 28px;
+        padding: 0 8px;
+        font-size: 11px;
+      }
+      .id-pill {
+        font-size: 11.5px;
+        padding: 2.5px 6px;
+      }
+    }
+
+    @container tableContainer (min-width: 1150px) {
+      th {
+        padding: 16px 20px;
+        font-size: 12px;
+      }
+      td {
+        padding: 15px 20px;
+        font-size: 13.5px;
+      }
+      .btn-act {
+        height: 34px;
+        padding: 0 14px;
+        font-size: 12.5px;
+      }
     }
 
     table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -790,27 +837,59 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       transform: scale(1.08);
     }
 
+    /* Native Popover / Toast Styling */
     .toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #1E293B;
+      inset: auto 24px 24px auto;
+      margin: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       color: #FFFFFF;
       border: 1px solid var(--primary);
-      padding: 12px 20px;
-      border-radius: 10px;
+      padding: 13px 22px;
+      border-radius: 12px;
       font-size: 13px;
       font-weight: 600;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 116, 204, 0.25);
       opacity: 0;
       transform: translateY(20px);
-      transition: all 0.3s;
+      transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: none;
-      z-index: 1000;
+      z-index: 10000;
     }
-    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast:popover-open,
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
 
-    /* Modal: Nuevo Grupo Corporativo */
+    /* Modern HTML5 <dialog> & Legacy Modal Styles */
+    dialog.app-dialog {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      background: transparent;
+      border: none;
+      padding: 20px;
+      outline: none;
+      max-width: 100vw;
+      max-height: 100vh;
+      overflow: visible;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    dialog.app-dialog:not([open]) {
+      display: none;
+    }
+    dialog.app-dialog::backdrop {
+      background: rgba(3, 7, 18, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -838,11 +917,17 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       max-width: 480px;
       box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(231, 114, 34, 0.25);
       overflow: hidden;
-      transform: scale(0.92) translateY(12px);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: dialogPop 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .modal-overlay.active .modal-card {
-      transform: scale(1) translateY(0);
+    @keyframes dialogPop {
+      from {
+        opacity: 0;
+        transform: scale(0.92) translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
     }
     .modal-header {
       padding: 20px 24px;
@@ -1160,6 +1245,33 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       transform: translateY(-1px);
       box-shadow: 0 6px 22px -2px rgba(231, 114, 34, 0.65);
     }
+
+    /* Multi-Window & Mobile Adaptations */
+    @media (max-width: 1100px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      body {
+        padding: 14px 16px;
+      }
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .header-right-tools {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1388,12 +1500,12 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 
   </div>
 
-  <div class="toast" id="toastBox">
+  <div class="toast" id="toastBox" popover="manual">
     <span id="toastMsg">Acción completada</span>
   </div>
 
   <!-- Modal: Crear Nuevo Grupo Corporativo -->
-  <div id="newGroupModal" class="modal-overlay" onclick="handleModalBackdropClick(event)">
+  <dialog id="newGroupModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title-wrap">
@@ -1420,11 +1532,11 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         </button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <?php if ($isAdmin): ?>
   <!-- Modal: Gestión de Usuarios (Solo Administrador) -->
-  <div id="usersModal" class="modal-overlay" onclick="handleUsersModalBackdropClick(event)">
+  <dialog id="usersModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
     <div class="modal-card" style="max-width: 660px;">
       <div class="modal-header">
         <div class="modal-title-wrap">
@@ -1502,11 +1614,11 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         <button type="button" class="btn btn-outline modal-btn-cancel" onclick="closeUsersModal()">Cerrar</button>
       </div>
     </div>
-  </div>
+  </dialog>
   <?php endif; ?>
 
   <!-- Modal: Confirmación Elegante -->
-  <div id="confirmActionModal" class="modal-overlay" style="z-index: 10005;" onclick="handleConfirmModalBackdropClick(event)">
+  <dialog id="confirmActionModal" class="app-dialog" style="z-index: 10005;" onclick="handleDialogBackdropClick(event)">
     <div class="modal-card" style="max-width: 440px; border-color: rgba(239, 68, 68, 0.35); box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(239, 68, 68, 0.2);">
       <div class="modal-header" style="background: rgba(239, 68, 68, 0.05); border-bottom: 1px solid rgba(255, 255, 255, 0.07);">
         <div class="modal-title-wrap">
@@ -1530,7 +1642,7 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         <button type="button" id="btnConfirmAction" class="confirm-btn confirm-btn-danger" onclick="executeConfirmedAction()">Confirmar</button>
       </div>
     </div>
-  </div>
+  </dialog>
 
   <script>
     let rawSessions = [];
@@ -1538,12 +1650,24 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
     let currentCategory = 'empresa'; // View defaults to Empresa
     let currentGroupFilter = 'all';
     let currentStatusFilter = 'all';
+    let previousOnlineIds = new Set();
+    let isInitialLoad = true;
 
     function showToast(msg) {
       const toast = document.getElementById('toastBox');
-      document.getElementById('toastMsg').innerText = msg;
+      const toastMsg = document.getElementById('toastMsg');
+      if (toastMsg) toastMsg.innerText = msg;
+      if (typeof toast.showPopover === 'function') {
+        try { toast.showPopover(); } catch(e) {}
+      }
       toast.classList.add('show');
-      setTimeout(() => { toast.classList.remove('show'); }, 2800);
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => {
+        toast.classList.remove('show');
+        if (typeof toast.hidePopover === 'function') {
+          try { toast.hidePopover(); } catch(e) {}
+        }
+      }, 2800);
     }
 
     function setCreationMode(type) {
@@ -1622,6 +1746,20 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         if (data.success) {
           rawSessions = data.sessions || [];
           customGroups = data.groups || ['Sucursales', 'Oficina Central', 'Soporte VIP'];
+          
+          // Detect newly connected clients for proactive Toast alerts
+          const currentOnline = new Set();
+          rawSessions.forEach(s => {
+            if (s.status === 'online') {
+              currentOnline.add(s.session_id);
+              if (!isInitialLoad && !previousOnlineIds.has(s.session_id)) {
+                showToast(`🟢 ¡Equipo "${s.client_name}" conectado y en línea!`);
+              }
+            }
+          });
+          previousOnlineIds = currentOnline;
+          isInitialLoad = false;
+
           updateGroupControls();
           updateKPIs();
           renderSessions();
@@ -1876,23 +2014,26 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       }
     }
 
+    function handleDialogBackdropClick(e) {
+      if (e.target && e.target.tagName === 'DIALOG') {
+        if (e.target.close) e.target.close();
+        else e.target.classList.remove('active');
+      }
+    }
+
     function promptNewGroup() {
       const modal = document.getElementById('newGroupModal');
       const input = document.getElementById('newGroupNameInput');
       input.value = '';
-      modal.classList.add('active');
+      if (modal.showModal) modal.showModal();
+      else modal.classList.add('active');
       setTimeout(() => input.focus(), 60);
     }
 
     function closeGroupModal() {
       const modal = document.getElementById('newGroupModal');
-      modal.classList.remove('active');
-    }
-
-    function handleModalBackdropClick(e) {
-      if (e.target.id === 'newGroupModal') {
-        closeGroupModal();
-      }
+      if (modal.close) modal.close();
+      else modal.classList.remove('active');
     }
 
     function handleModalKeydown(e) {
@@ -2019,7 +2160,8 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
     function openUsersModal() {
       const modal = document.getElementById('usersModal');
       if (modal) {
-        modal.classList.add('active');
+        if (modal.showModal) modal.showModal();
+        else modal.classList.add('active');
         loadUsersList();
       }
     }
@@ -2027,13 +2169,8 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
     function closeUsersModal() {
       const modal = document.getElementById('usersModal');
       if (modal) {
-        modal.classList.remove('active');
-      }
-    }
-
-    function handleUsersModalBackdropClick(e) {
-      if (e.target.id === 'usersModal') {
-        closeUsersModal();
+        if (modal.close) modal.close();
+        else modal.classList.remove('active');
       }
     }
 
@@ -2181,19 +2318,15 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         }
       }
       confirmCallback = onConfirm;
-      modal.classList.add('active');
+      if (modal.showModal) modal.showModal();
+      else modal.classList.add('active');
     }
 
     function closeConfirmDialog() {
       const modal = document.getElementById('confirmActionModal');
-      modal.classList.remove('active');
+      if (modal.close) modal.close();
+      else modal.classList.remove('active');
       confirmCallback = null;
-    }
-
-    function handleConfirmModalBackdropClick(e) {
-      if (e.target.id === 'confirmActionModal') {
-        closeConfirmDialog();
-      }
     }
 
     function executeConfirmedAction() {
