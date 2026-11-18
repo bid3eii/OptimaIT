@@ -15,66 +15,65 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OptimaIT - Centro de Control de Asistencia Técnica</title>
+  <title>OptimaIT - Control Center Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #3874CC;
-      --primary-hover: #295FB3;
-      --primary-glow: rgba(56, 116, 204, 0.35);
-      --orange: #E77222;
-      --orange-hover: #D06319;
-      --orange-glow: rgba(231, 114, 34, 0.4);
-      --bg-dark: #070B14;
-      --bg-sidebar: #0B111E;
-      --surface-card: rgba(16, 24, 40, 0.85);
-      --surface-elevated: rgba(22, 33, 56, 0.7);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(255, 255, 255, 0.16);
-      --text: #F8FAFC;
+      --primary: #2563EB;
+      --primary-accent: #38BDF8;
+      --primary-glow: rgba(37, 99, 235, 0.4);
+      --orange: #FF6B00;
+      --orange-accent: #FFA133;
+      --orange-glow: rgba(255, 107, 0, 0.35);
+      --bg-base: #060913;
+      --bg-sidebar: #090E1A;
+      --card-bg: rgba(13, 20, 36, 0.75);
+      --card-hover: rgba(18, 28, 51, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-focus: rgba(56, 189, 248, 0.4);
+      --text-main: #FFFFFF;
       --text-muted: #94A3B8;
       --text-dim: #64748B;
-      --green: #10B981;
-      --green-glow: rgba(16, 185, 129, 0.35);
-      --yellow: #F59E0B;
-      --red: #EF4444;
-      --sidebar-width: 280px;
+      --emerald: #10B981;
+      --emerald-glow: rgba(16, 185, 129, 0.3);
+      --amber: #F59E0B;
+      --rose: #F43F5E;
+      --sidebar-width: 270px;
     }
 
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.18) rgba(7, 11, 20, 0.5);
+      scrollbar-color: rgba(255, 255, 255, 0.15) rgba(6, 9, 19, 0.4);
     }
 
     body {
-      background: radial-gradient(circle at 20% 0%, rgba(56, 116, 204, 0.15) 0%, transparent 50%),
-                  radial-gradient(circle at 85% 100%, rgba(231, 114, 34, 0.12) 0%, transparent 50%),
-                  var(--bg-dark);
-      color: var(--text);
+      background: radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.12) 0%, transparent 45%),
+                  radial-gradient(circle at 90% 100%, rgba(255, 107, 0, 0.09) 0%, transparent 40%),
+                  var(--bg-base);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* Layout Shell */
     .app-shell {
       display: flex;
       width: 100%;
       min-height: 100vh;
     }
 
-    /* Left Sidebar */
+    /* LEFT SIDEBAR */
     .app-sidebar {
       width: var(--sidebar-width);
       background: var(--bg-sidebar);
-      border-right: 1px solid var(--border);
+      border-right: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
       position: sticky;
@@ -85,47 +84,48 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       backdrop-filter: blur(20px);
     }
 
-    .sidebar-header {
+    .sidebar-brand-box {
       padding: 24px 20px 20px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border-subtle);
     }
-    .brand-wrap {
+    .brand-logo-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
-    .brand-wrap img {
-      height: 38px;
+    .brand-logo-wrap img {
+      height: 36px;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
     }
-    .brand-badge {
+    .badge-enterprise {
       font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 6px;
-      background: rgba(56, 116, 204, 0.18);
-      border: 1px solid rgba(56, 116, 204, 0.35);
-      color: #93C5FD;
-      letter-spacing: 0.04em;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(56, 189, 248, 0.15) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38BDF8;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
-    /* Sidebar Content */
-    .sidebar-body {
+    .sidebar-scroll {
       flex: 1;
       padding: 20px 14px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 22px;
     }
 
+    /* Call To Action Button */
     .btn-create-session {
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
       color: #FFFFFF;
       border: none;
       padding: 13px 18px;
@@ -138,142 +138,144 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       justify-content: center;
       gap: 9px;
       box-shadow: 0 4px 18px -2px var(--orange-glow);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       width: 100%;
+      letter-spacing: 0.01em;
     }
     .btn-create-session:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px -2px rgba(231, 114, 34, 0.6);
-      filter: brightness(1.08);
+      box-shadow: 0 8px 24px -2px rgba(255, 107, 0, 0.55);
+      filter: brightness(1.06);
     }
 
-    .nav-group-title {
-      font-size: 10.5px;
+    .nav-section-title {
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-dim);
-      padding: 0 10px 8px 10px;
+      padding: 0 8px 8px 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .nav-list {
+    .nav-menu {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
-
-    .nav-item {
+    .nav-link {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 14px;
+      padding: 10px 12px;
       border-radius: 10px;
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 600;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.18s ease;
       user-select: none;
       border: 1px solid transparent;
     }
-    .nav-item:hover {
+    .nav-link:hover {
       background: rgba(255, 255, 255, 0.04);
       color: #FFFFFF;
-      transform: translateX(2px);
+      transform: translateX(3px);
     }
-    .nav-item.active {
-      background: rgba(56, 116, 204, 0.15);
-      border-color: rgba(56, 116, 204, 0.35);
+    .nav-link.active {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.08) 100%);
+      border-color: rgba(37, 99, 235, 0.4);
       color: #FFFFFF;
       font-weight: 700;
-      box-shadow: 0 2px 10px rgba(56, 116, 204, 0.15);
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
     }
-    .nav-item.active.empresa {
-      background: rgba(231, 114, 34, 0.15);
-      border-color: rgba(231, 114, 34, 0.35);
-      color: #FFFFFF;
-      box-shadow: 0 2px 10px rgba(231, 114, 34, 0.15);
+    .nav-link.active.empresa {
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.16) 0%, rgba(255, 107, 0, 0.06) 100%);
+      border-color: rgba(255, 107, 0, 0.35);
+      box-shadow: 0 2px 10px rgba(255, 107, 0, 0.15);
     }
-    .nav-label-wrap {
+    .nav-label {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .nav-count {
+    .nav-pill-counter {
       font-size: 11px;
       font-weight: 700;
       padding: 2px 8px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.07);
       color: var(--text-muted);
     }
-    .nav-item.active .nav-count {
+    .nav-link.active .nav-pill-counter {
       background: #FFFFFF;
       color: #0F172A;
     }
 
-    /* Relay Server Status Card */
-    .server-status-card {
+    /* Relay Server Live Indicator Card */
+    .relay-card {
       background: rgba(16, 185, 129, 0.06);
       border: 1px solid rgba(16, 185, 129, 0.22);
       border-radius: 12px;
-      padding: 14px;
+      padding: 12px 14px;
       margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
-    .server-status-header {
+    .relay-title {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: #34D399;
-      margin-bottom: 6px;
     }
-    .radar-pulse {
-      width: 8px;
-      height: 8px;
+    .radar-pulse-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 10px var(--green);
-      animation: radarAnimation 2s infinite;
+      background: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald);
+      animation: pulseRadar 2s infinite;
     }
-    @keyframes radarAnimation {
-      0% { transform: scale(0.9); opacity: 0.7; }
+    @keyframes pulseRadar {
+      0% { transform: scale(0.9); opacity: 0.6; }
       50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.9); opacity: 0.7; }
+      100% { transform: scale(0.9); opacity: 0.6; }
     }
-    .server-status-host {
+    .relay-host-text {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
+      font-size: 11px;
       color: #A7F3D0;
-      word-break: break-all;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    /* Sidebar Footer / User Profile */
-    .sidebar-footer {
-      padding: 16px;
-      border-top: 1px solid var(--border);
-      background: rgba(9, 13, 22, 0.4);
+    /* Sidebar User Footer */
+    .sidebar-user-footer {
+      padding: 16px 18px;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(6, 9, 19, 0.6);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
     }
-    .user-chip-wrap {
+    .user-info-cluster {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 11px;
       overflow: hidden;
     }
-    .user-avatar {
+    .user-avatar-badge {
       width: 36px;
       height: 36px;
       border-radius: 10px;
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
       color: #FFFFFF;
       font-weight: 800;
       font-size: 14px;
@@ -281,14 +283,14 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 2px 8px var(--orange-glow);
+      box-shadow: 0 2px 10px var(--orange-glow);
     }
-    .user-meta {
+    .user-label-group {
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
-    .user-meta-name {
+    .user-label-name {
       font-size: 13px;
       font-weight: 700;
       color: #FFFFFF;
@@ -296,14 +298,15 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .user-meta-role {
-      font-size: 10.5px;
+    .user-label-role {
+      font-size: 11px;
       font-weight: 700;
+      letter-spacing: 0.02em;
     }
     .role-admin { color: #FBBF24; }
-    .role-tech { color: #60A5FA; }
+    .role-tech { color: #38BDF8; }
 
-    .sidebar-user-actions {
+    .user-footer-btns {
       display: flex;
       align-items: center;
       gap: 6px;
@@ -319,60 +322,60 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: all 0.18s ease;
     }
     .btn-icon-soft:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
       color: #FFFFFF;
       transform: translateY(-1px);
     }
     .btn-icon-soft.danger:hover {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: rgba(239, 68, 68, 0.4);
-      color: #F87171;
+      background: rgba(244, 63, 94, 0.2);
+      border-color: rgba(244, 63, 94, 0.4);
+      color: #FB7185;
     }
 
-    /* Main App Content Area */
+    /* MAIN APP WORKSPACE */
     .app-main {
       flex: 1;
       display: flex;
       flex-direction: column;
       min-width: 0;
-      padding: 24px 32px;
-      max-width: 1600px;
+      padding: 24px 36px 40px 36px;
+      max-width: 1650px;
     }
 
-    /* Top Workspace Header Bar */
-    .main-topbar {
+    /* Top Navigation Header */
+    .main-top-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      margin-bottom: 24px;
+      margin-bottom: 26px;
       flex-wrap: wrap;
     }
-    .page-heading h1 {
-      font-size: 22px;
+    .page-title-cluster h1 {
+      font-size: 24px;
       font-weight: 800;
       color: #FFFFFF;
       letter-spacing: -0.02em;
     }
-    .page-heading p {
+    .page-title-cluster p {
       font-size: 13px;
       color: var(--text-muted);
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
-    .topbar-actions {
+    .top-toolbar-actions {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    .search-input-box {
+    .search-input-wrapper {
       position: relative;
-      width: 300px;
+      width: 320px;
     }
-    .search-input-box svg {
+    .search-input-wrapper svg {
       position: absolute;
       left: 14px;
       top: 50%;
@@ -380,185 +383,191 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       color: var(--text-dim);
       pointer-events: none;
     }
-    .search-field {
+    .search-box {
       width: 100%;
-      background: rgba(16, 24, 40, 0.7);
-      border: 1px solid var(--border);
+      background: rgba(13, 20, 36, 0.85);
+      border: 1px solid var(--border-subtle);
       border-radius: 12px;
-      padding: 10px 14px 10px 40px;
+      padding: 11px 14px 11px 42px;
       color: #FFFFFF;
       font-size: 13.5px;
       outline: none;
       transition: all 0.2s;
     }
-    .search-field:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-glow);
-      background: rgba(16, 24, 40, 0.95);
+    .search-box:focus {
+      border-color: #38BDF8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+      background: rgba(13, 20, 36, 0.98);
     }
 
-    /* KPI Summary Stats */
-    .stats-grid {
+    /* KPI METRIC CARDS */
+    .metrics-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      gap: 18px;
       margin-bottom: 28px;
     }
-    .stat-card {
-      background: var(--surface-card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 22px;
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 20px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      backdrop-filter: blur(16px);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
     }
-    .stat-card:hover {
-      border-color: var(--border-hover);
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .metric-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
       transform: translateY(-2px);
-      box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.65);
     }
-    .stat-meta p {
+    .metric-card.card-online:hover::before { background: var(--emerald); }
+    .metric-card.card-empresa:hover::before { background: var(--orange); }
+    .metric-card.card-personal:hover::before { background: var(--primary); }
+    .metric-card.card-total:hover::before { background: #38BDF8; }
+
+    .metric-meta p {
       font-size: 11.5px;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 5px;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
     }
-    .stat-meta h3 {
-      font-size: 28px;
+    .metric-meta h3 {
+      font-size: 30px;
       font-weight: 800;
       color: #FFFFFF;
       line-height: 1;
+      letter-spacing: -0.02em;
     }
-    .stat-icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+    .metric-icon-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
 
-    /* Workspace Panel */
-    .workspace-panel {
-      background: var(--surface-card);
-      border: 1px solid var(--border);
+    /* WORKSPACE DATA PANEL */
+    .content-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
       border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      padding: 24px 28px;
       backdrop-filter: blur(20px);
+      box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.6);
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    /* Toolbar Filter Row */
-    .toolbar-row {
+    /* Sub-header Filter Toolbar */
+    .filter-header-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
     }
-
-    .category-pills {
-      display: inline-flex;
-      background: rgba(7, 11, 20, 0.6);
-      padding: 4px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      gap: 4px;
+    .filter-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .main-tab {
-      padding: 8px 16px;
-      border-radius: 9px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.2s;
-      user-select: none;
-      display: inline-flex;
+    .active-view-heading {
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFFFFF;
+      display: flex;
       align-items: center;
       gap: 8px;
     }
-    .main-tab:hover { color: #FFFFFF; }
-    .main-tab.active {
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px var(--orange-glow);
-    }
-    .main-tab.active[data-cat="personal"] {
-      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
-      box-shadow: 0 4px 12px var(--primary-glow);
-    }
-    .main-tab.active[data-cat="all"] {
-      background: linear-gradient(135deg, #475569 0%, #334155 100%);
-      box-shadow: 0 4px 12px rgba(71, 85, 105, 0.4);
+    .active-badge-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.07);
+      color: #94A3B8;
     }
 
-    .filter-tools {
+    .filter-controls-right {
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .group-filter-box {
+    /* Modern Styled Sede Select */
+    .group-dropdown-wrap {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(7, 11, 20, 0.6);
-      border: 1px solid var(--border);
+      gap: 6px;
+      background: rgba(9, 14, 26, 0.7);
+      border: 1px solid var(--border-subtle);
       border-radius: 11px;
-      padding: 3px 8px 3px 12px;
+      padding: 3px 6px 3px 12px;
     }
-    .group-filter-select {
+    .group-dropdown-select {
       background: transparent;
       border: none;
-      color: #FB923C;
+      color: #FDBA74;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
       outline: none;
-      padding: 5px 8px;
+      padding: 6px 8px;
     }
-    .group-filter-select option {
+    .group-dropdown-select option {
       background: #0B111E;
       color: #F8FAFC;
     }
-    .btn-add-group-mini {
-      background: rgba(231, 114, 34, 0.15);
-      border: 1px solid rgba(231, 114, 34, 0.35);
+    .btn-add-group-badge {
+      background: rgba(255, 107, 0, 0.15);
+      border: 1px solid rgba(255, 107, 0, 0.35);
       color: #FB923C;
-      border-radius: 6px;
-      padding: 3px 8px;
+      border-radius: 7px;
+      padding: 4px 9px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .btn-add-group-mini:hover {
+    .btn-add-group-badge:hover {
       background: var(--orange);
       color: #FFFFFF;
     }
 
-    .status-pills {
+    /* Status Filters */
+    .status-filter-group {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: rgba(7, 11, 20, 0.6);
-      border: 1px solid var(--border);
+      background: rgba(9, 14, 26, 0.7);
+      border: 1px solid var(--border-subtle);
       border-radius: 11px;
       padding: 3px;
     }
-    .s-pill {
-      padding: 6px 13px;
+    .status-tab-btn {
+      padding: 6px 14px;
       border-radius: 8px;
       font-size: 12px;
       font-weight: 600;
@@ -569,32 +578,33 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      border: 1px solid transparent;
     }
-    .s-pill:hover { color: #FFFFFF; }
-    .s-pill.active {
-      background: rgba(56, 116, 204, 0.2);
-      color: #93C5FD;
+    .status-tab-btn:hover { color: #FFFFFF; }
+    .status-tab-btn.active {
+      background: rgba(37, 99, 235, 0.2);
+      color: #38BDF8;
       font-weight: 700;
-      border: 1px solid rgba(56, 116, 204, 0.4);
+      border-color: rgba(56, 189, 248, 0.35);
     }
-    .status-dot-pulse {
-      display: inline-block;
+    .status-online-dot {
       width: 7px;
       height: 7px;
-      background: #10B981;
+      background: var(--emerald);
       border-radius: 50%;
-      box-shadow: 0 0 8px #10B981;
+      box-shadow: 0 0 8px var(--emerald);
     }
 
-    .view-switcher {
+    /* View Switcher */
+    .view-toggle-bar {
       display: inline-flex;
-      background: rgba(7, 11, 20, 0.6);
-      border: 1px solid var(--border);
+      background: rgba(9, 14, 26, 0.7);
+      border: 1px solid var(--border-subtle);
       border-radius: 10px;
       padding: 3px;
     }
-    .view-btn {
-      padding: 6px 10px;
+    .view-toggle-btn {
+      padding: 6px 11px;
       border-radius: 7px;
       font-size: 12px;
       font-weight: 600;
@@ -606,72 +616,71 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.2s;
       user-select: none;
     }
-    .view-btn:hover { color: #FFFFFF; }
-    .view-btn.active {
-      background: rgba(255, 255, 255, 0.1);
+    .view-toggle-btn:hover { color: #FFFFFF; }
+    .view-toggle-btn.active {
+      background: rgba(255, 255, 255, 0.12);
       color: #FFFFFF;
       font-weight: 700;
     }
 
-    /* Container Queries Setup */
+    /* TABLE VIEW STYLES */
     .table-container {
       container-type: inline-size;
       container-name: tableContainer;
       overflow-x: auto;
       border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(9, 13, 22, 0.4);
+      border: 1px solid var(--border-subtle);
+      background: rgba(8, 12, 22, 0.55);
       box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
     .table-container::-webkit-scrollbar { height: 6px; }
-    .table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
-    .table-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 4px; }
-    .table-container::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
+    .table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+    .table-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 4px; }
 
     table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
     th {
       font-size: 11px;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: #94A3B8;
-      padding: 14px 18px;
+      padding: 15px 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(13, 20, 36, 0.85);
       white-space: nowrap;
       position: sticky;
       top: 0;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       z-index: 2;
     }
     td {
-      padding: 13px 18px;
+      padding: 14px 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       font-size: 13.5px;
       vertical-align: middle;
       transition: background 0.15s ease;
       white-space: nowrap;
     }
-    tr:hover td { background: rgba(56, 116, 204, 0.045); }
+    tr:hover td { background: rgba(37, 99, 235, 0.05); }
 
-    .code-badge {
+    .code-badge-pill {
       display: inline-flex;
       align-items: center;
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       font-size: 12px;
-      background: rgba(56, 116, 204, 0.12);
-      border: 1px solid rgba(56, 116, 204, 0.3);
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.35);
       color: #60A5FA;
       padding: 4px 9px;
-      border-radius: 7px;
+      border-radius: 8px;
       letter-spacing: 0.03em;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .code-badge:hover {
-      background: rgba(56, 116, 204, 0.25);
-      border-color: rgba(56, 116, 204, 0.6);
+    .code-badge-pill:hover {
+      background: rgba(37, 99, 235, 0.25);
+      border-color: rgba(37, 99, 235, 0.6);
       color: #93C5FD;
       transform: scale(1.04);
     }
@@ -687,153 +696,154 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       font-size: 14px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
     }
     .tag-installed {
-      font-size: 10.5px;
-      font-weight: 600;
-      background: rgba(231, 114, 34, 0.12);
-      color: #FB923C;
-      padding: 2px 7px;
-      border-radius: 5px;
-      border: 1px solid rgba(231, 114, 34, 0.25);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      width: fit-content;
-    }
-    .tag-personal {
-      font-size: 10.5px;
-      font-weight: 600;
-      color: #94A3B8;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 2px 7px;
-      border-radius: 5px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      width: fit-content;
-    }
-
-    .group-badge-pill {
-      font-size: 12px;
-      background: rgba(231, 114, 34, 0.1);
-      color: #FB923C;
-      border: 1px solid rgba(231, 114, 34, 0.25);
-      padding: 3px 9px;
-      border-radius: 6px;
+      font-size: 11px;
       font-weight: 700;
+      background: rgba(255, 107, 0, 0.12);
+      color: #FB923C;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 107, 0, 0.3);
       display: inline-flex;
       align-items: center;
       gap: 5px;
+      width: fit-content;
+    }
+    .tag-personal {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94A3B8;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      width: fit-content;
     }
 
-    .badge-status {
+    .group-pill {
+      font-size: 12px;
+      background: rgba(255, 107, 0, 0.09);
+      color: #FDBA74;
+      border: 1px solid rgba(255, 107, 0, 0.25);
+      padding: 3.5px 10px;
+      border-radius: 7px;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+    }
+
+    /* Live Radar Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       font-size: 11.5px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 6px;
+      font-weight: 800;
+      padding: 4px 11px;
+      border-radius: 7px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
-    .badge-online {
+    .status-badge.online {
       background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
+      border: 1px solid rgba(16, 185, 129, 0.4);
       color: #34D399;
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.18);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.2);
     }
-    .badge-waiting {
+    .status-badge.waiting {
       background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.35);
+      border: 1px solid rgba(245, 158, 11, 0.4);
       color: #FBBF24;
     }
-    .badge-closed {
+    .status-badge.inactive {
       background: rgba(148, 163, 184, 0.08);
-      border: 1px solid rgba(148, 163, 184, 0.18);
+      border: 1px solid rgba(148, 163, 184, 0.2);
       color: #94A3B8;
     }
 
-    .id-pill {
+    .remote-id-tag {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       font-size: 13px;
       color: #FB923C;
-      background: rgba(231, 114, 34, 0.08);
-      padding: 3.5px 9px;
-      border-radius: 7px;
-      border: 1px solid rgba(231, 114, 34, 0.25);
+      background: rgba(255, 107, 0, 0.08);
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 107, 0, 0.25);
       letter-spacing: 0.03em;
       display: inline-flex;
       align-items: center;
     }
 
-    /* Actions buttons */
-    .actions-wrap {
+    /* Action Buttons */
+    .row-actions-cluster {
       display: inline-flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 6px;
+      gap: 7px;
     }
-    .btn-act {
-      height: 32px;
-      padding: 0 12px;
+    .btn-action {
+      height: 33px;
+      padding: 0 13px;
       font-size: 12px;
-      font-weight: 600;
-      border-radius: 8px;
+      font-weight: 700;
+      border-radius: 9px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      transition: all 0.2s ease;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       line-height: 1;
       text-decoration: none;
       user-select: none;
     }
-    .btn-act-connect {
-      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
+    .btn-action.connect {
+      background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
       color: #FFFFFF;
-      border: 1px solid rgba(56, 116, 204, 0.5);
-      box-shadow: 0 2px 10px rgba(56, 116, 204, 0.3);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
     }
-    .btn-act-connect:hover {
+    .btn-action.connect:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(56, 116, 204, 0.45);
-      filter: brightness(1.1);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.55);
+      filter: brightness(1.12);
     }
-    .btn-act-reconnect {
-      background: rgba(56, 116, 204, 0.08);
+    .btn-action.reconnect {
+      background: rgba(37, 99, 235, 0.09);
       color: #93C5FD;
-      border: 1px solid rgba(56, 116, 204, 0.35);
+      border: 1px solid rgba(37, 99, 235, 0.35);
     }
-    .btn-act-reconnect:hover {
-      background: rgba(56, 116, 204, 0.18);
-      border-color: rgba(56, 116, 204, 0.55);
+    .btn-action.reconnect:hover {
+      background: rgba(37, 99, 235, 0.2);
+      border-color: rgba(37, 99, 235, 0.6);
       color: #FFFFFF;
       transform: translateY(-1px);
     }
-    .btn-act-copy {
-      background: rgba(255, 255, 255, 0.03);
+    .btn-action.copy {
+      background: rgba(255, 255, 255, 0.04);
       color: #CBD5E1;
       border: 1px solid rgba(255, 255, 255, 0.12);
     }
-    .btn-act-copy:hover {
-      background: rgba(231, 114, 34, 0.12);
-      border-color: rgba(231, 114, 34, 0.45);
+    .btn-action.copy:hover {
+      background: rgba(255, 107, 0, 0.14);
+      border-color: rgba(255, 107, 0, 0.45);
       color: #FB923C;
       transform: translateY(-1px);
     }
-    .btn-act-delete {
-      width: 32px;
-      height: 32px;
+    .btn-action.delete {
+      width: 33px;
+      height: 33px;
       padding: 0;
       background: transparent;
       color: var(--text-dim);
       border: 1px solid transparent;
-      border-radius: 8px;
+      border-radius: 9px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -841,67 +851,68 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.2s ease;
       flex-shrink: 0;
     }
-    .btn-act-delete:hover {
-      background: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.3);
-      color: #F87171;
+    .btn-action.delete:hover {
+      background: rgba(244, 63, 94, 0.14);
+      border-color: rgba(244, 63, 94, 0.35);
+      color: #FB7185;
       transform: scale(1.08);
     }
 
-    /* Grid Cards View */
-    .grid-container {
+    /* GRID CARDS VIEW */
+    .cards-grid-wrap {
       display: none;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 18px;
     }
-    .device-card {
-      background: rgba(11, 17, 30, 0.7);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
+    .device-grid-card {
+      background: rgba(10, 16, 29, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
       gap: 16px;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.4);
     }
-    .device-card:hover {
-      border-color: var(--border-hover);
+    .device-grid-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.6);
     }
-    .card-top {
+    .card-head {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       gap: 12px;
     }
-    .card-title-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .card-device-name {
+    .card-meta-name {
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       color: #FFFFFF;
     }
-    .card-details {
+    .card-meta-sub {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      background: rgba(7, 11, 20, 0.5);
-      border-radius: 10px;
-      padding: 12px;
+      gap: 5px;
+    }
+    .card-inner-box {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      background: rgba(6, 9, 19, 0.6);
+      border-radius: 12px;
+      padding: 14px;
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
-    .card-detail-row {
+    .card-row-spec {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 12.5px;
     }
-    .card-detail-label { color: var(--text-dim); }
-    .card-footer-actions {
+    .card-spec-key { color: var(--text-dim); }
+    .card-actions-grid {
       display: grid;
       grid-template-columns: 1fr auto auto;
       gap: 8px;
@@ -911,17 +922,17 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     /* Container Queries */
     @container tableContainer (max-width: 780px) {
       th, td { padding: 10px 12px; font-size: 12px; }
-      .actions-wrap { gap: 4px; }
-      .btn-act { height: 28px; padding: 0 8px; font-size: 11px; }
-      .id-pill { font-size: 11.5px; padding: 2.5px 6px; }
+      .row-actions-cluster { gap: 4px; }
+      .btn-action { height: 29px; padding: 0 8px; font-size: 11px; }
+      .remote-id-tag { font-size: 11.5px; padding: 2.5px 6px; }
     }
     @container tableContainer (min-width: 1150px) {
-      th { padding: 16px 20px; font-size: 12px; }
-      td { padding: 15px 20px; font-size: 13.5px; }
-      .btn-act { height: 34px; padding: 0 14px; font-size: 12.5px; }
+      th { padding: 16px 22px; font-size: 12px; }
+      td { padding: 15px 22px; font-size: 14px; }
+      .btn-action { height: 35px; padding: 0 15px; font-size: 12.5px; }
     }
 
-    /* HTML5 <dialog> Styling */
+    /* HTML5 <dialog> MODALS */
     dialog.app-dialog {
       position: fixed;
       inset: 0;
@@ -940,48 +951,48 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     dialog.app-dialog:not([open]) { display: none; }
     dialog.app-dialog::backdrop {
-      background: rgba(3, 7, 18, 0.78);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(2, 6, 16, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
-    .modal-card {
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96) 0%, rgba(10, 15, 29, 0.98) 100%);
-      border: 1px solid rgba(231, 114, 34, 0.35);
-      border-radius: 20px;
+    .modal-frame {
+      background: linear-gradient(145deg, rgba(14, 22, 40, 0.98) 0%, rgba(9, 14, 26, 0.99) 100%);
+      border: 1px solid rgba(255, 107, 0, 0.35);
+      border-radius: 22px;
       width: 100%;
-      max-width: 480px;
-      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(231, 114, 34, 0.25);
+      max-width: 500px;
+      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 40px -5px rgba(255, 107, 0, 0.2);
       overflow: hidden;
-      animation: dialogPop 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: dialogZoom 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    @keyframes dialogPop {
+    @keyframes dialogZoom {
       from { opacity: 0; transform: scale(0.92) translateY(12px); }
       to { opacity: 1; transform: scale(1) translateY(0); }
     }
-    .modal-header {
-      padding: 20px 24px;
+    .modal-header-row {
+      padding: 20px 26px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(231, 114, 34, 0.05);
+      background: rgba(255, 107, 0, 0.05);
     }
-    .modal-title-wrap { display: flex; align-items: center; gap: 12px; }
-    .modal-icon-badge {
-      width: 42px;
-      height: 42px;
+    .modal-headline-wrap { display: flex; align-items: center; gap: 12px; }
+    .modal-icon-bubble {
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
-      background: linear-gradient(135deg, rgba(231, 114, 34, 0.25) 0%, rgba(208, 99, 25, 0.15) 100%);
-      border: 1px solid rgba(231, 114, 34, 0.4);
+      background: linear-gradient(135deg, rgba(255, 107, 0, 0.25) 0%, rgba(234, 88, 12, 0.15) 100%);
+      border: 1px solid rgba(255, 107, 0, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
       flex-shrink: 0;
     }
-    .modal-title { font-size: 16px; font-weight: 700; color: #FFFFFF; }
-    .modal-subtitle { font-size: 12px; color: #94A3B8; margin-top: 2px; }
-    .modal-close-btn {
+    .modal-headline-title { font-size: 16.5px; font-weight: 800; color: #FFFFFF; }
+    .modal-headline-sub { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+    .modal-close-x {
       background: transparent;
       border: none;
       color: #94A3B8;
@@ -995,12 +1006,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       justify-content: center;
       transition: all 0.2s;
     }
-    .modal-close-btn:hover { background: rgba(255, 255, 255, 0.08); color: #FFFFFF; }
-    .modal-body { padding: 24px; }
-    .modal-label { display: block; font-size: 13px; font-weight: 600; color: #CBD5E1; margin-bottom: 8px; }
-    .modal-input {
+    .modal-close-x:hover { background: rgba(255, 255, 255, 0.08); color: #FFFFFF; }
+    .modal-body-content { padding: 26px; }
+    .input-label { display: block; font-size: 12.5px; font-weight: 700; color: #CBD5E1; margin-bottom: 8px; }
+    .modal-text-input {
       width: 100%;
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(6, 9, 19, 0.65);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
       padding: 13px 16px;
@@ -1009,25 +1020,24 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       outline: none;
       transition: all 0.2s;
     }
-    .modal-input:focus {
+    .modal-text-input:focus {
       border-color: var(--orange);
       box-shadow: 0 0 0 3px var(--orange-glow);
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(6, 9, 19, 0.85);
     }
-    .modal-hint { font-size: 12px; color: #64748B; margin-top: 10px; line-height: 1.4; }
-    .modal-footer {
-      padding: 16px 24px;
-      background: rgba(0, 0, 0, 0.25);
+    .modal-footer-row {
+      padding: 18px 26px;
+      background: rgba(0, 0, 0, 0.3);
       border-top: 1px solid rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
       justify-content: flex-end;
       gap: 10px;
     }
-    .modal-btn-cancel {
-      padding: 9px 18px;
+    .btn-modal-cancel {
+      padding: 10px 20px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: 10px;
       cursor: pointer;
       background: rgba(255, 255, 255, 0.06);
@@ -1035,15 +1045,15 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       color: #CBD5E1;
       transition: all 0.2s;
     }
-    .modal-btn-cancel:hover { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; }
-    .btn-save-group {
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+    .btn-modal-cancel:hover { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; }
+    .btn-modal-save {
+      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
       color: #FFFFFF;
       border: none;
-      padding: 9px 20px;
+      padding: 10px 22px;
       border-radius: 10px;
       font-size: 13.5px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -1051,20 +1061,20 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       box-shadow: 0 4px 15px -2px var(--orange-glow);
       transition: all 0.2s;
     }
-    .btn-save-group:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .btn-modal-save:hover { transform: translateY(-1px); filter: brightness(1.08); }
 
-    /* Generator Inside Modal / Offcanvas */
-    .mode-switcher {
+    /* Generator Modal Components */
+    .mode-toggle-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      background: rgba(9, 13, 22, 0.7);
+      background: rgba(6, 9, 19, 0.7);
       padding: 5px;
       border-radius: 12px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-subtle);
       margin-bottom: 20px;
     }
-    .mode-btn {
+    .mode-toggle-option {
       padding: 10px 14px;
       border-radius: 9px;
       font-size: 13px;
@@ -1078,22 +1088,22 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.2s;
       user-select: none;
     }
-    .mode-btn.active.empresa {
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+    .mode-toggle-option.active.empresa {
+      background: linear-gradient(135deg, var(--orange) 0%, #EA580C 100%);
       color: #FFFFFF;
       box-shadow: 0 4px 14px var(--orange-glow);
     }
-    .mode-btn.active.personal {
-      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
+    .mode-toggle-option.active.personal {
+      background: linear-gradient(135deg, var(--primary) 0%, #1D4ED8 100%);
       color: #FFFFFF;
       box-shadow: 0 4px 14px var(--primary-glow);
     }
-    .info-notice {
-      background: rgba(56, 116, 204, 0.1);
-      border: 1px solid rgba(56, 116, 204, 0.25);
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 12px;
+    .notice-box {
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+      border-radius: 11px;
+      padding: 12px 14px;
+      font-size: 12.5px;
       line-height: 1.45;
       color: #93C5FD;
       margin-bottom: 18px;
@@ -1101,51 +1111,51 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       align-items: flex-start;
       gap: 8px;
     }
-    .info-notice.orange {
-      background: rgba(231, 114, 34, 0.1);
-      border-color: rgba(231, 114, 34, 0.3);
+    .notice-box.orange {
+      background: rgba(255, 107, 0, 0.1);
+      border-color: rgba(255, 107, 0, 0.3);
       color: #FDBA74;
     }
-    .link-share-card {
-      background: rgba(231, 114, 34, 0.08);
-      border: 1px dashed rgba(231, 114, 34, 0.4);
+    .result-link-card {
+      background: rgba(255, 107, 0, 0.08);
+      border: 1px dashed rgba(255, 107, 0, 0.4);
       border-radius: 14px;
       padding: 16px;
-      margin-top: 18px;
+      margin-top: 20px;
       display: none;
     }
-    .share-input-row {
+    .result-input-line {
       display: flex;
       gap: 8px;
       margin: 10px 0;
     }
-    .share-input-row input {
+    .result-input-line input {
       flex: 1;
       background: rgba(0,0,0,0.5);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 9px;
+      padding: 10px 14px;
       color: #FFFFFF;
       font-size: 12.5px;
       font-family: 'JetBrains Mono', monospace;
       outline: none;
     }
 
-    /* Native Toast Popover */
+    /* Popover Toast */
     .toast {
       position: fixed;
-      inset: auto 24px 24px auto;
+      inset: auto 26px 26px auto;
       margin: 0;
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(14, 22, 40, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       color: #FFFFFF;
-      border: 1px solid var(--primary);
-      padding: 13px 22px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 116, 204, 0.25);
+      border: 1px solid #38BDF8;
+      padding: 14px 24px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      font-weight: 700;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.25);
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1159,9 +1169,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       pointer-events: auto;
     }
 
-    /* Confirmation Modal Footer */
-    .confirm-modal-footer {
-      padding: 16px 24px 20px 24px;
+    /* Confirm Dialog */
+    .confirm-footer-grid {
+      padding: 18px 26px 22px 26px;
       background: rgba(0, 0, 0, 0.35);
       border-top: 1px solid rgba(255, 255, 255, 0.07);
       display: grid;
@@ -1169,7 +1179,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       gap: 12px;
       width: 100%;
     }
-    .confirm-btn {
+    .btn-confirm-action {
       height: 44px;
       padding: 0 16px;
       border-radius: 12px;
@@ -1182,50 +1192,48 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       border: none;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .confirm-btn-cancel {
-      background: rgba(255, 255, 255, 0.06);
+    .btn-confirm-cancel {
+      background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.14);
       color: #E2E8F0;
     }
-    .confirm-btn-cancel:hover { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; }
-    .confirm-btn-danger {
+    .btn-confirm-cancel:hover { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; }
+    .btn-confirm-danger {
       background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
       color: #FFFFFF;
       box-shadow: 0 4px 18px -2px rgba(239, 68, 68, 0.45);
     }
-    .confirm-btn-danger:hover { filter: brightness(1.12); transform: translateY(-1px); }
-    .confirm-btn-warning {
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+    .btn-confirm-danger:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    .btn-confirm-warning {
+      background: linear-gradient(135deg, var(--orange) 0%, #EA580C 100%);
       color: #FFFFFF;
       box-shadow: 0 4px 18px -2px var(--orange-glow);
     }
-    .confirm-btn-warning:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    .btn-confirm-warning:hover { filter: brightness(1.12); transform: translateY(-1px); }
 
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .app-sidebar {
-        width: 72px;
-      }
-      .brand-wrap span, .nav-item span, .nav-count, .nav-group-title, .server-status-card, .user-meta {
+    /* RESPONSIVE ADAPTATIONS */
+    @media (max-width: 1080px) {
+      .app-sidebar { width: 76px; }
+      .brand-logo-wrap span, .badge-enterprise, .nav-label span:not(:first-child), .nav-pill-counter, .nav-section-title, .relay-card, .user-label-group {
         display: none !important;
       }
-      .sidebar-header, .sidebar-body, .sidebar-footer {
-        padding: 14px 10px;
+      .sidebar-brand-box, .sidebar-scroll, .sidebar-user-footer {
+        padding: 16px 10px;
         align-items: center;
       }
       .btn-create-session span { display: none; }
-      .btn-create-session { padding: 12px; width: 44px; height: 44px; border-radius: 10px; }
-      .nav-item { justify-content: center; padding: 12px; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .btn-create-session { padding: 12px; width: 44px; height: 44px; border-radius: 12px; }
+      .nav-link { justify-content: center; padding: 12px; }
+      .metrics-row { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 680px) {
       .app-shell { flex-direction: column; }
-      .app-sidebar { width: 100%; height: auto; position: static; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); }
-      .sidebar-body { display: none; }
-      .stats-grid { grid-template-columns: 1fr; }
+      .app-sidebar { width: 100%; height: auto; position: static; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border-subtle); }
+      .sidebar-scroll { display: none; }
+      .metrics-row { grid-template-columns: 1fr; }
       .app-main { padding: 16px; }
-      .main-topbar { flex-direction: column; align-items: stretch; }
-      .search-input-box { width: 100%; }
+      .main-top-header { flex-direction: column; align-items: stretch; }
+      .search-input-wrapper { width: 100%; }
     }
   </style>
 </head>
@@ -1235,83 +1243,83 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     
     <!-- LEFT SIDEBAR -->
     <aside class="app-sidebar">
-      <div class="sidebar-header">
-        <div class="brand-wrap">
+      <div class="sidebar-brand-box">
+        <div class="brand-logo-wrap">
           <img src="flutter/assets/logo_dark.png?v=2" alt="OptimaIT">
         </div>
-        <span class="brand-badge">SaaS v2.4</span>
+        <span class="badge-enterprise">PRO</span>
       </div>
 
-      <div class="sidebar-body">
+      <div class="sidebar-scroll">
         <button type="button" class="btn-create-session" onclick="openSessionModal()">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
           <span>Nueva Sesión</span>
         </button>
 
         <div>
-          <div class="nav-group-title">
+          <div class="nav-section-title">
             <span>Vistas de Equipos</span>
           </div>
-          <ul class="nav-list">
-            <li class="nav-item active empresa" id="navItemEmpresas" onclick="setCategoryTab('empresa')">
-              <div class="nav-label-wrap">
+          <ul class="nav-menu">
+            <li class="nav-link active empresa" id="navItemEmpresas" onclick="setCategoryTab('empresa')">
+              <div class="nav-label">
                 <span>🏢</span>
                 <span>Empresas</span>
               </div>
-              <span class="nav-count" id="countTabEmpresa">0</span>
+              <span class="nav-pill-counter" id="countTabEmpresa">0</span>
             </li>
-            <li class="nav-item" id="navItemPersonal" onclick="setCategoryTab('personal')">
-              <div class="nav-label-wrap">
+            <li class="nav-link" id="navItemPersonal" onclick="setCategoryTab('personal')">
+              <div class="nav-label">
                 <span>👤</span>
                 <span>Personas Naturales</span>
               </div>
-              <span class="nav-count" id="countTabPersonal">0</span>
+              <span class="nav-pill-counter" id="countTabPersonal">0</span>
             </li>
-            <li class="nav-item" id="navItemAll" onclick="setCategoryTab('all')">
-              <div class="nav-label-wrap">
+            <li class="nav-link" id="navItemAll" onclick="setCategoryTab('all')">
+              <div class="nav-label">
                 <span>🌐</span>
                 <span>Todos los Equipos</span>
               </div>
-              <span class="nav-count" id="countTabAll">0</span>
+              <span class="nav-pill-counter" id="countTabAll">0</span>
             </li>
           </ul>
         </div>
 
         <div>
-          <div class="nav-group-title">
+          <div class="nav-section-title">
             <span>Sedes / Grupos</span>
-            <button type="button" class="btn-add-group-mini" onclick="promptNewGroup()" title="Crear nueva sede">+</button>
+            <button type="button" class="btn-add-group-badge" onclick="promptNewGroup()" title="Crear nueva sede">+</button>
           </div>
-          <ul class="nav-list" id="sidebarGroupsList">
-            <!-- Populated dynamically via updateGroupControls() -->
+          <ul class="nav-menu" id="sidebarGroupsList">
+            <!-- Dynamic groups -->
           </ul>
         </div>
 
-        <!-- Relay Server Health Card -->
-        <div class="server-status-card">
-          <div class="server-status-header">
-            <div class="radar-pulse"></div>
-            <span>Relay Server Activo</span>
+        <!-- Relay Server Status -->
+        <div class="relay-card">
+          <div class="relay-title">
+            <div class="radar-pulse-dot"></div>
+            <span>Relay Activo</span>
           </div>
-          <div class="server-status-host"><?= htmlspecialchars($relayHost) ?></div>
+          <div class="relay-host-text" title="<?= htmlspecialchars($relayHost) ?>"><?= htmlspecialchars($relayHost) ?></div>
         </div>
       </div>
 
-      <!-- User Profile Card -->
-      <div class="sidebar-footer">
-        <div class="user-chip-wrap">
-          <div class="user-avatar">
+      <!-- User Profile Box -->
+      <div class="sidebar-user-footer">
+        <div class="user-info-cluster">
+          <div class="user-avatar-badge">
             <?= strtoupper(substr($currentUser['name'] ?? $currentUser['username'], 0, 1)) ?>
           </div>
-          <div class="user-meta">
-            <span class="user-meta-name"><?= htmlspecialchars($currentUser['name'] ?? $currentUser['username']) ?></span>
-            <span class="user-meta-role <?= $isAdmin ? 'role-admin' : 'role-tech' ?>">
+          <div class="user-label-group">
+            <span class="user-label-name"><?= htmlspecialchars($currentUser['name'] ?? $currentUser['username']) ?></span>
+            <span class="user-label-role <?= $isAdmin ? 'role-admin' : 'role-tech' ?>">
               <?= $isAdmin ? '👑 Administrador' : '🛠️ Técnico' ?>
             </span>
           </div>
         </div>
 
-        <div class="sidebar-user-actions">
+        <div class="user-footer-btns">
           <?php if ($isAdmin): ?>
           <button type="button" class="btn-icon-soft" onclick="openUsersModal()" title="Gestión de Técnicos">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
@@ -1324,109 +1332,107 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       </div>
     </aside>
 
-    <!-- MAIN WORKSPACE -->
+    <!-- MAIN APP CANVAS -->
     <main class="app-main">
       
-      <!-- Topbar -->
-      <header class="main-topbar">
-        <div class="page-heading">
-          <h1>Centro de Asistencia Remota</h1>
+      <!-- Top Title & Search Bar -->
+      <header class="main-top-header">
+        <div class="page-title-cluster">
+          <h1>Centro de Asistencia Técnica</h1>
           <p>Supervisión en tiempo real y conexión desatendida corporativa</p>
         </div>
 
-        <div class="topbar-actions">
-          <div class="search-input-box">
+        <div class="top-toolbar-actions">
+          <div class="search-input-wrapper">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" class="search-field" placeholder="Buscar equipo, código, ID..." oninput="handleSearchInput(event)">
+            <input type="text" class="search-box" placeholder="Buscar por equipo, ID, sede..." oninput="handleSearchInput(event)">
           </div>
 
-          <button type="button" class="btn-create-session" style="padding:10px 16px; font-size:13px; width:auto;" onclick="openSessionModal()">
+          <button type="button" class="btn-create-session" style="padding:11px 18px; font-size:13px; width:auto;" onclick="openSessionModal()">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
             <span>Generar Enlace</span>
           </button>
         </div>
       </header>
 
-      <!-- KPI Summary Stats -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-meta">
+      <!-- KPI METRICS SUMMARY -->
+      <div class="metrics-row">
+        <div class="metric-card card-online">
+          <div class="metric-meta">
             <p>Clientes En Línea</p>
             <h3 id="statOnline">0</h3>
           </div>
-          <div class="stat-icon-wrap" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+          <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.828a5 5 0 010-7.072m7.072 0a5 5 0 010 7.072M13 12a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
           </div>
         </div>
 
-        <div class="stat-card">
-          <div class="stat-meta">
+        <div class="metric-card card-empresa">
+          <div class="metric-meta">
             <p>Equipos Empresa</p>
             <h3 id="statEmpresas">0</h3>
           </div>
-          <div class="stat-icon-wrap" style="background: rgba(231, 114, 34, 0.15); color: #E77222;">
+          <div class="metric-icon-box" style="background: rgba(255, 107, 0, 0.15); color: #FF6B00;">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
           </div>
         </div>
 
-        <div class="stat-card">
-          <div class="stat-meta">
+        <div class="metric-card card-personal">
+          <div class="metric-meta">
             <p>Personas Naturales</p>
             <h3 id="statPersonal">0</h3>
           </div>
-          <div class="stat-icon-wrap" style="background: rgba(56, 116, 204, 0.15); color: #3874CC;">
+          <div class="metric-icon-box" style="background: rgba(37, 99, 235, 0.15); color: #38BDF8;">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
           </div>
         </div>
 
-        <div class="stat-card">
-          <div class="stat-meta">
+        <div class="metric-card card-total">
+          <div class="metric-meta">
             <p>Total Registrados</p>
             <h3 id="statTotal">0</h3>
           </div>
-          <div class="stat-icon-wrap" style="background: rgba(148, 163, 184, 0.15); color: #94A3B8;">
+          <div class="metric-icon-box" style="background: rgba(148, 163, 184, 0.15); color: #94A3B8;">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           </div>
         </div>
       </div>
 
-      <!-- Main Workspace Panel -->
-      <section class="workspace-panel">
+      <!-- MAIN DATA CONTENT PANEL -->
+      <section class="content-panel">
         
-        <!-- Filter Toolbar -->
-        <div class="toolbar-row">
-          <div class="category-pills">
-            <div class="main-tab active" data-cat="empresa" onclick="setCategoryTab('empresa')">
-              🏢 Empresas
+        <!-- Filter Bar -->
+        <div class="filter-header-bar">
+          <div class="filter-title-group">
+            <div class="active-view-heading" id="activeCategoryTitle">
+              🏢 Equipos Corporativos
             </div>
-            <div class="main-tab" data-cat="personal" onclick="setCategoryTab('personal')">
-              👤 Personas Naturales
-            </div>
-            <div class="main-tab" data-cat="all" onclick="setCategoryTab('all')">
-              🌐 Todos los Equipos
-            </div>
+            <span class="active-badge-tag" id="activeCategoryBadge">0 equipos</span>
           </div>
 
-          <div class="filter-tools">
-            <div class="group-filter-box" id="groupFilterBox">
-              <select id="groupFilterSelect" class="group-filter-select" onchange="selectGroupDropdown(this.value)">
+          <div class="filter-controls-right">
+            <!-- Sede Dropdown Filter -->
+            <div class="group-dropdown-wrap" id="groupFilterBox">
+              <select id="groupFilterSelect" class="group-dropdown-select" onchange="selectGroupDropdown(this.value)">
                 <option value="all">🏢 Todas las Sedes</option>
               </select>
-              <button type="button" class="btn-add-group-mini" onclick="promptNewGroup()" title="Agregar nuevo grupo">+</button>
+              <button type="button" class="btn-add-group-badge" onclick="promptNewGroup()" title="Crear nueva sede">+</button>
             </div>
 
-            <div class="status-pills">
-              <div class="s-pill active" data-status="all" onclick="setStatusFilter('all')">Todos</div>
-              <div class="s-pill" data-status="online" onclick="setStatusFilter('online')"><span class="status-dot-pulse"></span> En Línea</div>
-              <div class="s-pill" data-status="inactive" onclick="setStatusFilter('inactive')">Inactivos</div>
+            <!-- Status Tabs -->
+            <div class="status-filter-group">
+              <div class="status-tab-btn active" data-status="all" onclick="setStatusFilter('all')">Todos</div>
+              <div class="status-tab-btn" data-status="online" onclick="setStatusFilter('online')"><span class="status-online-dot"></span> En Línea</div>
+              <div class="status-tab-btn" data-status="inactive" onclick="setStatusFilter('inactive')">Inactivos</div>
             </div>
 
-            <div class="view-switcher">
-              <div class="view-btn active" id="btnViewTable" onclick="switchView('table')" title="Vista Tabla">
+            <!-- View Switcher -->
+            <div class="view-toggle-bar">
+              <div class="view-toggle-btn active" id="btnViewTable" onclick="switchView('table')" title="Vista Tabla">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                 <span>Tabla</span>
               </div>
-              <div class="view-btn" id="btnViewGrid" onclick="switchView('grid')" title="Vista Tarjetas">
+              <div class="view-toggle-btn" id="btnViewGrid" onclick="switchView('grid')" title="Vista Tarjetas">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                 <span>Tarjetas</span>
               </div>
@@ -1444,20 +1450,20 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
                 <th id="thColGrupo" style="width:160px;">Sede / Grupo</th>
                 <th style="width:125px;">Estado</th>
                 <th style="width:145px;">ID Remoto</th>
-                <th style="text-align:right; width:250px;">Acciones</th>
+                <th style="text-align:right; width:260px;">Acciones</th>
               </tr>
             </thead>
             <tbody id="sessionsBody">
               <tr>
-                <td colspan="6" style="text-align:center; padding:40px; color:var(--text-dim);">Cargando registros de equipos...</td>
+                <td colspan="6" style="text-align:center; padding:45px 20px; color:var(--text-dim);">Cargando registros...</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Grid View (Cards) -->
-        <div class="grid-container" id="gridViewContainer">
-          <!-- Populated dynamically via renderSessions() -->
+        <!-- Cards View -->
+        <div class="cards-grid-wrap" id="gridViewContainer">
+          <!-- Dynamically populated -->
         </div>
 
       </section>
@@ -1471,95 +1477,95 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     <span id="toastMsg">Acción completada</span>
   </div>
 
-  <!-- MODAL: GENERAR NUEVA SESIÓN DE SOPORTE -->
+  <!-- MODAL: GENERAR NUEVA SESIÓN -->
   <dialog id="newSessionModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
-    <div class="modal-card" style="max-width: 520px;">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <div class="modal-icon-badge">⚡</div>
+    <div class="modal-frame" style="max-width: 520px;">
+      <div class="modal-header-row">
+        <div class="modal-headline-wrap">
+          <div class="modal-icon-bubble">⚡</div>
           <div>
-            <h3 class="modal-title">Generar Enlace de Asistencia</h3>
-            <p class="modal-subtitle">Crea una sesión de soporte directo o instalación permanente</p>
+            <h3 class="modal-headline-title">Generar Enlace de Asistencia</h3>
+            <p class="modal-headline-sub">Crea un enlace para instalación corporativa o soporte directo</p>
           </div>
         </div>
-        <button type="button" class="modal-close-btn" onclick="closeSessionModal()" title="Cerrar">&times;</button>
+        <button type="button" class="modal-close-x" onclick="closeSessionModal()" title="Cerrar">&times;</button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body-content">
         <form id="createForm" onsubmit="handleCreateSession(event)">
-          <label class="modal-label">Modalidad de Atención:</label>
-          <div class="mode-switcher">
-            <div class="mode-btn empresa active" id="btnModeEmpresa" onclick="setCreationMode('empresa')">
+          <label class="input-label">Modalidad de Asistencia:</label>
+          <div class="mode-toggle-grid">
+            <div class="mode-toggle-option empresa active" id="btnModeEmpresa" onclick="setCreationMode('empresa')">
               🏢 Empresa (Permanente)
             </div>
-            <div class="mode-btn personal" id="btnModePersonal" onclick="setCreationMode('personal')">
+            <div class="mode-toggle-option personal" id="btnModePersonal" onclick="setCreationMode('personal')">
               👤 Persona Natural (Temporal)
             </div>
           </div>
           <input type="hidden" id="clientTypeInput" value="empresa">
 
-          <div class="info-notice orange" id="noticeText">
+          <div class="notice-box orange" id="noticeText">
             <span>🏢 <strong>Modo Empresa:</strong> Genera instalador desatendido que iniciará automáticamente con Windows.</span>
           </div>
 
           <div style="margin-bottom: 16px;">
-            <label class="modal-label" id="lblClientName">Nombre de la Empresa o Equipo:</label>
-            <input type="text" id="clientNameInput" class="modal-input" placeholder="Ej: Sucursal Central / Caja 01" required>
+            <label class="input-label" id="lblClientName">Nombre de la Empresa o Equipo:</label>
+            <input type="text" id="clientNameInput" class="modal-text-input" placeholder="Ej: Sucursal Central / Caja 01" required>
           </div>
 
-          <div style="margin-bottom: 20px;" id="empresaGroupContainer">
-            <label class="modal-label" for="groupSelect">Asignar a Grupo Corporativo / Sede:</label>
+          <div style="margin-bottom: 22px;" id="empresaGroupContainer">
+            <label class="input-label" for="groupSelect">Asignar a Grupo Corporativo / Sede:</label>
             <div style="display:flex; gap:8px;">
-              <select id="groupSelect" class="modal-input" style="cursor:pointer;"></select>
-              <button type="button" class="btn-save-group" style="padding:0 14px; font-size:16px;" onclick="promptNewGroup()" title="Crear nueva sede">+</button>
+              <select id="groupSelect" class="modal-text-input" style="cursor:pointer;"></select>
+              <button type="button" class="btn-modal-save" style="padding:0 14px; font-size:16px;" onclick="promptNewGroup()" title="Crear nueva sede">+</button>
             </div>
           </div>
 
-          <button type="submit" class="btn-create-session" id="btnSubmit" style="height:46px; font-size:14px;">
+          <button type="submit" class="btn-create-session" id="btnSubmit" style="height:48px; font-size:14px;">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
             <span id="btnSubmitText">Generar Enlace para Empresa</span>
           </button>
         </form>
 
-        <div class="link-share-card" id="linkBox">
+        <div class="result-link-card" id="linkBox">
           <div style="display:flex; align-items:center; justify-content:space-between;">
-            <span style="font-size:11px; font-weight:700; color:var(--orange);" id="shareModeTitle">ENLACE GENERADO</span>
-            <span id="badgeShareType" style="font-size:10px; padding:2px 7px; border-radius:4px; font-weight:700;"></span>
+            <span style="font-size:11px; font-weight:800; color:var(--orange);" id="shareModeTitle">ENLACE GENERADO</span>
+            <span id="badgeShareType" style="font-size:10px; padding:2px 8px; border-radius:5px; font-weight:800;"></span>
           </div>
-          <div class="share-input-row">
+          <div class="result-input-line">
             <input type="text" id="generatedUrl" readonly>
-            <button type="button" class="btn-save-group" style="padding:0 14px; font-size:12px;" onclick="copyLink()">📋 Copiar</button>
+            <button type="button" class="btn-modal-save" style="padding:0 14px; font-size:12.5px;" onclick="copyLink()">📋 Copiar</button>
           </div>
-          <p style="font-size:11px; color:var(--text-dim); line-height:1.4;" id="shareExplanation"></p>
+          <p style="font-size:11.5px; color:var(--text-dim); line-height:1.4;" id="shareExplanation"></p>
         </div>
       </div>
     </div>
   </dialog>
 
-  <!-- MODAL: NUEVO GRUPO CORPORATIVO -->
+  <!-- MODAL: NUEVA SEDE / GRUPO -->
   <dialog id="newGroupModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <div class="modal-icon-badge">🏢</div>
+    <div class="modal-frame">
+      <div class="modal-header-row">
+        <div class="modal-headline-wrap">
+          <div class="modal-icon-bubble">🏢</div>
           <div>
-            <h3 class="modal-title">Nueva Sede o Grupo Corporativo</h3>
-            <p class="modal-subtitle">Organiza tus equipos por empresa, sucursal o sede</p>
+            <h3 class="modal-headline-title">Nueva Sede o Grupo</h3>
+            <p class="modal-headline-sub">Organiza tus equipos por empresa, sucursal o área</p>
           </div>
         </div>
-        <button type="button" class="modal-close-btn" onclick="closeGroupModal()" title="Cerrar">&times;</button>
+        <button type="button" class="modal-close-x" onclick="closeGroupModal()" title="Cerrar">&times;</button>
       </div>
 
-      <div class="modal-body">
-        <label for="newGroupNameInput" class="modal-label">Nombre de la Empresa o Sede</label>
-        <input type="text" id="newGroupNameInput" class="modal-input" placeholder="Ej: Sucursal Norte / Farmacia Central / Almacén" autocomplete="off" onkeydown="handleModalKeydown(event)">
-        <p class="modal-hint">💡 Este nombre se agregará a tu selector de empresas y a los filtros de equipos.</p>
+      <div class="modal-body-content">
+        <label for="newGroupNameInput" class="input-label">Nombre de la Sede o Empresa</label>
+        <input type="text" id="newGroupNameInput" class="modal-text-input" placeholder="Ej: Sucursal Norte / Farmacia Central / Almacén" autocomplete="off" onkeydown="handleModalKeydown(event)">
+        <p style="font-size:12px; color:var(--text-dim); margin-top:10px;">💡 Se agregará a la lista de sedes y filtros del panel.</p>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" class="modal-btn-cancel" onclick="closeGroupModal()">Cancelar</button>
-        <button type="button" class="btn-save-group" id="btnSaveGroup" onclick="submitNewGroup()">
-          <span>Guardar Grupo</span>
+      <div class="modal-footer-row">
+        <button type="button" class="btn-modal-cancel" onclick="closeGroupModal()">Cancelar</button>
+        <button type="button" class="btn-modal-save" id="btnSaveGroup" onclick="submitNewGroup()">
+          <span>Guardar Sede</span>
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
         </button>
       </div>
@@ -1567,60 +1573,58 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
   </dialog>
 
   <?php if ($isAdmin): ?>
-  <!-- MODAL: GESTIÓN DE USUARIOS (ADMIN) -->
+  <!-- MODAL: GESTIÓN DE TÉCNICOS -->
   <dialog id="usersModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
-    <div class="modal-card" style="max-width: 660px;">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <div class="modal-icon-badge" style="background:linear-gradient(135deg, rgba(56, 116, 204, 0.25) 0%, rgba(37, 99, 235, 0.15) 100%); border-color:rgba(56, 116, 204, 0.4);">
+    <div class="modal-frame" style="max-width: 660px;">
+      <div class="modal-header-row">
+        <div class="modal-headline-wrap">
+          <div class="modal-icon-bubble" style="background:linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(56, 189, 248, 0.15) 100%); border-color:rgba(56, 189, 248, 0.4);">
             👥
           </div>
           <div>
-            <h3 class="modal-title">Gestión de Usuarios</h3>
-            <p class="modal-subtitle">Administra las cuentas técnicas con acceso al panel</p>
+            <h3 class="modal-headline-title">Gestión de Cuentas Técnicas</h3>
+            <p class="modal-headline-sub">Administra los técnicos con acceso al panel de control</p>
           </div>
         </div>
-        <button type="button" class="modal-close-btn" onclick="closeUsersModal()" title="Cerrar">&times;</button>
+        <button type="button" class="modal-close-x" onclick="closeUsersModal()" title="Cerrar">&times;</button>
       </div>
 
-      <div class="modal-body" style="padding: 20px 24px;">
-        <!-- Form Crear Usuario -->
+      <div class="modal-body-content" style="padding: 22px 26px;">
         <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px;">
-          <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;">➕ Crear Nuevo Usuario Técnico</div>
+          <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;">➕ Crear Nuevo Técnico</div>
           <form id="createUserForm" onsubmit="handleCreateUser(event)" style="display:grid; grid-template-columns: 1fr 1fr 1fr 120px; gap: 10px; align-items: end;">
             <div>
-              <label class="modal-label" style="font-size:11px;">Nombre</label>
-              <input type="text" id="newUserName" class="modal-input" style="padding:9px 12px; font-size:13px;" placeholder="Ej: Juan Perez" required>
+              <label class="input-label" style="font-size:11px;">Nombre</label>
+              <input type="text" id="newUserName" class="modal-text-input" style="padding:9px 12px; font-size:13px;" placeholder="Ej: Juan Perez" required>
             </div>
             <div>
-              <label class="modal-label" style="font-size:11px;">Usuario</label>
-              <input type="text" id="newUserUsername" class="modal-input" style="padding:9px 12px; font-size:13px;" placeholder="Ej: jperez" required autocomplete="off">
+              <label class="input-label" style="font-size:11px;">Usuario</label>
+              <input type="text" id="newUserUsername" class="modal-text-input" style="padding:9px 12px; font-size:13px;" placeholder="Ej: jperez" required autocomplete="off">
             </div>
             <div>
-              <label class="modal-label" style="font-size:11px;">Contraseña</label>
-              <input type="password" id="newUserPassword" class="modal-input" style="padding:9px 12px; font-size:13px;" placeholder="Mínimo 4 carácteres" required autocomplete="new-password">
+              <label class="input-label" style="font-size:11px;">Contraseña</label>
+              <input type="password" id="newUserPassword" class="modal-text-input" style="padding:9px 12px; font-size:13px;" placeholder="Mínimo 4 caracteres" required autocomplete="new-password">
             </div>
             <div>
-              <label class="modal-label" style="font-size:11px;">Rol</label>
-              <select id="newUserRole" class="modal-input" style="padding:9px 10px; font-size:12.5px; cursor:pointer;">
+              <label class="input-label" style="font-size:11px;">Rol</label>
+              <select id="newUserRole" class="modal-text-input" style="padding:9px 10px; font-size:12.5px; cursor:pointer;">
                 <option value="tecnico">Técnico</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
             <div style="grid-column: 1 / -1; display:flex; justify-content:flex-end; margin-top: 4px;">
-              <button type="submit" class="btn-save-group" id="btnSubmitUser" style="padding:8px 18px; font-size:12.5px;">
+              <button type="submit" class="btn-modal-save" id="btnSubmitUser" style="padding:8px 18px; font-size:12.5px;">
                 <span>+ Guardar Usuario</span>
               </button>
             </div>
           </form>
         </div>
 
-        <!-- Tabla Usuarios -->
         <div style="margin-top: 20px;">
-          <div style="font-size: 12px; font-weight: 700; color: #94A3B8; text-transform:uppercase; letter-spacing:0.06em; margin-bottom: 10px;">
-            Usuarios Registrados
+          <div style="font-size: 12px; font-weight: 800; color: #94A3B8; text-transform:uppercase; letter-spacing:0.06em; margin-bottom: 10px;">
+            Cuentas Activas
           </div>
-          <div style="max-height: 220px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(8,12,22,0.45);">
+          <div style="max-height: 220px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(6,9,19,0.5);">
             <table style="width: 100%;">
               <thead>
                 <tr>
@@ -1638,36 +1642,36 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button type="button" class="modal-btn-cancel" onclick="closeUsersModal()">Cerrar</button>
+      <div class="modal-footer-row">
+        <button type="button" class="btn-modal-cancel" onclick="closeUsersModal()">Cerrar</button>
       </div>
     </div>
   </dialog>
   <?php endif; ?>
 
-  <!-- MODAL: CONFIRMACIÓN ELEGANTE -->
+  <!-- MODAL: CONFIRMAR ACCIÓN -->
   <dialog id="confirmActionModal" class="app-dialog" style="z-index: 10005;" onclick="handleDialogBackdropClick(event)">
-    <div class="modal-card" style="max-width: 440px; border-color: rgba(239, 68, 68, 0.35); box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(239, 68, 68, 0.2);">
-      <div class="modal-header" style="background: rgba(239, 68, 68, 0.05); border-bottom: 1px solid rgba(255, 255, 255, 0.07);">
-        <div class="modal-title-wrap">
-          <div class="modal-icon-badge" id="confirmModalIcon" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%); border-color: rgba(239, 68, 68, 0.4);">
+    <div class="modal-frame" style="max-width: 440px; border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 40px -5px rgba(239, 68, 68, 0.25);">
+      <div class="modal-header-row" style="background: rgba(239, 68, 68, 0.06);">
+        <div class="modal-headline-wrap">
+          <div class="modal-icon-bubble" id="confirmModalIcon" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.15) 100%); border-color: rgba(239, 68, 68, 0.45);">
             ⚠️
           </div>
           <div>
-            <h3 class="modal-title" id="confirmModalTitle">Confirmar Acción</h3>
-            <p class="modal-subtitle">Por favor confirma para continuar</p>
+            <h3 class="modal-headline-title" id="confirmModalTitle">Confirmar Acción</h3>
+            <p class="modal-headline-sub">Por favor confirma para continuar</p>
           </div>
         </div>
-        <button type="button" class="modal-close-btn" onclick="closeConfirmDialog()" title="Cerrar">&times;</button>
+        <button type="button" class="modal-close-x" onclick="closeConfirmDialog()" title="Cerrar">&times;</button>
       </div>
 
-      <div class="modal-body" style="padding: 22px 24px;">
-        <p id="confirmModalMessage" style="font-size: 13.5px; color: #E2E8F0; line-height: 1.5; margin: 0;"></p>
+      <div class="modal-body-content" style="padding: 24px;">
+        <p id="confirmModalMessage" style="font-size: 14px; color: #E2E8F0; line-height: 1.5; margin: 0;"></p>
       </div>
 
-      <div class="confirm-modal-footer">
-        <button type="button" class="confirm-btn confirm-btn-cancel" onclick="closeConfirmDialog()">Cancelar</button>
-        <button type="button" id="btnConfirmAction" class="confirm-btn confirm-btn-danger" onclick="executeConfirmedAction()">Confirmar</button>
+      <div class="confirm-footer-grid">
+        <button type="button" class="btn-confirm-action btn-confirm-cancel" onclick="closeConfirmDialog()">Cancelar</button>
+        <button type="button" id="btnConfirmAction" class="btn-confirm-action btn-confirm-danger" onclick="executeConfirmedAction()">Confirmar</button>
       </div>
     </div>
   </dialog>
@@ -1735,7 +1739,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       if (type === 'empresa') {
         btnP.classList.remove('active');
         btnE.classList.add('active');
-        notice.className = 'info-notice orange';
+        notice.className = 'notice-box orange';
         notice.innerHTML = `<span>🏢 <strong>Modo Empresa:</strong> Genera instalador desatendido que iniciará automáticamente con Windows.</span>`;
         grpCont.style.display = 'block';
         lblName.innerText = "Nombre de la Empresa o Equipo:";
@@ -1743,7 +1747,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       } else {
         btnE.classList.remove('active');
         btnP.classList.add('active');
-        notice.className = 'info-notice';
+        notice.className = 'notice-box';
         notice.innerHTML = `<span>👤 <strong>Persona Natural:</strong> Asistente temporal directo de un solo clic sin requerir instalación.</span>`;
         grpCont.style.display = 'none';
         lblName.innerText = "Nombre del Cliente:";
@@ -1758,22 +1762,27 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     function setCategoryTab(cat) {
       currentCategory = cat;
-      // Sync main tab pills
-      document.querySelectorAll('.main-tab').forEach(t => {
-        t.classList.toggle('active', t.getAttribute('data-cat') === cat);
-      });
-      // Sync sidebar nav items
+      
+      // Update sidebar nav items
       document.getElementById('navItemEmpresas').classList.toggle('active', cat === 'empresa');
       document.getElementById('navItemPersonal').classList.toggle('active', cat === 'personal');
       document.getElementById('navItemAll').classList.toggle('active', cat === 'all');
 
-      // Show group dropdown filter ONLY when viewing Empresa or Todos
+      // Update workspace panel title
+      const titleElem = document.getElementById('activeCategoryTitle');
       const grpFilterBox = document.getElementById('groupFilterBox');
       const thGrupo = document.getElementById('thColGrupo');
-      if (cat === 'personal') {
+
+      if (cat === 'empresa') {
+        titleElem.innerHTML = `🏢 Equipos Corporativos`;
+        if (grpFilterBox) grpFilterBox.style.display = 'inline-flex';
+        if (thGrupo) thGrupo.style.display = 'table-cell';
+      } else if (cat === 'personal') {
+        titleElem.innerHTML = `👤 Personas Naturales`;
         if (grpFilterBox) grpFilterBox.style.display = 'none';
         if (thGrupo) thGrupo.style.display = 'none';
       } else {
+        titleElem.innerHTML = `🌐 Todos los Equipos`;
         if (grpFilterBox) grpFilterBox.style.display = 'inline-flex';
         if (thGrupo) thGrupo.style.display = 'table-cell';
       }
@@ -1788,7 +1797,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     function setStatusFilter(status) {
       currentStatusFilter = status;
-      document.querySelectorAll('.s-pill').forEach(f => {
+      document.querySelectorAll('.status-tab-btn').forEach(f => {
         f.classList.toggle('active', f.getAttribute('data-status') === status);
       });
       renderSessions();
@@ -1802,7 +1811,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           rawSessions = data.sessions || [];
           customGroups = data.groups || ['Sucursales', 'Oficina Central', 'Soporte VIP'];
           
-          // Detect newly connected clients for proactive Toast alerts
+          // Toast alert for newly connected equipment
           const currentOnline = new Set();
           rawSessions.forEach(s => {
             if (s.status === 'online') {
@@ -1839,7 +1848,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         groupArr.push('Oficina Central', 'Sucursales');
       }
 
-      // 1. Generator Group Select
+      // Generator group select
       const sel = document.getElementById('groupSelect');
       if (sel) {
         const curr = sel.value;
@@ -1847,7 +1856,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         if (curr && groupArr.includes(curr)) sel.value = curr;
       }
 
-      // 2. Table Filter Select
+      // Table filter select
       const grpFilterSelect = document.getElementById('groupFilterSelect');
       if (grpFilterSelect) {
         let optHtml = `<option value="all">🏢 Todas las Sedes</option>`;
@@ -1864,18 +1873,19 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         }
       }
 
-      // 3. Sidebar Groups Shortcut List
+      // Sidebar groups list
       const sList = document.getElementById('sidebarGroupsList');
       if (sList) {
-        sList.innerHTML = groupArr.slice(0, 5).map(g => {
+        sList.innerHTML = groupArr.slice(0, 6).map(g => {
           const count = rawSessions.filter(s => s.group_name === g).length;
+          const isAct = (currentCategory === 'empresa' && currentGroupFilter === g);
           return `
-            <li class="nav-item ${currentGroupFilter === g ? 'active empresa' : ''}" onclick="setCategoryTab('empresa'); selectGroupDropdown('${escapeHtml(g)}');">
-              <div class="nav-label-wrap">
+            <li class="nav-link ${isAct ? 'active empresa' : ''}" onclick="setCategoryTab('empresa'); selectGroupDropdown('${escapeHtml(g)}');">
+              <div class="nav-label">
                 <span style="font-size:12px;">📁</span>
-                <span style="font-size:12px;">${escapeHtml(g)}</span>
+                <span style="font-size:12.5px;">${escapeHtml(g)}</span>
               </div>
-              <span class="nav-count">${count}</span>
+              <span class="nav-pill-counter">${count}</span>
             </li>
           `;
         }).join('');
@@ -1908,7 +1918,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       const gridContainer = document.getElementById('gridViewContainer');
       const isPersonalView = (currentCategory === 'personal');
 
-      // 1. Filter by category
+      // 1. Filter category
       let list = rawSessions;
       if (currentCategory === 'empresa') {
         list = list.filter(s => s.client_type === 'empresa');
@@ -1916,19 +1926,19 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         list = list.filter(s => s.client_type !== 'empresa');
       }
 
-      // 2. Filter by group
+      // 2. Filter group
       if (currentCategory !== 'personal' && currentGroupFilter !== 'all') {
         list = list.filter(s => (s.group_name || '') === currentGroupFilter);
       }
 
-      // 3. Filter by status
+      // 3. Filter status
       if (currentStatusFilter === 'online') {
         list = list.filter(s => s.status === 'online');
       } else if (currentStatusFilter === 'inactive') {
         list = list.filter(s => s.status === 'closed' || s.status === 'idle' || s.status === 'offline');
       }
 
-      // 4. Filter by search query
+      // 4. Search query
       if (currentSearchQuery) {
         const q = currentSearchQuery.toLowerCase();
         list = list.filter(s => 
@@ -1939,18 +1949,22 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         );
       }
 
+      // Update badge count
+      const badgeElem = document.getElementById('activeCategoryBadge');
+      if (badgeElem) badgeElem.innerText = `${list.length} equipo${list.length === 1 ? '' : 's'}`;
+
       const colSpan = isPersonalView ? 5 : 6;
       if (!list || list.length === 0) {
         let emptyMsg = "No hay registros en esta sección.";
         if (currentCategory === 'empresa') {
           emptyMsg = currentGroupFilter === 'all' 
-            ? "No hay equipos empresariales registrados aún. Genere un enlace para instalar el primer equipo."
+            ? "No hay equipos empresariales registrados aún. Haz clic en '+ Nueva Sesión' para instalar el primer equipo."
             : `No hay equipos asignados a la sede "${escapeHtml(currentGroupFilter)}".`;
         } else if (currentCategory === 'personal') {
-          emptyMsg = "No hay asistencias temporales de Personas Naturales activas.";
+          emptyMsg = "No hay asistencias temporales activas.";
         }
-        tbody.innerHTML = `<tr><td colspan="${colSpan}" style="text-align:center; padding:45px 20px; color:var(--text-dim); font-size:13.5px;"><div style="font-size:28px; margin-bottom:10px;">📋</div>${emptyMsg}</td></tr>`;
-        gridContainer.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:45px 20px; color:var(--text-dim); font-size:13.5px;"><div style="font-size:32px; margin-bottom:10px;">🗂️</div>${emptyMsg}</div>`;
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" style="text-align:center; padding:50px 20px; color:var(--text-dim); font-size:13.5px;"><div style="font-size:32px; margin-bottom:12px;">📋</div>${emptyMsg}</td></tr>`;
+        gridContainer.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:50px 20px; color:var(--text-dim); font-size:13.5px;"><div style="font-size:36px; margin-bottom:12px;">🗂️</div>${emptyMsg}</div>`;
         return;
       }
 
@@ -1962,11 +1976,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
         let badgeStatus = '';
         if (isOnline) {
-          badgeStatus = `<span class="badge-status badge-online">● EN LÍNEA</span>`;
+          badgeStatus = `<span class="status-badge online">● EN LÍNEA</span>`;
         } else if (isWaiting) {
-          badgeStatus = `<span class="badge-status badge-waiting">⏳ En espera</span>`;
+          badgeStatus = `<span class="status-badge waiting">⏳ En espera</span>`;
         } else {
-          badgeStatus = `<span class="badge-status badge-closed">Inactivo</span>`;
+          badgeStatus = `<span class="status-badge inactive">Inactivo</span>`;
         }
 
         const tagType = isEmpresa 
@@ -1975,28 +1989,28 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
         const groupCell = !isPersonalView ? `
           <td>
-            <span class="group-badge-pill">
+            <span class="group-pill">
               🏢 ${escapeHtml(s.group_name || 'General')}
             </span>
           </td>
         ` : '';
 
         const idDisplay = s.rustdesk_id 
-          ? `<span class="id-pill">${s.rustdesk_id}</span>` 
+          ? `<span class="remote-id-tag">${s.rustdesk_id}</span>` 
           : `<span style="font-size:12px; color:var(--text-dim); white-space:nowrap;">⏳ Pendiente</span>`;
 
         let connectBtn = '';
         if (s.rustdesk_id) {
           if (isOnline) {
             connectBtn = `
-              <button onclick="connectSession('${s.rustdesk_id}')" class="btn-act btn-act-connect" title="Conectar por RustDesk a ${s.rustdesk_id}">
+              <button onclick="connectSession('${s.rustdesk_id}')" class="btn-action connect" title="Conectar por RustDesk a ${s.rustdesk_id}">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                 <span>Conectar</span>
               </button>
             `;
           } else {
             connectBtn = `
-              <button onclick="connectSession('${s.rustdesk_id}')" class="btn-act btn-act-reconnect" title="Intentar conectar con ${s.rustdesk_id}">
+              <button onclick="connectSession('${s.rustdesk_id}')" class="btn-action reconnect" title="Intentar conectar con ${s.rustdesk_id}">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                 <span>Conectar</span>
               </button>
@@ -2005,21 +2019,21 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         }
 
         const copyBtn = `
-          <button onclick="copySpecificUrl('${s.session_id}')" class="btn-act btn-act-copy" title="Copiar enlace de descarga para este equipo">
+          <button onclick="copySpecificUrl('${s.session_id}')" class="btn-action copy" title="Copiar enlace de descarga para este equipo">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
             <span>Copiar Link</span>
           </button>
         `;
 
         const deleteBtn = `
-          <button onclick="deleteSessionPermanently('${s.session_id}')" class="btn-act-delete" title="Eliminar definitivamente">
+          <button onclick="deleteSessionPermanently('${s.session_id}')" class="btn-action delete" title="Eliminar definitivamente">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
           </button>
         `;
 
         return `
           <tr>
-            <td><span class="code-badge" onclick="copySpecificUrl('${s.session_id}')" title="Clic para copiar enlace">${s.session_id}</span></td>
+            <td><span class="code-badge-pill" onclick="copySpecificUrl('${s.session_id}')" title="Clic para copiar enlace">${s.session_id}</span></td>
             <td>
               <div class="client-cell">
                 <span class="client-name-title">🖥️ ${escapeHtml(s.client_name)}</span>
@@ -2030,7 +2044,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <td>${badgeStatus}</td>
             <td>${idDisplay}</td>
             <td style="text-align:right;">
-              <div class="actions-wrap">
+              <div class="row-actions-cluster">
                 ${connectBtn}
                 ${copyBtn}
                 ${deleteBtn}
@@ -2045,48 +2059,48 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         const isOnline = s.status === 'online';
         const isEmpresa = s.client_type === 'empresa';
         let statusPill = isOnline 
-          ? `<span class="badge-status badge-online">● EN LÍNEA</span>` 
-          : `<span class="badge-status badge-closed">Inactivo</span>`;
+          ? `<span class="status-badge online">● EN LÍNEA</span>` 
+          : `<span class="status-badge inactive">Inactivo</span>`;
 
         let connectBtnGrid = s.rustdesk_id ? `
-          <button onclick="connectSession('${s.rustdesk_id}')" class="btn-act ${isOnline ? 'btn-act-connect' : 'btn-act-reconnect'}" style="width:100%; justify-content:center; height:36px;">
+          <button onclick="connectSession('${s.rustdesk_id}')" class="btn-action ${isOnline ? 'connect' : 'reconnect'}" style="width:100%; justify-content:center; height:36px;">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
             <span>Conectar</span>
           </button>
         ` : `<div style="font-size:12px; color:var(--text-dim); text-align:center; padding:8px;">⏳ Pendiente de instalación</div>`;
 
         return `
-          <div class="device-card">
-            <div class="card-top">
-              <div class="card-title-group">
-                <span class="card-device-name">🖥️ ${escapeHtml(s.client_name)}</span>
-                <span class="code-badge" style="width:fit-content;" onclick="copySpecificUrl('${s.session_id}')">${s.session_id}</span>
+          <div class="device-grid-card">
+            <div class="card-head">
+              <div class="card-meta-sub">
+                <span class="card-meta-name">🖥️ ${escapeHtml(s.client_name)}</span>
+                <span class="code-badge-pill" style="width:fit-content;" onclick="copySpecificUrl('${s.session_id}')">${s.session_id}</span>
               </div>
               ${statusPill}
             </div>
 
-            <div class="card-details">
-              <div class="card-detail-row">
-                <span class="card-detail-label">Modalidad:</span>
+            <div class="card-inner-box">
+              <div class="card-row-spec">
+                <span class="card-spec-key">Tipo:</span>
                 <span>${isEmpresa ? '🏢 Empresa' : '👤 Temporal'}</span>
               </div>
               ${isEmpresa ? `
-              <div class="card-detail-row">
-                <span class="card-detail-label">Sede / Grupo:</span>
-                <span style="color:#FB923C; font-weight:700;">🏢 ${escapeHtml(s.group_name || 'General')}</span>
+              <div class="card-row-spec">
+                <span class="card-spec-key">Sede:</span>
+                <span style="color:#FDBA74; font-weight:700;">🏢 ${escapeHtml(s.group_name || 'General')}</span>
               </div>` : ''}
-              <div class="card-detail-row">
-                <span class="card-detail-label">ID Remoto:</span>
-                <span class="id-pill">${s.rustdesk_id || '---'}</span>
+              <div class="card-row-spec">
+                <span class="card-spec-key">ID Remoto:</span>
+                <span class="remote-id-tag">${s.rustdesk_id || '---'}</span>
               </div>
             </div>
 
-            <div class="card-footer-actions">
+            <div class="card-actions-grid">
               ${connectBtnGrid}
-              <button onclick="copySpecificUrl('${s.session_id}')" class="btn-act btn-act-copy" title="Copiar Link" style="height:36px; padding:0 12px;">
+              <button onclick="copySpecificUrl('${s.session_id}')" class="btn-action copy" title="Copiar Link" style="height:36px; padding:0 12px;">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
               </button>
-              <button onclick="deleteSessionPermanently('${s.session_id}')" class="btn-act-delete" title="Eliminar" style="height:36px; width:36px;">
+              <button onclick="deleteSessionPermanently('${s.session_id}')" class="btn-action delete" title="Eliminar" style="height:36px; width:36px;">
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
               </button>
             </div>
@@ -2115,13 +2129,13 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           if (type === 'empresa') {
             document.getElementById('shareModeTitle').innerText = 'ENLACE ASISTENCIA EMPRESA';
             document.getElementById('badgeShareType').innerText = 'EMPRESA';
-            document.getElementById('badgeShareType').style.background = 'rgba(231,114,34,0.2)';
+            document.getElementById('badgeShareType').style.background = 'rgba(255,107,0,0.2)';
             document.getElementById('badgeShareType').style.color = '#FB923C';
             document.getElementById('shareExplanation').innerText = 'Descarga con elevación UAC y servicio en segundo plano que iniciará con Windows.';
           } else {
             document.getElementById('shareModeTitle').innerText = 'ENLACE PERSONA NATURAL';
             document.getElementById('badgeShareType').innerText = 'NATURAL';
-            document.getElementById('badgeShareType').style.background = 'rgba(56,116,204,0.2)';
+            document.getElementById('badgeShareType').style.background = 'rgba(37,99,235,0.2)';
             document.getElementById('badgeShareType').style.color = '#93C5FD';
             document.getElementById('shareExplanation').innerText = 'Asistente temporal directo de 1 solo clic sin instalación permanente.';
           }
@@ -2174,7 +2188,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       const gName = input.value.trim();
       if (!gName) {
         input.focus();
-        showToast("⚠️ Ingrese un nombre de grupo válido");
+        showToast("⚠️ Ingrese un nombre de sede válido");
         return;
       }
       const btn = document.getElementById('btnSaveGroup');
@@ -2196,7 +2210,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         showToast("Error al agregar grupo");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span>Guardar Grupo</span> <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>`;
+        btn.innerHTML = `<span>Guardar Sede</span> <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>`;
       }
     }
 
@@ -2312,12 +2326,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             const isAdminUser = u.role === 'admin';
             const roleBadge = isAdminUser 
               ? '<span style="font-size:11px; font-weight:700; color:#FBBF24; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 7px; border-radius:5px;">Admin</span>' 
-              : '<span style="font-size:11px; font-weight:600; color:#93C5FD; background:rgba(56,116,204,0.15); border:1px solid rgba(56,116,204,0.3); padding:2px 7px; border-radius:5px;">Técnico</span>';
+              : '<span style="font-size:11px; font-weight:700; color:#38BDF8; background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); padding:2px 7px; border-radius:5px;">Técnico</span>';
             
             const isSelf = u.username.toLowerCase() === '<?= strtolower($currentUser['username'] ?? '') ?>';
             const deleteBtn = isSelf 
               ? '<span style="font-size:11px; color:#64748B; font-weight:600;">(Tú)</span>' 
-              : `<button type="button" class="btn-act-delete" onclick="deleteUserAccount('${escapeHtml(u.username)}')" title="Eliminar usuario">
+              : `<button type="button" class="btn-action delete" onclick="deleteUserAccount('${escapeHtml(u.username)}')" title="Eliminar usuario">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                  </button>`;
 
@@ -2403,7 +2417,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     function showConfirmDialog({ title, message, iconHtml, confirmText, isDanger, onConfirm }) {
       const modal = document.getElementById('confirmActionModal');
-      const card = modal.querySelector('.modal-card');
+      const card = modal.querySelector('.modal-frame');
       const iconBadge = document.getElementById('confirmModalIcon');
       document.getElementById('confirmModalTitle').innerText = title || 'Confirmar Acción';
       document.getElementById('confirmModalMessage').innerHTML = message || '';
@@ -2413,24 +2427,24 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       const btn = document.getElementById('btnConfirmAction');
       btn.innerText = confirmText || 'Confirmar';
       if (isDanger) {
-        btn.className = 'confirm-btn confirm-btn-danger';
+        btn.className = 'btn-confirm-action btn-confirm-danger';
         if (card) {
-          card.style.borderColor = 'rgba(239, 68, 68, 0.35)';
-          card.style.boxShadow = '0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(239, 68, 68, 0.2)';
+          card.style.borderColor = 'rgba(239, 68, 68, 0.45)';
+          card.style.boxShadow = '0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(239, 68, 68, 0.25)';
         }
         if (iconBadge) {
-          iconBadge.style.background = 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%)';
-          iconBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+          iconBadge.style.background = 'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.15) 100%)';
+          iconBadge.style.borderColor = 'rgba(239, 68, 68, 0.45)';
         }
       } else {
-        btn.className = 'confirm-btn confirm-btn-warning';
+        btn.className = 'btn-confirm-action btn-confirm-warning';
         if (card) {
-          card.style.borderColor = 'rgba(231, 114, 34, 0.35)';
-          card.style.boxShadow = '0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(231, 114, 34, 0.2)';
+          card.style.borderColor = 'rgba(255, 107, 0, 0.4)';
+          card.style.boxShadow = '0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(255, 107, 0, 0.25)';
         }
         if (iconBadge) {
-          iconBadge.style.background = 'linear-gradient(135deg, rgba(231, 114, 34, 0.2) 0%, rgba(208, 99, 25, 0.1) 100%)';
-          iconBadge.style.borderColor = 'rgba(231, 114, 34, 0.4)';
+          iconBadge.style.background = 'linear-gradient(135deg, rgba(255, 107, 0, 0.25) 0%, rgba(234, 88, 12, 0.15) 100%)';
+          iconBadge.style.borderColor = 'rgba(255, 107, 0, 0.45)';
         }
       }
       confirmCallback = onConfirm;
