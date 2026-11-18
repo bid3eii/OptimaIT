@@ -8,6 +8,7 @@ if (empty($_SESSION['optimait_user'])) {
 }
 $currentUser = $_SESSION['optimait_user'];
 $isAdmin = ($currentUser['role'] ?? '') === 'admin';
+$relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : '155.133.197.176';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -26,134 +27,1033 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       --orange: #E77222;
       --orange-hover: #D06319;
       --orange-glow: rgba(231, 114, 34, 0.4);
-      --bg: #090D16;
-      --surface-card: rgba(18, 25, 41, 0.95);
+      --bg-dark: #070B14;
+      --bg-sidebar: #0B111E;
+      --surface-card: rgba(16, 24, 40, 0.85);
+      --surface-elevated: rgba(22, 33, 56, 0.7);
       --border: rgba(255, 255, 255, 0.08);
       --border-hover: rgba(255, 255, 255, 0.16);
       --text: #F8FAFC;
       --text-muted: #94A3B8;
       --text-dim: #64748B;
       --green: #10B981;
+      --green-glow: rgba(16, 185, 129, 0.35);
       --yellow: #F59E0B;
       --red: #EF4444;
+      --sidebar-width: 280px;
     }
 
     * { 
       box-sizing: border-box; 
       margin: 0; 
       padding: 0; 
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.16) rgba(9, 13, 22, 0.4);
+      scrollbar-color: rgba(255, 255, 255, 0.18) rgba(7, 11, 20, 0.5);
     }
-    
+
     body {
-      background: radial-gradient(circle at 15% 10%, rgba(56, 116, 204, 0.14) 0%, transparent 45%),
-                  radial-gradient(circle at 85% 85%, rgba(231, 114, 34, 0.1) 0%, transparent 45%),
-                  var(--bg);
+      background: radial-gradient(circle at 20% 0%, rgba(56, 116, 204, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 85% 100%, rgba(231, 114, 34, 0.12) 0%, transparent 50%),
+                  var(--bg-dark);
       color: var(--text);
       min-height: 100vh;
-      padding: 24px 32px;
+      display: flex;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    .container { max-width: 1420px; margin: 0 auto; }
+    /* Layout Shell */
+    .app-shell {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
 
-    /* Top Navigation Bar */
-    header {
+    /* Left Sidebar */
+    .app-sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      flex-shrink: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 20px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 24px;
-      padding-bottom: 18px;
       border-bottom: 1px solid var(--border);
     }
-    .brand-section { display: flex; align-items: center; }
-    .brand-section img { height: 48px; width: auto; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); }
-
-    .server-badge {
-      display: inline-flex;
+    .brand-wrap {
+      display: flex;
       align-items: center;
+      gap: 10px;
+    }
+    .brand-wrap img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    }
+    .brand-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(56, 116, 204, 0.18);
+      border: 1px solid rgba(56, 116, 204, 0.35);
+      color: #93C5FD;
+      letter-spacing: 0.04em;
+    }
+
+    /* Sidebar Content */
+    .sidebar-body {
+      flex: 1;
+      padding: 20px 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .btn-create-session {
+      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 13px 18px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 9px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 7px 16px;
-      border-radius: 999px;
+      box-shadow: 0 4px 18px -2px var(--orange-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+    }
+    .btn-create-session:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -2px rgba(231, 114, 34, 0.6);
+      filter: brightness(1.08);
+    }
+
+    .nav-group-title {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 0 10px 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 10px;
       font-size: 13px;
-      color: #34D399;
       font-weight: 600;
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.12);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      border: 1px solid transparent;
     }
-    .pulse-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: #10B981;
-      box-shadow: 0 0 8px #10B981; animation: pulseAnim 2s infinite;
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: #FFFFFF;
+      transform: translateX(2px);
     }
-    @keyframes pulseAnim {
-      0% { transform: scale(0.95); opacity: 0.6; }
-      50% { transform: scale(1.15); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.6; }
+    .nav-item.active {
+      background: rgba(56, 116, 204, 0.15);
+      border-color: rgba(56, 116, 204, 0.35);
+      color: #FFFFFF;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(56, 116, 204, 0.15);
+    }
+    .nav-item.active.empresa {
+      background: rgba(231, 114, 34, 0.15);
+      border-color: rgba(231, 114, 34, 0.35);
+      color: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(231, 114, 34, 0.15);
+    }
+    .nav-label-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-count {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+    }
+    .nav-item.active .nav-count {
+      background: #FFFFFF;
+      color: #0F172A;
+    }
+
+    /* Relay Server Status Card */
+    .server-status-card {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: auto;
+    }
+    .server-status-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #34D399;
+      margin-bottom: 6px;
+    }
+    .radar-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+      animation: radarAnimation 2s infinite;
+    }
+    @keyframes radarAnimation {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+    .server-status-host {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: #A7F3D0;
+      word-break: break-all;
+    }
+
+    /* Sidebar Footer / User Profile */
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      background: rgba(9, 13, 22, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .user-chip-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px var(--orange-glow);
+    }
+    .user-meta {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .user-meta-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #FFFFFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-meta-role {
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .role-admin { color: #FBBF24; }
+    .role-tech { color: #60A5FA; }
+
+    .sidebar-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-icon-soft {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-icon-soft:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+    .btn-icon-soft.danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #F87171;
+    }
+
+    /* Main App Content Area */
+    .app-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 24px 32px;
+      max-width: 1600px;
+    }
+
+    /* Top Workspace Header Bar */
+    .main-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .page-heading h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+    }
+    .page-heading p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .search-input-box {
+      position: relative;
+      width: 300px;
+    }
+    .search-input-box svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+    .search-field {
+      width: 100%;
+      background: rgba(16, 24, 40, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px 10px 40px;
+      color: #FFFFFF;
+      font-size: 13.5px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+      background: rgba(16, 24, 40, 0.95);
     }
 
     /* KPI Summary Stats */
-    .stats-row {
+    .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
     .stat-card {
       background: var(--surface-card);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 20px;
+      border-radius: 16px;
+      padding: 18px 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.4);
     }
-    .stat-card:hover { border-color: var(--border-hover); transform: translateY(-1px); }
-    .stat-info p {
-      font-size: 11px;
+    .stat-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.6);
+    }
+    .stat-meta p {
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
-    .stat-info h3 { font-size: 24px; font-weight: 800; color: #FFFFFF; }
-    .stat-icon {
-      width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    .stat-meta h3 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1;
+    }
+    .stat-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    /* Main Workspace Grid */
-    .workspace-grid {
-      display: grid;
-      grid-template-columns: 390px 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-
-    .panel-card {
+    /* Workspace Panel */
+    .workspace-panel {
       background: var(--surface-card);
-      backdrop-filter: blur(20px);
       border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: 20px;
       padding: 24px;
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .panel-title {
+    /* Toolbar Filter Row */
+    .toolbar-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .category-pills {
+      display: inline-flex;
+      background: rgba(7, 11, 20, 0.6);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      gap: 4px;
+    }
+    .main-tab {
+      padding: 8px 16px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .main-tab:hover { color: #FFFFFF; }
+    .main-tab.active {
+      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px var(--orange-glow);
+    }
+    .main-tab.active[data-cat="personal"] {
+      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .main-tab.active[data-cat="all"] {
+      background: linear-gradient(135deg, #475569 0%, #334155 100%);
+      box-shadow: 0 4px 12px rgba(71, 85, 105, 0.4);
+    }
+
+    .filter-tools {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 17px;
+      flex-wrap: wrap;
+    }
+
+    .group-filter-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(7, 11, 20, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 3px 8px 3px 12px;
+    }
+    .group-filter-select {
+      background: transparent;
+      border: none;
+      color: #FB923C;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+      padding: 5px 8px;
+    }
+    .group-filter-select option {
+      background: #0B111E;
+      color: #F8FAFC;
+    }
+    .btn-add-group-mini {
+      background: rgba(231, 114, 34, 0.15);
+      border: 1px solid rgba(231, 114, 34, 0.35);
+      color: #FB923C;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-add-group-mini:hover {
+      background: var(--orange);
+      color: #FFFFFF;
+    }
+
+    .status-pills {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(7, 11, 20, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 3px;
+    }
+    .s-pill {
+      padding: 6px 13px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .s-pill:hover { color: #FFFFFF; }
+    .s-pill.active {
+      background: rgba(56, 116, 204, 0.2);
+      color: #93C5FD;
+      font-weight: 700;
+      border: 1px solid rgba(56, 116, 204, 0.4);
+    }
+    .status-dot-pulse {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: #10B981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    .view-switcher {
+      display: inline-flex;
+      background: rgba(7, 11, 20, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+    }
+    .view-btn {
+      padding: 6px 10px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .view-btn:hover { color: #FFFFFF; }
+    .view-btn.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    /* Container Queries Setup */
+    .table-container {
+      container-type: inline-size;
+      container-name: tableContainer;
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(9, 13, 22, 0.4);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    .table-container::-webkit-scrollbar { height: 6px; }
+    .table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+    .table-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 4px; }
+    .table-container::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
+
+    table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
+    th {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94A3B8;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(15, 23, 42, 0.75);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      z-index: 2;
+    }
+    td {
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 13.5px;
+      vertical-align: middle;
+      transition: background 0.15s ease;
+      white-space: nowrap;
+    }
+    tr:hover td { background: rgba(56, 116, 204, 0.045); }
+
+    .code-badge {
+      display: inline-flex;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      background: rgba(56, 116, 204, 0.12);
+      border: 1px solid rgba(56, 116, 204, 0.3);
+      color: #60A5FA;
+      padding: 4px 9px;
+      border-radius: 7px;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .code-badge:hover {
+      background: rgba(56, 116, 204, 0.25);
+      border-color: rgba(56, 116, 204, 0.6);
+      color: #93C5FD;
+      transform: scale(1.04);
+    }
+
+    .client-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .client-name-title {
       font-weight: 700;
       color: #FFFFFF;
-      margin-bottom: 18px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .panel-title svg { color: var(--primary); }
+    .tag-installed {
+      font-size: 10.5px;
+      font-weight: 600;
+      background: rgba(231, 114, 34, 0.12);
+      color: #FB923C;
+      padding: 2px 7px;
+      border-radius: 5px;
+      border: 1px solid rgba(231, 114, 34, 0.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+    }
+    .tag-personal {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #94A3B8;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 2px 7px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+    }
 
-    /* Mode Switcher Pills */
+    .group-badge-pill {
+      font-size: 12px;
+      background: rgba(231, 114, 34, 0.1);
+      color: #FB923C;
+      border: 1px solid rgba(231, 114, 34, 0.25);
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-online {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34D399;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.18);
+    }
+    .badge-waiting {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #FBBF24;
+    }
+    .badge-closed {
+      background: rgba(148, 163, 184, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      color: #94A3B8;
+    }
+
+    .id-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 13px;
+      color: #FB923C;
+      background: rgba(231, 114, 34, 0.08);
+      padding: 3.5px 9px;
+      border-radius: 7px;
+      border: 1px solid rgba(231, 114, 34, 0.25);
+      letter-spacing: 0.03em;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Actions buttons */
+    .actions-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+    .btn-act {
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      line-height: 1;
+      text-decoration: none;
+      user-select: none;
+    }
+    .btn-act-connect {
+      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
+      color: #FFFFFF;
+      border: 1px solid rgba(56, 116, 204, 0.5);
+      box-shadow: 0 2px 10px rgba(56, 116, 204, 0.3);
+    }
+    .btn-act-connect:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(56, 116, 204, 0.45);
+      filter: brightness(1.1);
+    }
+    .btn-act-reconnect {
+      background: rgba(56, 116, 204, 0.08);
+      color: #93C5FD;
+      border: 1px solid rgba(56, 116, 204, 0.35);
+    }
+    .btn-act-reconnect:hover {
+      background: rgba(56, 116, 204, 0.18);
+      border-color: rgba(56, 116, 204, 0.55);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+    .btn-act-copy {
+      background: rgba(255, 255, 255, 0.03);
+      color: #CBD5E1;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .btn-act-copy:hover {
+      background: rgba(231, 114, 34, 0.12);
+      border-color: rgba(231, 114, 34, 0.45);
+      color: #FB923C;
+      transform: translateY(-1px);
+    }
+    .btn-act-delete {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .btn-act-delete:hover {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #F87171;
+      transform: scale(1.08);
+    }
+
+    /* Grid Cards View */
+    .grid-container {
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .device-card {
+      background: rgba(11, 17, 30, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .device-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .card-device-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+    .card-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(7, 11, 20, 0.5);
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .card-detail-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .card-detail-label { color: var(--text-dim); }
+    .card-footer-actions {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    /* Container Queries */
+    @container tableContainer (max-width: 780px) {
+      th, td { padding: 10px 12px; font-size: 12px; }
+      .actions-wrap { gap: 4px; }
+      .btn-act { height: 28px; padding: 0 8px; font-size: 11px; }
+      .id-pill { font-size: 11.5px; padding: 2.5px 6px; }
+    }
+    @container tableContainer (min-width: 1150px) {
+      th { padding: 16px 20px; font-size: 12px; }
+      td { padding: 15px 20px; font-size: 13.5px; }
+      .btn-act { height: 34px; padding: 0 14px; font-size: 12.5px; }
+    }
+
+    /* HTML5 <dialog> Styling */
+    dialog.app-dialog {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      background: transparent;
+      border: none;
+      padding: 20px;
+      outline: none;
+      max-width: 100vw;
+      max-height: 100vh;
+      overflow: visible;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    dialog.app-dialog:not([open]) { display: none; }
+    dialog.app-dialog::backdrop {
+      background: rgba(3, 7, 18, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .modal-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96) 0%, rgba(10, 15, 29, 0.98) 100%);
+      border: 1px solid rgba(231, 114, 34, 0.35);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(231, 114, 34, 0.25);
+      overflow: hidden;
+      animation: dialogPop 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes dialogPop {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(231, 114, 34, 0.05);
+    }
+    .modal-title-wrap { display: flex; align-items: center; gap: 12px; }
+    .modal-icon-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(231, 114, 34, 0.25) 0%, rgba(208, 99, 25, 0.15) 100%);
+      border: 1px solid rgba(231, 114, 34, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .modal-title { font-size: 16px; font-weight: 700; color: #FFFFFF; }
+    .modal-subtitle { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 24px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close-btn:hover { background: rgba(255, 255, 255, 0.08); color: #FFFFFF; }
+    .modal-body { padding: 24px; }
+    .modal-label { display: block; font-size: 13px; font-weight: 600; color: #CBD5E1; margin-bottom: 8px; }
+    .modal-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 14px;
+      color: #FFFFFF;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .modal-input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px var(--orange-glow);
+      background: rgba(0, 0, 0, 0.6);
+    }
+    .modal-hint { font-size: 12px; color: #64748B; margin-top: 10px; line-height: 1.4; }
+    .modal-footer {
+      padding: 16px 24px;
+      background: rgba(0, 0, 0, 0.25);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .modal-btn-cancel {
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #CBD5E1;
+      transition: all 0.2s;
+    }
+    .modal-btn-cancel:hover { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; }
+    .btn-save-group {
+      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px -2px var(--orange-glow);
+      transition: all 0.2s;
+    }
+    .btn-save-group:hover { transform: translateY(-1px); filter: brightness(1.08); }
+
+    /* Generator Inside Modal / Offcanvas */
     .mode-switcher {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -188,28 +1088,6 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       color: #FFFFFF;
       box-shadow: 0 4px 14px var(--primary-glow);
     }
-
-    /* Form Fields */
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-size: 12px; font-weight: 700; color: #CBD5E1; margin-bottom: 7px; }
-    
-    .input-field, select.input-field {
-      width: 100%;
-      background: rgba(9, 13, 22, 0.85);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      color: #FFFFFF;
-      font-size: 14px;
-      outline: none;
-      transition: all 0.2s;
-    }
-    .input-field:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-glow);
-    }
-
-    /* Helper info notice */
     .info-notice {
       background: rgba(56, 116, 204, 0.1);
       border: 1px solid rgba(56, 116, 204, 0.25);
@@ -228,616 +1106,32 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       border-color: rgba(231, 114, 34, 0.3);
       color: #FDBA74;
     }
-
-    /* Primary Action Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
-      color: #FFFFFF;
-      border: none;
-      padding: 13px 20px;
-      border-radius: 11px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.2s;
-      box-shadow: 0 8px 20px -4px var(--orange-glow);
-    }
-    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
-
-    .btn-sm {
-      padding: 7px 12px;
-      font-size: 12px;
-      border-radius: 8px;
-      width: auto;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-    }
-    .btn-blue {
-      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px var(--primary-glow);
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-    .btn-outline:hover { background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.2); }
-
-    .btn-ghost {
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      cursor: pointer;
-      padding: 6px 8px;
-      border-radius: 6px;
-      transition: all 0.2s;
-    }
-    .btn-ghost:hover { color: var(--red); background: rgba(239, 68, 68, 0.12); }
-
-    /* Generated Share Card */
     .link-share-card {
-      margin-top: 18px;
-      background: rgba(9, 13, 22, 0.7);
-      border: 1px solid rgba(231, 114, 34, 0.35);
-      border-radius: 12px;
+      background: rgba(231, 114, 34, 0.08);
+      border: 1px dashed rgba(231, 114, 34, 0.4);
+      border-radius: 14px;
       padding: 16px;
+      margin-top: 18px;
       display: none;
     }
-    .share-input-row { display: flex; gap: 8px; margin: 10px 0; }
+    .share-input-row {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0;
+    }
     .share-input-row input {
       flex: 1;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0,0,0,0.5);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 9px 12px;
-      color: #93C5FD;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      outline: none;
-    }
-
-    /* Main Category Tabs */
-    .category-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      padding-bottom: 16px;
-      margin-bottom: 18px;
-    }
-    .tabs-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .main-tab {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 10px 18px;
-      border-radius: 12px;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      user-select: none;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(255, 255, 255, 0.02);
-      backdrop-filter: blur(10px);
-    }
-    .main-tab:hover {
-      color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.14);
-      transform: translateY(-1px);
-    }
-    .main-tab.active {
-      background: rgba(56, 116, 204, 0.18);
-      border-color: rgba(56, 116, 204, 0.55);
-      color: #93C5FD;
-      box-shadow: 0 4px 18px -2px rgba(56, 116, 204, 0.3);
-    }
-    .main-tab.active.empresa-tab {
-      background: linear-gradient(135deg, rgba(231, 114, 34, 0.22) 0%, rgba(208, 99, 25, 0.12) 100%);
-      border-color: rgba(231, 114, 34, 0.55);
-      color: #FFB074;
-      box-shadow: 0 4px 18px -2px rgba(231, 114, 34, 0.25);
-    }
-    .main-tab .tab-badge {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #FFFFFF;
-      font-weight: 700;
-    }
-
-    /* Subfilter Bar Toolbar */
-    .subfilter-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      gap: 16px;
-      background: rgba(13, 20, 36, 0.55);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 14px;
-      padding: 10px 16px;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      flex-wrap: wrap;
-    }
-
-    /* Left tools: Search & Group Select */
-    .filter-tools-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .search-box-wrapper {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-    }
-    .search-box-wrapper svg {
-      position: absolute;
-      left: 12px;
-      color: var(--text-dim);
-      pointer-events: none;
-      transition: color 0.2s;
-    }
-    .filter-search-input {
-      background: rgba(8, 12, 22, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 8px 14px 8px 34px;
       color: #FFFFFF;
       font-size: 12.5px;
-      outline: none;
-      width: 210px;
-      transition: all 0.2s ease;
-    }
-    .filter-search-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-glow);
-      width: 250px;
-    }
-    .search-box-wrapper:focus-within svg {
-      color: var(--primary);
-    }
-
-    .group-dropdown-wrapper {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .group-dropdown-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #FDBA74;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-      user-select: none;
-    }
-    .group-filter-select {
-      background: rgba(8, 12, 22, 0.75);
-      border: 1px solid rgba(231, 114, 34, 0.35);
-      border-radius: 10px;
-      padding: 8px 34px 8px 12px;
-      color: #FFB074;
-      font-size: 12.5px;
-      font-weight: 600;
-      outline: none;
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23FB923C'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 11px center;
-      background-size: 13px;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-    .group-filter-select:hover {
-      border-color: var(--orange);
-      background-color: rgba(231, 114, 34, 0.08);
-      transform: translateY(-1px);
-    }
-    .group-filter-select:focus {
-      border-color: var(--orange);
-      box-shadow: 0 0 0 3px var(--orange-glow);
-    }
-    .group-filter-select option {
-      background: #0B111E;
-      color: #F8FAFC;
-      padding: 10px;
-    }
-
-    .status-filter-pills {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(8, 12, 22, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 11px;
-      padding: 3px;
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-    .s-pill {
-      padding: 6px 13px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .s-pill:hover {
-      color: #FFFFFF;
-      background: rgba(255, 255, 255, 0.04);
-    }
-    .s-pill.active {
-      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
-      color: #FFFFFF;
-      font-weight: 700;
-      box-shadow: 0 2px 10px var(--primary-glow);
-    }
-    .status-dot-pulse {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
-      background: #10B981;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #10B981;
-    }
-
-    /* Custom Dropdown Styling in Form */
-    select.input-field {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      background-size: 16px;
-      padding-right: 38px;
-      cursor: pointer;
-    }
-    select.input-field option {
-      background: #0F172A;
-      color: #F8FAFC;
-      padding: 10px;
-    }
-
-    /* Sessions Table */
-    .table-container {
-      container-type: inline-size;
-      container-name: tableContainer;
-      overflow-x: auto;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.16) rgba(0, 0, 0, 0.2);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(9, 13, 22, 0.45);
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    }
-    .table-container::-webkit-scrollbar {
-      height: 6px;
-    }
-    .table-container::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 4px;
-    }
-    .table-container::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 4px;
-    }
-    .table-container::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.22);
-    }
-
-    /* Container Queries for Adaptive Split-Window & Ultrawide Layouts */
-    @container tableContainer (max-width: 780px) {
-      th, td {
-        padding: 10px 12px;
-        font-size: 12px;
-      }
-      .actions-wrap {
-        gap: 4px;
-      }
-      .btn-act {
-        height: 28px;
-        padding: 0 8px;
-        font-size: 11px;
-      }
-      .id-pill {
-        font-size: 11.5px;
-        padding: 2.5px 6px;
-      }
-    }
-
-    @container tableContainer (min-width: 1150px) {
-      th {
-        padding: 16px 20px;
-        font-size: 12px;
-      }
-      td {
-        padding: 15px 20px;
-        font-size: 13.5px;
-      }
-      .btn-act {
-        height: 34px;
-        padding: 0 14px;
-        font-size: 12.5px;
-      }
-    }
-
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #94A3B8;
-      padding: 14px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      background: rgba(15, 23, 42, 0.65);
-      white-space: nowrap;
-    }
-    table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
-    th {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #94A3B8;
-      padding: 14px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      background: rgba(15, 23, 42, 0.65);
-      white-space: nowrap;
-    }
-    td {
-      padding: 13px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      font-size: 13px;
-      vertical-align: middle;
-      transition: background 0.15s ease;
-      white-space: nowrap;
-    }
-    tr:hover td { background: rgba(56, 116, 204, 0.045); }
-
-    .code-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      font-size: 12px;
-      background: rgba(56, 116, 204, 0.12);
-      border: 1px solid rgba(56, 116, 204, 0.3);
-      color: #60A5FA;
-      padding: 4px 9px;
-      border-radius: 7px;
-      letter-spacing: 0.03em;
-      white-space: nowrap;
-      user-select: none;
-    }
-    .code-badge-clickable {
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .code-badge-clickable:hover {
-      background: rgba(56, 116, 204, 0.25);
-      border-color: rgba(56, 116, 204, 0.6);
-      color: #93C5FD;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(56, 116, 204, 0.3);
+      outline: none;
     }
 
-    .client-cell {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      white-space: nowrap;
-    }
-    .client-name-title {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #F8FAFC;
-      letter-spacing: -0.01em;
-      white-space: nowrap;
-    }
-
-    .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-    .badge-online { 
-      background: rgba(16, 185, 129, 0.12); 
-      color: #34D399; 
-      border: 1px solid rgba(16, 185, 129, 0.32);
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.12);
-    }
-    .badge-waiting { 
-      background: rgba(245, 158, 11, 0.12); 
-      color: #FBBF24; 
-      border: 1px solid rgba(245, 158, 11, 0.32); 
-    }
-    .badge-closed { 
-      background: rgba(71, 85, 105, 0.2); 
-      color: #94A3B8; 
-      border: 1px solid rgba(100, 116, 139, 0.22); 
-    }
-
-    .tag-installed {
-      font-size: 10.5px;
-      font-weight: 600;
-      background: rgba(231, 114, 34, 0.12);
-      color: #FB923C;
-      padding: 2px 7px;
-      border-radius: 5px;
-      border: 1px solid rgba(231, 114, 34, 0.25);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-      width: fit-content;
-    }
-    .tag-personal {
-      font-size: 10.5px;
-      font-weight: 600;
-      color: #94A3B8;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 2px 7px;
-      border-radius: 5px;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-      width: fit-content;
-    }
-
-    .group-badge-pill {
-      font-size: 12px;
-      background: rgba(231, 114, 34, 0.1);
-      color: #FB923C;
-      border: 1px solid rgba(231, 114, 34, 0.25);
-      padding: 3px 9px;
-      border-radius: 6px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-    }
-
-    .id-pill {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      font-size: 13px;
-      color: #FB923C;
-      background: rgba(231, 114, 34, 0.08);
-      padding: 3.5px 9px;
-      border-radius: 7px;
-      border: 1px solid rgba(231, 114, 34, 0.25);
-      letter-spacing: 0.03em;
-      display: inline-flex;
-      align-items: center;
-      white-space: nowrap;
-    }
-
-    /* Standardized Row Action Buttons */
-    .actions-wrap {
-      display: inline-flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 6px;
-      white-space: nowrap;
-    }
-    .btn-act {
-      height: 31px;
-      padding: 0 11px;
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-      box-sizing: border-box;
-      line-height: 1;
-      text-decoration: none;
-      user-select: none;
-    }
-    .btn-act svg {
-      flex-shrink: 0;
-    }
-    .btn-act-connect {
-      background: linear-gradient(135deg, var(--primary) 0%, #2563EB 100%);
-      color: #FFFFFF;
-      border: 1px solid rgba(56, 116, 204, 0.5);
-      box-shadow: 0 2px 10px rgba(56, 116, 204, 0.3);
-    }
-    .btn-act-connect:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(56, 116, 204, 0.45);
-      filter: brightness(1.1);
-    }
-    .btn-act-reconnect {
-      background: rgba(56, 116, 204, 0.08);
-      color: #93C5FD;
-      border: 1px solid rgba(56, 116, 204, 0.35);
-    }
-    .btn-act-reconnect:hover {
-      background: rgba(56, 116, 204, 0.18);
-      border-color: rgba(56, 116, 204, 0.55);
-      color: #FFFFFF;
-      transform: translateY(-1px);
-    }
-    .btn-act-copy {
-      background: rgba(255, 255, 255, 0.03);
-      color: #CBD5E1;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-    }
-    .btn-act-copy:hover {
-      background: rgba(231, 114, 34, 0.12);
-      border-color: rgba(231, 114, 34, 0.45);
-      color: #FB923C;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 10px rgba(231, 114, 34, 0.2);
-    }
-    .btn-act-delete {
-      width: 31px;
-      height: 31px;
-      padding: 0;
-      background: transparent;
-      color: var(--text-dim);
-      border: 1px solid transparent;
-      border-radius: 8px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-    .btn-act-delete:hover {
-      background: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.3);
-      color: #F87171;
-      transform: scale(1.08);
-    }
-
-    /* Native Popover / Toast Styling */
+    /* Native Toast Popover */
     .toast {
       position: fixed;
       inset: auto 24px 24px auto;
@@ -865,326 +1159,7 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       pointer-events: auto;
     }
 
-    /* Modern HTML5 <dialog> & Legacy Modal Styles */
-    dialog.app-dialog {
-      position: fixed;
-      inset: 0;
-      margin: auto;
-      background: transparent;
-      border: none;
-      padding: 20px;
-      outline: none;
-      max-width: 100vw;
-      max-height: 100vh;
-      overflow: visible;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    dialog.app-dialog:not([open]) {
-      display: none;
-    }
-    dialog.app-dialog::backdrop {
-      background: rgba(3, 7, 18, 0.78);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(3, 7, 18, 0.78);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.22s ease;
-    }
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .modal-card {
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.96) 0%, rgba(10, 15, 29, 0.98) 100%);
-      border: 1px solid rgba(231, 114, 34, 0.35);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(231, 114, 34, 0.25);
-      overflow: hidden;
-      animation: dialogPop 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes dialogPop {
-      from {
-        opacity: 0;
-        transform: scale(0.92) translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-    .modal-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(231, 114, 34, 0.05);
-    }
-    .modal-title-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .modal-icon-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(231, 114, 34, 0.25) 0%, rgba(208, 99, 25, 0.15) 100%);
-      border: 1px solid rgba(231, 114, 34, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-    .modal-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin: 0;
-      letter-spacing: -0.01em;
-    }
-    .modal-subtitle {
-      font-size: 12px;
-      color: #94A3B8;
-      margin: 2px 0 0 0;
-    }
-    .modal-close-btn {
-      background: transparent;
-      border: none;
-      color: #94A3B8;
-      font-size: 24px;
-      line-height: 1;
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-    .modal-close-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #FFFFFF;
-    }
-    .modal-body {
-      padding: 24px;
-    }
-    .modal-label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #CBD5E1;
-      margin-bottom: 8px;
-    }
-    .modal-input {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 13px 16px;
-      font-size: 14px;
-      color: #FFFFFF;
-      outline: none;
-      transition: all 0.2s;
-    }
-    .modal-input:focus {
-      border-color: var(--orange);
-      box-shadow: 0 0 0 3px var(--orange-glow);
-      background: rgba(0, 0, 0, 0.6);
-    }
-    .modal-hint {
-      font-size: 12px;
-      color: #64748B;
-      margin: 10px 0 0 0;
-      line-height: 1.4;
-    }
-    .modal-footer {
-      padding: 16px 24px;
-      background: rgba(0, 0, 0, 0.25);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-    .modal-btn-cancel {
-      padding: 9px 18px;
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .btn-save-group {
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
-      color: #FFFFFF;
-      border: none;
-      padding: 9px 20px;
-      border-radius: 10px;
-      font-size: 13.5px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 15px -2px var(--orange-glow);
-      transition: all 0.2s;
-    }
-    .btn-save-group:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.08);
-    }
-
-    /* Row Action Buttons Enhancement */
-    .btn-copy-link {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #CBD5E1;
-      padding: 7px 11px;
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-    .btn-copy-link:hover {
-      background: rgba(56, 116, 204, 0.15);
-      border-color: rgba(56, 116, 204, 0.45);
-      color: #93C5FD;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 10px rgba(56, 116, 204, 0.25);
-    }
-    .code-badge-clickable {
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .code-badge-clickable:hover {
-      background: rgba(56, 116, 204, 0.25);
-      border-color: rgba(56, 116, 204, 0.6);
-      color: #93C5FD;
-      transform: scale(1.04);
-    }
-    /* User Header Chip & Management Styles */
-    .header-right-tools {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .user-profile-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      padding: 5px 10px 5px 6px;
-      border-radius: 999px;
-      backdrop-filter: blur(10px);
-    }
-    .user-avatar-circle {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
-      color: #FFFFFF;
-      font-weight: 800;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px var(--orange-glow);
-    }
-    .user-info-text {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-    .user-display-name {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: #FFFFFF;
-      line-height: 1.2;
-    }
-    .user-role-pill {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      line-height: 1;
-    }
-    .role-admin {
-      color: #FBBF24;
-    }
-    .role-tech {
-      color: #60A5FA;
-    }
-    .btn-user-manage {
-      background: rgba(231, 114, 34, 0.12);
-      border: 1px solid rgba(231, 114, 34, 0.3);
-      color: #FB923C;
-      padding: 6px 11px;
-      font-size: 11.5px;
-      font-weight: 700;
-      border-radius: 999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.2s ease;
-    }
-    .btn-user-manage:hover {
-      background: rgba(231, 114, 34, 0.25);
-      border-color: rgba(231, 114, 34, 0.55);
-      transform: translateY(-1px);
-    }
-    .btn-logout {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #CBD5E1;
-      padding: 6px 11px;
-      font-size: 11.5px;
-      font-weight: 600;
-      border-radius: 999px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.2s ease;
-    }
-    .btn-logout:hover {
-      background: rgba(239, 68, 68, 0.15);
-      border-color: rgba(239, 68, 68, 0.35);
-      color: #F87171;
-      transform: translateY(-1px);
-    }
-    .user-create-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 16px;
-    }
-    /* Symmetrical Confirmation Dialog Styles */
+    /* Confirmation Modal Footer */
     .confirm-modal-footer {
       padding: 16px 24px 20px 24px;
       background: rgba(0, 0, 0, 0.35);
@@ -1193,7 +1168,6 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       width: 100%;
-      box-sizing: border-box;
     }
     .confirm-btn {
       height: 44px;
@@ -1201,286 +1175,273 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       border-radius: 12px;
       font-size: 13.5px;
       font-weight: 700;
-      letter-spacing: 0.01em;
-      white-space: nowrap;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      box-sizing: border-box;
+      border: none;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      width: 100%;
-      user-select: none;
     }
     .confirm-btn-cancel {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.14);
       color: #E2E8F0;
     }
-    .confirm-btn-cancel:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.25);
-      color: #FFFFFF;
-      transform: translateY(-1px);
-    }
+    .confirm-btn-cancel:hover { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; }
     .confirm-btn-danger {
       background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-      border: 1px solid rgba(239, 68, 68, 0.5);
       color: #FFFFFF;
       box-shadow: 0 4px 18px -2px rgba(239, 68, 68, 0.45);
     }
-    .confirm-btn-danger:hover {
-      filter: brightness(1.12);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 22px -2px rgba(239, 68, 68, 0.65);
-    }
+    .confirm-btn-danger:hover { filter: brightness(1.12); transform: translateY(-1px); }
     .confirm-btn-warning {
       background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
-      border: 1px solid rgba(231, 114, 34, 0.5);
       color: #FFFFFF;
       box-shadow: 0 4px 18px -2px var(--orange-glow);
     }
-    .confirm-btn-warning:hover {
-      filter: brightness(1.12);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 22px -2px rgba(231, 114, 34, 0.65);
-    }
+    .confirm-btn-warning:hover { filter: brightness(1.12); transform: translateY(-1px); }
 
-    /* Multi-Window & Mobile Adaptations */
-    @media (max-width: 1100px) {
-      .workspace-grid {
-        grid-template-columns: 1fr;
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .app-sidebar {
+        width: 72px;
       }
-      .stats-row {
-        grid-template-columns: repeat(2, 1fr);
+      .brand-wrap span, .nav-item span, .nav-count, .nav-group-title, .server-status-card, .user-meta {
+        display: none !important;
       }
+      .sidebar-header, .sidebar-body, .sidebar-footer {
+        padding: 14px 10px;
+        align-items: center;
+      }
+      .btn-create-session span { display: none; }
+      .btn-create-session { padding: 12px; width: 44px; height: 44px; border-radius: 10px; }
+      .nav-item { justify-content: center; padding: 12px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    @media (max-width: 640px) {
-      body {
-        padding: 14px 16px;
-      }
-      .stats-row {
-        grid-template-columns: 1fr;
-      }
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-      .header-right-tools {
-        width: 100%;
-        justify-content: space-between;
-      }
+    @media (max-width: 680px) {
+      .app-shell { flex-direction: column; }
+      .app-sidebar { width: 100%; height: auto; position: static; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); }
+      .sidebar-body { display: none; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .app-main { padding: 16px; }
+      .main-topbar { flex-direction: column; align-items: stretch; }
+      .search-input-box { width: 100%; }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
+  <div class="app-shell">
     
-    <!-- Top Bar -->
-    <header>
-      <div class="brand-section">
-        <img src="flutter/assets/logo_dark.png?v=2" alt="OptimaIT Logo">
+    <!-- LEFT SIDEBAR -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="brand-wrap">
+          <img src="flutter/assets/logo_dark.png?v=2" alt="OptimaIT">
+        </div>
+        <span class="brand-badge">SaaS v2.4</span>
       </div>
 
-      <div class="header-right-tools">
-        <div class="server-badge">
-          <div class="pulse-dot"></div>
-          <?php $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : '155.133.197.176'; ?>
-          <span>Servidor Relay: <?= htmlspecialchars($relayHost) ?> (En línea)</span>
+      <div class="sidebar-body">
+        <button type="button" class="btn-create-session" onclick="openSessionModal()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+          <span>Nueva Sesión</span>
+        </button>
+
+        <div>
+          <div class="nav-group-title">
+            <span>Vistas de Equipos</span>
+          </div>
+          <ul class="nav-list">
+            <li class="nav-item active empresa" id="navItemEmpresas" onclick="setCategoryTab('empresa')">
+              <div class="nav-label-wrap">
+                <span>🏢</span>
+                <span>Empresas</span>
+              </div>
+              <span class="nav-count" id="countTabEmpresa">0</span>
+            </li>
+            <li class="nav-item" id="navItemPersonal" onclick="setCategoryTab('personal')">
+              <div class="nav-label-wrap">
+                <span>👤</span>
+                <span>Personas Naturales</span>
+              </div>
+              <span class="nav-count" id="countTabPersonal">0</span>
+            </li>
+            <li class="nav-item" id="navItemAll" onclick="setCategoryTab('all')">
+              <div class="nav-label-wrap">
+                <span>🌐</span>
+                <span>Todos los Equipos</span>
+              </div>
+              <span class="nav-count" id="countTabAll">0</span>
+            </li>
+          </ul>
         </div>
 
-        <!-- User Profile Chip -->
-        <div class="user-profile-badge">
-          <div class="user-avatar-circle">
+        <div>
+          <div class="nav-group-title">
+            <span>Sedes / Grupos</span>
+            <button type="button" class="btn-add-group-mini" onclick="promptNewGroup()" title="Crear nueva sede">+</button>
+          </div>
+          <ul class="nav-list" id="sidebarGroupsList">
+            <!-- Populated dynamically via updateGroupControls() -->
+          </ul>
+        </div>
+
+        <!-- Relay Server Health Card -->
+        <div class="server-status-card">
+          <div class="server-status-header">
+            <div class="radar-pulse"></div>
+            <span>Relay Server Activo</span>
+          </div>
+          <div class="server-status-host"><?= htmlspecialchars($relayHost) ?></div>
+        </div>
+      </div>
+
+      <!-- User Profile Card -->
+      <div class="sidebar-footer">
+        <div class="user-chip-wrap">
+          <div class="user-avatar">
             <?= strtoupper(substr($currentUser['name'] ?? $currentUser['username'], 0, 1)) ?>
           </div>
-          <div class="user-info-text">
-            <span class="user-display-name"><?= htmlspecialchars($currentUser['name'] ?? $currentUser['username']) ?></span>
-            <span class="user-role-pill <?= $isAdmin ? 'role-admin' : 'role-tech' ?>">
+          <div class="user-meta">
+            <span class="user-meta-name"><?= htmlspecialchars($currentUser['name'] ?? $currentUser['username']) ?></span>
+            <span class="user-meta-role <?= $isAdmin ? 'role-admin' : 'role-tech' ?>">
               <?= $isAdmin ? '👑 Administrador' : '🛠️ Técnico' ?>
             </span>
           </div>
+        </div>
 
+        <div class="sidebar-user-actions">
           <?php if ($isAdmin): ?>
-          <button type="button" class="btn-user-manage" onclick="openUsersModal()" title="Gestionar usuarios del sistema">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-            <span>Usuarios</span>
+          <button type="button" class="btn-icon-soft" onclick="openUsersModal()" title="Gestión de Técnicos">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
           </button>
           <?php endif; ?>
-
-          <button type="button" class="btn-logout" onclick="logoutUser()" title="Cerrar sesión">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-            <span>Salir</span>
+          <button type="button" class="btn-icon-soft danger" onclick="logoutUser()" title="Cerrar Sesión">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
           </button>
         </div>
       </div>
-    </header>
+    </aside>
 
-    <!-- KPI Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-info">
-          <p>Clientes En Línea</p>
-          <h3 id="statOnline">0</h3>
-        </div>
-        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
-          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.828a5 5 0 010-7.072m7.072 0a5 5 0 010 7.072M13 12a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-info">
-          <p>Equipos Empresa</p>
-          <h3 id="statEmpresas">0</h3>
-        </div>
-        <div class="stat-icon" style="background: rgba(231, 114, 34, 0.15); color: #E77222;">
-          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-info">
-          <p>Personas Naturales</p>
-          <h3 id="statPersonal">0</h3>
-        </div>
-        <div class="stat-icon" style="background: rgba(56, 116, 204, 0.15); color: #3874CC;">
-          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-info">
-          <p>Total Registrados</p>
-          <h3 id="statTotal">0</h3>
-        </div>
-        <div class="stat-icon" style="background: rgba(148, 163, 184, 0.15); color: #94A3B8;">
-          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- Workspace Grid -->
-    <div class="workspace-grid">
+    <!-- MAIN WORKSPACE -->
+    <main class="app-main">
       
-      <!-- Generator Left Column -->
-      <div class="panel-card">
-        <div class="panel-title">
-          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-          Nueva Sesión de Soporte
+      <!-- Topbar -->
+      <header class="main-topbar">
+        <div class="page-heading">
+          <h1>Centro de Asistencia Remota</h1>
+          <p>Supervisión en tiempo real y conexión desatendida corporativa</p>
         </div>
 
-        <form id="createForm" onsubmit="handleCreateSession(event)">
-          
-          <!-- Mode Switcher -->
-          <label>¿A quién va dirigido el soporte?</label>
-          <div class="mode-switcher">
-            <div class="mode-btn empresa active" id="btnModeEmpresa" onclick="setCreationMode('empresa')">
-              🏢 Empresa
-            </div>
-            <div class="mode-btn personal" id="btnModePersonal" onclick="setCreationMode('personal')">
-              👤 Persona Natural
-            </div>
-          </div>
-          <input type="hidden" id="clientTypeInput" value="empresa">
-
-          <!-- Notice explanation -->
-          <div class="info-notice orange" id="noticeText">
-            <span>🏢 <strong>Empresa:</strong> Se genera instalador con elevación UAC y servicio en segundo plano para iniciar con Windows.</span>
+        <div class="topbar-actions">
+          <div class="search-input-box">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" class="search-field" placeholder="Buscar equipo, código, ID..." oninput="handleSearchInput(event)">
           </div>
 
-          <!-- Client / Machine Name -->
-          <div class="form-group">
-            <label id="lblClientName">Nombre de la Empresa o Equipo</label>
-            <input type="text" id="clientNameInput" class="input-field" placeholder="Ej: Sucursal Central / Caja 01" required>
-          </div>
-
-          <!-- Empresa Group Selection (VISIBLE FOR EMPRESA) -->
-          <div class="form-group" id="empresaGroupContainer">
-            <label for="groupSelect">Asignar a Grupo Corporativo / Sede</label>
-            <div style="display:flex; gap:8px;">
-              <select id="groupSelect" class="input-field"></select>
-              <button type="button" class="btn btn-outline btn-sm" onclick="promptNewGroup()" title="Crear nueva sede o grupo">+</button>
-            </div>
-          </div>
-
-          <button type="submit" class="btn" id="btnSubmit">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-            <span id="btnSubmitText">Generar Enlace para Empresa</span>
+          <button type="button" class="btn-create-session" style="padding:10px 16px; font-size:13px; width:auto;" onclick="openSessionModal()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+            <span>Generar Enlace</span>
           </button>
-        </form>
+        </div>
+      </header>
 
-        <!-- Generated Link Card -->
-        <div class="link-share-card" id="linkBox">
-          <div style="display:flex; align-items:center; justify-content:space-between;">
-            <span style="font-size:11px; font-weight:700; color:var(--orange);" id="shareModeTitle">ENLACE GENERADO</span>
-            <span id="badgeShareType" style="font-size:10px; padding:2px 7px; border-radius:4px; font-weight:700;"></span>
+      <!-- KPI Summary Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-meta">
+            <p>Clientes En Línea</p>
+            <h3 id="statOnline">0</h3>
           </div>
-          <div class="share-input-row">
-            <input type="text" id="generatedUrl" readonly>
-            <button type="button" class="btn btn-blue btn-sm" onclick="copyLink()">📋 Copiar</button>
+          <div class="stat-icon-wrap" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.828a5 5 0 010-7.072m7.072 0a5 5 0 010 7.072M13 12a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
           </div>
-          <p style="font-size:11px; color:var(--text-dim); line-height:1.4;" id="shareExplanation"></p>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-meta">
+            <p>Equipos Empresa</p>
+            <h3 id="statEmpresas">0</h3>
+          </div>
+          <div class="stat-icon-wrap" style="background: rgba(231, 114, 34, 0.15); color: #E77222;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-meta">
+            <p>Personas Naturales</p>
+            <h3 id="statPersonal">0</h3>
+          </div>
+          <div class="stat-icon-wrap" style="background: rgba(56, 116, 204, 0.15); color: #3874CC;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-meta">
+            <p>Total Registrados</p>
+            <h3 id="statTotal">0</h3>
+          </div>
+          <div class="stat-icon-wrap" style="background: rgba(148, 163, 184, 0.15); color: #94A3B8;">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
         </div>
       </div>
 
-      <!-- Right Column: Organized Workspace -->
-      <div class="panel-card">
+      <!-- Main Workspace Panel -->
+      <section class="workspace-panel">
         
-        <!-- Category Navigation -->
-        <div class="category-nav">
-          <div class="tabs-group">
-            <div class="main-tab empresa-tab active" data-cat="empresa" onclick="setCategoryTab('empresa')">
-              🏢 Empresas <span class="tab-badge" id="countTabEmpresa">0</span>
+        <!-- Filter Toolbar -->
+        <div class="toolbar-row">
+          <div class="category-pills">
+            <div class="main-tab active" data-cat="empresa" onclick="setCategoryTab('empresa')">
+              🏢 Empresas
             </div>
             <div class="main-tab" data-cat="personal" onclick="setCategoryTab('personal')">
-              👤 Personas Naturales <span class="tab-badge" id="countTabPersonal">0</span>
+              👤 Personas Naturales
             </div>
             <div class="main-tab" data-cat="all" onclick="setCategoryTab('all')">
-              🌐 Todos los Equipos <span class="tab-badge" id="countTabAll">0</span>
+              🌐 Todos los Equipos
             </div>
           </div>
-        </div>
 
-        <!-- Subfilters Bar Toolbar -->
-        <div class="subfilter-bar">
-          
-          <div class="filter-tools-left">
-            <!-- Search Box -->
-            <div class="search-box-wrapper">
-              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
-              <input type="text" id="searchInput" class="filter-search-input" placeholder="Buscar equipo o ID..." oninput="handleSearchInput(event)">
-            </div>
-
-            <!-- Corporate Group Dropdown Filter -->
-            <div class="group-dropdown-wrapper" id="groupFilterBox">
-              <span class="group-dropdown-label">
-                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                Grupo:
-              </span>
+          <div class="filter-tools">
+            <div class="group-filter-box" id="groupFilterBox">
               <select id="groupFilterSelect" class="group-filter-select" onchange="selectGroupDropdown(this.value)">
-                <option value="all">🏢 Todos los grupos</option>
+                <option value="all">🏢 Todas las Sedes</option>
               </select>
+              <button type="button" class="btn-add-group-mini" onclick="promptNewGroup()" title="Agregar nuevo grupo">+</button>
             </div>
-          </div>
 
-          <!-- Status pills -->
-          <div class="status-filter-pills">
-            <div class="s-pill active" data-status="all" onclick="setStatusFilter('all')">Todos</div>
-            <div class="s-pill" data-status="online" onclick="setStatusFilter('online')"><span class="status-dot-pulse"></span> En Línea</div>
-            <div class="s-pill" data-status="inactive" onclick="setStatusFilter('inactive')">Inactivos</div>
+            <div class="status-pills">
+              <div class="s-pill active" data-status="all" onclick="setStatusFilter('all')">Todos</div>
+              <div class="s-pill" data-status="online" onclick="setStatusFilter('online')"><span class="status-dot-pulse"></span> En Línea</div>
+              <div class="s-pill" data-status="inactive" onclick="setStatusFilter('inactive')">Inactivos</div>
+            </div>
+
+            <div class="view-switcher">
+              <div class="view-btn active" id="btnViewTable" onclick="switchView('table')" title="Vista Tabla">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                <span>Tabla</span>
+              </div>
+              <div class="view-btn" id="btnViewGrid" onclick="switchView('grid')" title="Vista Tarjetas">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Tarjetas</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Sessions Table -->
-        <div class="table-container">
+        <!-- Table View -->
+        <div class="table-container" id="tableViewContainer">
           <table>
             <thead>
               <tr id="tableHeaderRow">
                 <th style="width:115px;">Código</th>
                 <th>Cliente / Equipo</th>
-                <th id="thColGrupo" style="width:160px;">Grupo Corporativo</th>
+                <th id="thColGrupo" style="width:160px;">Sede / Grupo</th>
                 <th style="width:125px;">Estado</th>
                 <th style="width:145px;">ID Remoto</th>
                 <th style="text-align:right; width:250px;">Acciones</th>
@@ -1488,30 +1449,101 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
             </thead>
             <tbody id="sessionsBody">
               <tr>
-                <td colspan="6" style="text-align:center; padding:40px; color:var(--text-dim);">Cargando registros...</td>
+                <td colspan="6" style="text-align:center; padding:40px; color:var(--text-dim);">Cargando registros de equipos...</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-      </div>
+        <!-- Grid View (Cards) -->
+        <div class="grid-container" id="gridViewContainer">
+          <!-- Populated dynamically via renderSessions() -->
+        </div>
 
-    </div>
+      </section>
+
+    </main>
 
   </div>
 
+  <!-- TOAST NOTIFICATION (POPOVER) -->
   <div class="toast" id="toastBox" popover="manual">
     <span id="toastMsg">Acción completada</span>
   </div>
 
-  <!-- Modal: Crear Nuevo Grupo Corporativo -->
+  <!-- MODAL: GENERAR NUEVA SESIÓN DE SOPORTE -->
+  <dialog id="newSessionModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge">⚡</div>
+          <div>
+            <h3 class="modal-title">Generar Enlace de Asistencia</h3>
+            <p class="modal-subtitle">Crea una sesión de soporte directo o instalación permanente</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeSessionModal()" title="Cerrar">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="createForm" onsubmit="handleCreateSession(event)">
+          <label class="modal-label">Modalidad de Atención:</label>
+          <div class="mode-switcher">
+            <div class="mode-btn empresa active" id="btnModeEmpresa" onclick="setCreationMode('empresa')">
+              🏢 Empresa (Permanente)
+            </div>
+            <div class="mode-btn personal" id="btnModePersonal" onclick="setCreationMode('personal')">
+              👤 Persona Natural (Temporal)
+            </div>
+          </div>
+          <input type="hidden" id="clientTypeInput" value="empresa">
+
+          <div class="info-notice orange" id="noticeText">
+            <span>🏢 <strong>Modo Empresa:</strong> Genera instalador desatendido que iniciará automáticamente con Windows.</span>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label class="modal-label" id="lblClientName">Nombre de la Empresa o Equipo:</label>
+            <input type="text" id="clientNameInput" class="modal-input" placeholder="Ej: Sucursal Central / Caja 01" required>
+          </div>
+
+          <div style="margin-bottom: 20px;" id="empresaGroupContainer">
+            <label class="modal-label" for="groupSelect">Asignar a Grupo Corporativo / Sede:</label>
+            <div style="display:flex; gap:8px;">
+              <select id="groupSelect" class="modal-input" style="cursor:pointer;"></select>
+              <button type="button" class="btn-save-group" style="padding:0 14px; font-size:16px;" onclick="promptNewGroup()" title="Crear nueva sede">+</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-create-session" id="btnSubmit" style="height:46px; font-size:14px;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            <span id="btnSubmitText">Generar Enlace para Empresa</span>
+          </button>
+        </form>
+
+        <div class="link-share-card" id="linkBox">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:11px; font-weight:700; color:var(--orange);" id="shareModeTitle">ENLACE GENERADO</span>
+            <span id="badgeShareType" style="font-size:10px; padding:2px 7px; border-radius:4px; font-weight:700;"></span>
+          </div>
+          <div class="share-input-row">
+            <input type="text" id="generatedUrl" readonly>
+            <button type="button" class="btn-save-group" style="padding:0 14px; font-size:12px;" onclick="copyLink()">📋 Copiar</button>
+          </div>
+          <p style="font-size:11px; color:var(--text-dim); line-height:1.4;" id="shareExplanation"></p>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: NUEVO GRUPO CORPORATIVO -->
   <dialog id="newGroupModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title-wrap">
           <div class="modal-icon-badge">🏢</div>
           <div>
-            <h3 class="modal-title">Nuevo Grupo Corporativo</h3>
+            <h3 class="modal-title">Nueva Sede o Grupo Corporativo</h3>
             <p class="modal-subtitle">Organiza tus equipos por empresa, sucursal o sede</p>
           </div>
         </div>
@@ -1525,8 +1557,8 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline modal-btn-cancel" onclick="closeGroupModal()">Cancelar</button>
-        <button type="button" class="btn btn-save-group" id="btnSaveGroup" onclick="submitNewGroup()">
+        <button type="button" class="modal-btn-cancel" onclick="closeGroupModal()">Cancelar</button>
+        <button type="button" class="btn-save-group" id="btnSaveGroup" onclick="submitNewGroup()">
           <span>Guardar Grupo</span>
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
         </button>
@@ -1535,7 +1567,7 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
   </dialog>
 
   <?php if ($isAdmin): ?>
-  <!-- Modal: Gestión de Usuarios (Solo Administrador) -->
+  <!-- MODAL: GESTIÓN DE USUARIOS (ADMIN) -->
   <dialog id="usersModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
     <div class="modal-card" style="max-width: 660px;">
       <div class="modal-header">
@@ -1552,12 +1584,9 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       </div>
 
       <div class="modal-body" style="padding: 20px 24px;">
-        
-        <!-- Formulario Crear Usuario -->
-        <div class="user-create-box">
-          <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px; display:flex; align-items:center; gap:6px;">
-            <span>➕ Crear Nuevo Usuario</span>
-          </div>
+        <!-- Form Crear Usuario -->
+        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px;">
+          <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;">➕ Crear Nuevo Usuario Técnico</div>
           <form id="createUserForm" onsubmit="handleCreateUser(event)" style="display:grid; grid-template-columns: 1fr 1fr 1fr 120px; gap: 10px; align-items: end;">
             <div>
               <label class="modal-label" style="font-size:11px;">Nombre</label>
@@ -1579,14 +1608,14 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
               </select>
             </div>
             <div style="grid-column: 1 / -1; display:flex; justify-content:flex-end; margin-top: 4px;">
-              <button type="submit" class="btn btn-save-group" id="btnSubmitUser" style="padding:8px 18px; font-size:12.5px;">
+              <button type="submit" class="btn-save-group" id="btnSubmitUser" style="padding:8px 18px; font-size:12.5px;">
                 <span>+ Guardar Usuario</span>
               </button>
             </div>
           </form>
         </div>
 
-        <!-- Tabla de Usuarios Registrados -->
+        <!-- Tabla Usuarios -->
         <div style="margin-top: 20px;">
           <div style="font-size: 12px; font-weight: 700; color: #94A3B8; text-transform:uppercase; letter-spacing:0.06em; margin-bottom: 10px;">
             Usuarios Registrados
@@ -1607,17 +1636,16 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
             </table>
           </div>
         </div>
-
       </div>
 
-      <div class="modal-footer" style="padding: 12px 24px;">
-        <button type="button" class="btn btn-outline modal-btn-cancel" onclick="closeUsersModal()">Cerrar</button>
+      <div class="modal-footer">
+        <button type="button" class="modal-btn-cancel" onclick="closeUsersModal()">Cerrar</button>
       </div>
     </div>
   </dialog>
   <?php endif; ?>
 
-  <!-- Modal: Confirmación Elegante -->
+  <!-- MODAL: CONFIRMACIÓN ELEGANTE -->
   <dialog id="confirmActionModal" class="app-dialog" style="z-index: 10005;" onclick="handleDialogBackdropClick(event)">
     <div class="modal-card" style="max-width: 440px; border-color: rgba(239, 68, 68, 0.35); box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(239, 68, 68, 0.2);">
       <div class="modal-header" style="background: rgba(239, 68, 68, 0.05); border-bottom: 1px solid rgba(255, 255, 255, 0.07);">
@@ -1647,11 +1675,14 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
   <script>
     let rawSessions = [];
     let customGroups = [];
-    let currentCategory = 'empresa'; // View defaults to Empresa
+    let currentCategory = 'empresa'; // 'empresa' | 'personal' | 'all'
     let currentGroupFilter = 'all';
     let currentStatusFilter = 'all';
+    let currentViewMode = 'table'; // 'table' | 'grid'
+    let currentSearchQuery = '';
     let previousOnlineIds = new Set();
     let isInitialLoad = true;
+    let confirmCallback = null;
 
     function showToast(msg) {
       const toast = document.getElementById('toastBox');
@@ -1670,9 +1701,30 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       }, 2800);
     }
 
+    function switchView(mode) {
+      currentViewMode = mode;
+      document.getElementById('btnViewTable').classList.toggle('active', mode === 'table');
+      document.getElementById('btnViewGrid').classList.toggle('active', mode === 'grid');
+      document.getElementById('tableViewContainer').style.display = mode === 'table' ? 'block' : 'none';
+      document.getElementById('gridViewContainer').style.display = mode === 'grid' ? 'grid' : 'none';
+      renderSessions();
+    }
+
+    function openSessionModal() {
+      const modal = document.getElementById('newSessionModal');
+      if (modal.showModal) modal.showModal();
+      else modal.classList.add('active');
+      setTimeout(() => document.getElementById('clientNameInput').focus(), 80);
+    }
+
+    function closeSessionModal() {
+      const modal = document.getElementById('newSessionModal');
+      if (modal.close) modal.close();
+      else modal.classList.remove('active');
+    }
+
     function setCreationMode(type) {
       document.getElementById('clientTypeInput').value = type;
-      
       const btnP = document.getElementById('btnModePersonal');
       const btnE = document.getElementById('btnModeEmpresa');
       const notice = document.getElementById('noticeText');
@@ -1684,22 +1736,20 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         btnP.classList.remove('active');
         btnE.classList.add('active');
         notice.className = 'info-notice orange';
-        notice.innerHTML = `<span>🏢 <strong>Empresa:</strong> Se genera instalador con elevación UAC y servicio en segundo plano para iniciar con Windows.</span>`;
+        notice.innerHTML = `<span>🏢 <strong>Modo Empresa:</strong> Genera instalador desatendido que iniciará automáticamente con Windows.</span>`;
         grpCont.style.display = 'block';
-        lblName.innerText = "Nombre de la Empresa o Equipo";
+        lblName.innerText = "Nombre de la Empresa o Equipo:";
         btnText.innerText = "Generar Enlace para Empresa";
       } else {
         btnE.classList.remove('active');
         btnP.classList.add('active');
         notice.className = 'info-notice';
-        notice.innerHTML = `<span>👤 <strong>Persona Natural:</strong> Asistente temporal directo sin requerir instalación. Se asigna automáticamente a Personas Naturales.</span>`;
+        notice.innerHTML = `<span>👤 <strong>Persona Natural:</strong> Asistente temporal directo de un solo clic sin requerir instalación.</span>`;
         grpCont.style.display = 'none';
-        lblName.innerText = "Nombre del Cliente";
+        lblName.innerText = "Nombre del Cliente:";
         btnText.innerText = "Generar Enlace para Persona Natural";
       }
     }
-
-    let currentSearchQuery = '';
 
     function handleSearchInput(e) {
       currentSearchQuery = e.target.value.trim();
@@ -1708,9 +1758,14 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 
     function setCategoryTab(cat) {
       currentCategory = cat;
+      // Sync main tab pills
       document.querySelectorAll('.main-tab').forEach(t => {
         t.classList.toggle('active', t.getAttribute('data-cat') === cat);
       });
+      // Sync sidebar nav items
+      document.getElementById('navItemEmpresas').classList.toggle('active', cat === 'empresa');
+      document.getElementById('navItemPersonal').classList.toggle('active', cat === 'personal');
+      document.getElementById('navItemAll').classList.toggle('active', cat === 'all');
 
       // Show group dropdown filter ONLY when viewing Empresa or Todos
       const grpFilterBox = document.getElementById('groupFilterBox');
@@ -1771,36 +1826,31 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 
     function updateGroupControls() {
       const companyGroups = new Set();
-      // Add existing from customGroups
       customGroups.forEach(g => { 
-        if (g && g !== 'General' && g !== 'Personas Naturales') {
-          companyGroups.add(g);
-        } 
+        if (g && g !== 'General' && g !== 'Personas Naturales') companyGroups.add(g);
       });
-      // Add existing from active sessions
       rawSessions.forEach(s => {
         if (s.client_type === 'empresa' && s.group_name && s.group_name !== 'Personas Naturales' && s.group_name !== 'General') {
           companyGroups.add(s.group_name);
         }
       });
-      
       const groupArr = Array.from(companyGroups);
       if (groupArr.length === 0) {
         groupArr.push('Oficina Central', 'Sucursales');
       }
 
-      // 1. Populate Generator group select
+      // 1. Generator Group Select
       const sel = document.getElementById('groupSelect');
-      const curr = sel.value;
-      sel.innerHTML = groupArr.map(g => `<option value="${escapeHtml(g)}">🏢 ${escapeHtml(g)}</option>`).join('');
-      if (curr && groupArr.includes(curr)) {
-        sel.value = curr;
+      if (sel) {
+        const curr = sel.value;
+        sel.innerHTML = groupArr.map(g => `<option value="${escapeHtml(g)}">🏢 ${escapeHtml(g)}</option>`).join('');
+        if (curr && groupArr.includes(curr)) sel.value = curr;
       }
 
-      // 2. Populate Group Filter Dropdown in Table Toolbar
+      // 2. Table Filter Select
       const grpFilterSelect = document.getElementById('groupFilterSelect');
       if (grpFilterSelect) {
-        let optHtml = `<option value="all">🏢 Todos los grupos</option>`;
+        let optHtml = `<option value="all">🏢 Todas las Sedes</option>`;
         groupArr.forEach(g => {
           const isSel = (currentGroupFilter === g) ? 'selected' : '';
           optHtml += `<option value="${escapeHtml(g)}" ${isSel}>🏢 ${escapeHtml(g)}</option>`;
@@ -1812,6 +1862,23 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
           grpFilterSelect.value = 'all';
           currentGroupFilter = 'all';
         }
+      }
+
+      // 3. Sidebar Groups Shortcut List
+      const sList = document.getElementById('sidebarGroupsList');
+      if (sList) {
+        sList.innerHTML = groupArr.slice(0, 5).map(g => {
+          const count = rawSessions.filter(s => s.group_name === g).length;
+          return `
+            <li class="nav-item ${currentGroupFilter === g ? 'active empresa' : ''}" onclick="setCategoryTab('empresa'); selectGroupDropdown('${escapeHtml(g)}');">
+              <div class="nav-label-wrap">
+                <span style="font-size:12px;">📁</span>
+                <span style="font-size:12px;">${escapeHtml(g)}</span>
+              </div>
+              <span class="nav-count">${count}</span>
+            </li>
+          `;
+        }).join('');
       }
     }
 
@@ -1838,6 +1905,7 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 
     function renderSessions() {
       const tbody = document.getElementById('sessionsBody');
+      const gridContainer = document.getElementById('gridViewContainer');
       const isPersonalView = (currentCategory === 'personal');
 
       // 1. Filter by category
@@ -1848,7 +1916,7 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         list = list.filter(s => s.client_type !== 'empresa');
       }
 
-      // 2. Filter by group (when viewing Empresa or All)
+      // 2. Filter by group
       if (currentCategory !== 'personal' && currentGroupFilter !== 'all') {
         list = list.filter(s => (s.group_name || '') === currentGroupFilter);
       }
@@ -1877,14 +1945,16 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         if (currentCategory === 'empresa') {
           emptyMsg = currentGroupFilter === 'all' 
             ? "No hay equipos empresariales registrados aún. Genere un enlace para instalar el primer equipo."
-            : `No hay equipos asignados al grupo "${escapeHtml(currentGroupFilter)}".`;
+            : `No hay equipos asignados a la sede "${escapeHtml(currentGroupFilter)}".`;
         } else if (currentCategory === 'personal') {
           emptyMsg = "No hay asistencias temporales de Personas Naturales activas.";
         }
         tbody.innerHTML = `<tr><td colspan="${colSpan}" style="text-align:center; padding:45px 20px; color:var(--text-dim); font-size:13.5px;"><div style="font-size:28px; margin-bottom:10px;">📋</div>${emptyMsg}</td></tr>`;
+        gridContainer.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:45px 20px; color:var(--text-dim); font-size:13.5px;"><div style="font-size:32px; margin-bottom:10px;">🗂️</div>${emptyMsg}</div>`;
         return;
       }
 
+      // Render Table Rows
       tbody.innerHTML = list.map(s => {
         const isOnline = s.status === 'online';
         const isWaiting = s.status === 'waiting';
@@ -1935,7 +2005,7 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         }
 
         const copyBtn = `
-          <button onclick="copySpecificUrl('${s.session_id}')" class="btn-act btn-act-copy" title="Copiar enlace de asistencia para este equipo">
+          <button onclick="copySpecificUrl('${s.session_id}')" class="btn-act btn-act-copy" title="Copiar enlace de descarga para este equipo">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
             <span>Copiar Link</span>
           </button>
@@ -1949,10 +2019,10 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 
         return `
           <tr>
-            <td><span class="code-badge code-badge-clickable" onclick="copySpecificUrl('${s.session_id}')" title="Clic para copiar enlace">${s.session_id}</span></td>
+            <td><span class="code-badge" onclick="copySpecificUrl('${s.session_id}')" title="Clic para copiar enlace">${s.session_id}</span></td>
             <td>
               <div class="client-cell">
-                <span class="client-name-title">${escapeHtml(s.client_name)}</span>
+                <span class="client-name-title">🖥️ ${escapeHtml(s.client_name)}</span>
                 <div>${tagType}</div>
               </div>
             </td>
@@ -1967,6 +2037,60 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
               </div>
             </td>
           </tr>
+        `;
+      }).join('');
+
+      // Render Cards Grid
+      gridContainer.innerHTML = list.map(s => {
+        const isOnline = s.status === 'online';
+        const isEmpresa = s.client_type === 'empresa';
+        let statusPill = isOnline 
+          ? `<span class="badge-status badge-online">● EN LÍNEA</span>` 
+          : `<span class="badge-status badge-closed">Inactivo</span>`;
+
+        let connectBtnGrid = s.rustdesk_id ? `
+          <button onclick="connectSession('${s.rustdesk_id}')" class="btn-act ${isOnline ? 'btn-act-connect' : 'btn-act-reconnect'}" style="width:100%; justify-content:center; height:36px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span>Conectar</span>
+          </button>
+        ` : `<div style="font-size:12px; color:var(--text-dim); text-align:center; padding:8px;">⏳ Pendiente de instalación</div>`;
+
+        return `
+          <div class="device-card">
+            <div class="card-top">
+              <div class="card-title-group">
+                <span class="card-device-name">🖥️ ${escapeHtml(s.client_name)}</span>
+                <span class="code-badge" style="width:fit-content;" onclick="copySpecificUrl('${s.session_id}')">${s.session_id}</span>
+              </div>
+              ${statusPill}
+            </div>
+
+            <div class="card-details">
+              <div class="card-detail-row">
+                <span class="card-detail-label">Modalidad:</span>
+                <span>${isEmpresa ? '🏢 Empresa' : '👤 Temporal'}</span>
+              </div>
+              ${isEmpresa ? `
+              <div class="card-detail-row">
+                <span class="card-detail-label">Sede / Grupo:</span>
+                <span style="color:#FB923C; font-weight:700;">🏢 ${escapeHtml(s.group_name || 'General')}</span>
+              </div>` : ''}
+              <div class="card-detail-row">
+                <span class="card-detail-label">ID Remoto:</span>
+                <span class="id-pill">${s.rustdesk_id || '---'}</span>
+              </div>
+            </div>
+
+            <div class="card-footer-actions">
+              ${connectBtnGrid}
+              <button onclick="copySpecificUrl('${s.session_id}')" class="btn-act btn-act-copy" title="Copiar Link" style="height:36px; padding:0 12px;">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+              </button>
+              <button onclick="deleteSessionPermanently('${s.session_id}')" class="btn-act-delete" title="Eliminar" style="height:36px; width:36px;">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          </div>
         `;
       }).join('');
     }
@@ -1989,25 +2113,25 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
           document.getElementById('linkBox').style.display = 'block';
           
           if (type === 'empresa') {
-            document.getElementById('shareModeTitle').innerText = 'ENLACE DE ASISTENCIA EMPRESARIAL';
+            document.getElementById('shareModeTitle').innerText = 'ENLACE ASISTENCIA EMPRESA';
             document.getElementById('badgeShareType').innerText = 'EMPRESA';
             document.getElementById('badgeShareType').style.background = 'rgba(231,114,34,0.2)';
             document.getElementById('badgeShareType').style.color = '#FB923C';
-            document.getElementById('shareExplanation').innerText = 'Descarga con elevación UAC. Se instalará de forma permanente e iniciará con Windows.';
+            document.getElementById('shareExplanation').innerText = 'Descarga con elevación UAC y servicio en segundo plano que iniciará con Windows.';
           } else {
             document.getElementById('shareModeTitle').innerText = 'ENLACE PERSONA NATURAL';
             document.getElementById('badgeShareType').innerText = 'NATURAL';
             document.getElementById('badgeShareType').style.background = 'rgba(56,116,204,0.2)';
             document.getElementById('badgeShareType').style.color = '#93C5FD';
-            document.getElementById('shareExplanation').innerText = 'Asistente temporal de 1 solo clic. No instala nada permanente en la computadora del cliente.';
+            document.getElementById('shareExplanation').innerText = 'Asistente temporal directo de 1 solo clic sin instalación permanente.';
           }
 
           document.getElementById('clientNameInput').value = '';
-          showToast(`Sesión para ${data.session.client_name} generada`);
+          showToast(`¡Enlace para "${data.session.client_name}" creado con éxito!`);
           loadSessions();
         }
       } catch (err) {
-        alert("Error al generar sesión");
+        showToast("Error al generar sesión");
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg> <span id="btnSubmitText">${type === 'empresa' ? 'Generar Enlace para Empresa' : 'Generar Enlace para Persona Natural'}</span>`;
@@ -2060,10 +2184,9 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
         const res = await fetch(`api.php?action=add_group&group_name=${encodeURIComponent(gName)}`);
         const data = await res.json();
         if (data.success) {
-          showToast(`Grupo corporativo "${gName}" agregado con éxito`);
+          showToast(`Sede corporativa "${gName}" agregada con éxito`);
           closeGroupModal();
           await loadSessions();
-          // Select newly created group in the generator select
           const sel = document.getElementById('groupSelect');
           if (sel) sel.value = gName;
         } else {
@@ -2236,54 +2359,47 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 
         const res = await fetch('api.php', { method: 'POST', body: formData });
         const data = await res.json();
-
         if (data.success) {
-          showToast(`¡Usuario ${u} creado con éxito!`);
-          document.getElementById('newUserUsername').value = '';
-          document.getElementById('newUserName').value = '';
-          document.getElementById('newUserPassword').value = '';
+          showToast(`Usuario "${u}" creado con éxito`);
+          document.getElementById('createUserForm').reset();
           loadUsersList();
         } else {
-          showToast(`⚠️ ${data.error || 'Error al crear usuario'}`);
+          showToast(data.error || "Error al crear usuario");
         }
       } catch (err) {
-        showToast("Error de conexión");
+        showToast("Error al procesar la solicitud");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span>+ Guardar Usuario</span>`;
+        btn.innerText = "+ Guardar Usuario";
       }
     }
 
     function deleteUserAccount(username) {
       showConfirmDialog({
         title: 'Eliminar Usuario',
-        message: `¿Estás seguro de eliminar al usuario <strong>'${escapeHtml(username)}'</strong>?<br><span style="font-size:12px; color:#94A3B8;">Esta cuenta perderá de inmediato el acceso al panel técnico.</span>`,
-        iconHtml: '🗑️',
+        message: `¿Estás seguro de que deseas eliminar la cuenta de <strong>${escapeHtml(username)}</strong>?<br><span style="font-size:12px; color:#94A3B8;">Este usuario ya no podrá iniciar sesión en el panel técnico.</span>`,
+        iconHtml: '👤',
         confirmText: 'Sí, Eliminar',
         isDanger: true,
         onConfirm: async () => {
           try {
             const formData = new FormData();
             formData.append('action', 'delete_user');
-            formData.append('target_user', username);
-
+            formData.append('username', username);
             const res = await fetch('api.php', { method: 'POST', body: formData });
             const data = await res.json();
             if (data.success) {
-              showToast(`Usuario ${username} eliminado`);
+              showToast(`Usuario "${username}" eliminado`);
               loadUsersList();
             } else {
-              showToast(`⚠️ ${data.error || 'Error al eliminar usuario'}`);
+              showToast(data.error || "Error al eliminar");
             }
-          } catch (err) {
-            showToast("Error al eliminar");
+          } catch (e) {
+            showToast("Error de conexión");
           }
         }
       });
     }
-
-    // Confirmation Dialog Controller
-    let confirmCallback = null;
 
     function showConfirmDialog({ title, message, iconHtml, confirmText, isDanger, onConfirm }) {
       const modal = document.getElementById('confirmActionModal');
@@ -2339,7 +2455,7 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
       }
     }
 
-    // Initialize with Empresa view as requested
+    // Initialize with Empresa view
     setCategoryTab('empresa');
     setInterval(loadSessions, 3000);
     loadSessions();
