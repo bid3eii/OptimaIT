@@ -16,7 +16,7 @@ namespace OptimaIT
         private string sessionId = "";
         private string rustdeskId = "";
         private string clientType = "personal"; // "personal" o "empresa"
-        private string serverUrl = "http://155.133.197.176";
+        private string serverUrl = "http://optimait.155.133.197.176.sslip.io";
         private string serverIp = "155.133.197.176";
         private string serverKey = "wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=";
         private System.Windows.Forms.Timer timer;
@@ -34,7 +34,7 @@ namespace OptimaIT
                 this.serverIp = sHost;
                 if (!sHost.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !sHost.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.serverUrl = "https://" + sHost;
+                    this.serverUrl = "http://" + sHost;
                 }
                 else
                 {
@@ -490,8 +490,9 @@ namespace OptimaIT
 
                         string[] tryUrls = new string[] {
                             serverUrl + "/api.php" + queryParams,
-                            "https://" + serverIp + "/api.php" + queryParams,
+                            "http://optimait.155.133.197.176.sslip.io/api.php" + queryParams,
                             "http://" + serverIp + "/api.php" + queryParams,
+                            "https://" + serverIp + "/api.php" + queryParams,
                             serverUrl + "/OptimaIT/api.php" + queryParams
                         };
 
@@ -853,20 +854,19 @@ namespace OptimaIT
 
                 while (true)
                 {
-                    try
-                    {
-                        using (WebClient wc = new WebClient())
-                        {
-                            wc.DownloadString("https://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId));
-                        }
-                    }
-                    catch
+                    string[] hbUrls = new string[] {
+                        "http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
+                        "http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
+                        "https://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId)
+                    };
+                    foreach (string hUrl in hbUrls)
                     {
                         try
                         {
                             using (WebClient wc = new WebClient())
                             {
-                                wc.DownloadString("http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId));
+                                wc.DownloadString(hUrl);
+                                break;
                             }
                         }
                         catch { }

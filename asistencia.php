@@ -24,9 +24,9 @@ if (isset($_GET['descargar'])) {
     
     // Prefix determines self-elevation in C# launcher
     $prefix = ($clientType === 'empresa') ? "OptimaIT_Empresa" : "OptimaIT_Asistente";
-    $serverHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : '155.133.197.176';
-    if ($serverHost === 'localhost' || $serverHost === '127.0.0.1') {
-        $serverHost = '155.133.197.176';
+    $serverHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : 'optimait.155.133.197.176.sslip.io';
+    if ($serverHost === 'localhost' || $serverHost === '127.0.0.1' || $serverHost === '155.133.197.176') {
+        $serverHost = 'optimait.155.133.197.176.sslip.io';
     }
     $downloadName = "{$prefix}_{$sessionId},host={$serverHost},key=wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=.exe";
     header('Content-Description: File Transfer');

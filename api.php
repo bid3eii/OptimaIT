@@ -138,6 +138,7 @@ switch ($action) {
         $netOut = [];
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             @exec('netstat -ano -p tcp | findstr 21116 | findstr ESTABLISHED', $netOut);
+        } else {
             @exec('ss -nt 2>/dev/null | grep :21116 | grep ESTAB || netstat -tn 2>/dev/null | grep :21116 | grep ESTABLISHED', $netOut);
         }
         foreach ($netOut as $nLine) {

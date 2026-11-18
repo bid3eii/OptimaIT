@@ -1990,6 +1990,7 @@ $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 
     function connectSession(id) {
       showToast(`Conectando con equipo ${id}...`);
+      fetch(`api.php?action=mark_online&id=${encodeURIComponent(id)}`).then(() => loadSessions()).catch(() => {});
       window.location.href = `rustdesk://${id}`;
     }
 
