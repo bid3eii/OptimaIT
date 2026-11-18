@@ -1211,6 +1211,342 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     .btn-confirm-warning:hover { filter: brightness(1.12); transform: translateY(-1px); }
 
+    /* ENHANCED USERS MANAGEMENT MODAL */
+    .modal-frame.users-modal-custom {
+      max-width: 780px;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      box-shadow: 0 25px 65px -12px rgba(0, 0, 0, 0.9), 0 0 45px -5px rgba(37, 99, 235, 0.22);
+    }
+    .users-modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(37, 99, 235, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38BDF8;
+    }
+    .users-modal-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 8px #38BDF8;
+    }
+    .user-create-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.7) 0%, rgba(9, 14, 26, 0.8) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.4);
+    }
+    .user-create-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .user-create-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+    }
+    .user-create-title svg {
+      color: #FF6B00;
+    }
+    .user-create-tag {
+      font-size: 11px;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+    .user-create-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px 18px;
+      align-items: start;
+    }
+    @media (max-width: 640px) {
+      .user-create-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .user-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .user-field-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #CBD5E1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .user-field-label svg {
+      color: #94A3B8;
+    }
+    .user-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .user-input-wrap .field-icon {
+      position: absolute;
+      left: 14px;
+      color: #64748B;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+    .user-input-wrap input,
+    .user-input-wrap select {
+      width: 100%;
+      background: rgba(6, 9, 19, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 11px;
+      padding: 10px 14px 10px 40px;
+      font-size: 13px;
+      color: #FFFFFF;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .user-input-wrap input:focus,
+    .user-input-wrap select:focus {
+      border-color: #FF6B00;
+      background: rgba(6, 9, 19, 0.95);
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.25);
+    }
+    .user-input-wrap input:focus + .field-icon,
+    .user-input-wrap select:focus + .field-icon {
+      color: #FF6B00;
+    }
+    .btn-pwd-eye {
+      position: absolute;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #64748B;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .btn-pwd-eye:hover {
+      color: #CBD5E1;
+    }
+    .user-form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 6px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+    .btn-submit-operator {
+      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 11px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px -2px rgba(255, 107, 0, 0.45);
+      transition: all 0.2s;
+    }
+    .btn-submit-operator:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.1);
+      box-shadow: 0 6px 20px -2px rgba(255, 107, 0, 0.55);
+    }
+    .btn-submit-operator:active {
+      transform: translateY(0);
+    }
+    .btn-submit-operator:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Active Users Table Section */
+    .spin-icon { animation: spinRotate 0.85s linear infinite; }
+    @keyframes spinRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* Active Users Table Section */
+    .users-table-card {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      background: rgba(6, 9, 19, 0.6);
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+    .users-table-header-bar {
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .users-table-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .users-table-container {
+      max-height: 250px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    }
+    .users-modern-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .users-modern-table th {
+      padding: 11px 18px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .users-modern-table td {
+      padding: 13px 18px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #CBD5E1;
+      vertical-align: middle;
+    }
+    .users-modern-table tr:last-child td {
+      border-bottom: none;
+    }
+    .users-modern-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .user-cell-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-avatar-disc {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      flex-shrink: 0;
+      letter-spacing: -0.02em;
+    }
+    .user-avatar-disc.admin {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #FBBF24;
+    }
+    .user-avatar-disc.tech {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(56, 189, 248, 0.15) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38BDF8;
+    }
+    .user-profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .user-profile-name {
+      font-weight: 700;
+      color: #FFFFFF;
+      font-size: 13px;
+    }
+    .user-profile-handle {
+      font-size: 11.5px;
+      color: #94A3B8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .user-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .user-role-badge.admin {
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #FBBF24;
+    }
+    .user-role-badge.tech {
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38BDF8;
+    }
+    .user-badge-self {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: #94A3B8;
+    }
+    .btn-delete-operator {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.22);
+      color: #F87171;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-delete-operator:hover {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.3);
+    }
+
     /* RESPONSIVE ADAPTATIONS */
     @media (max-width: 1080px) {
       .app-sidebar { width: 76px; }
@@ -1573,76 +1909,139 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
   </dialog>
 
   <?php if ($isAdmin): ?>
-  <!-- MODAL: GESTIÓN DE TÉCNICOS -->
+  <!-- MODAL: GESTIÓN DE TÉCNICOS & ACCESOS -->
   <dialog id="usersModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
-    <div class="modal-frame" style="max-width: 660px;">
-      <div class="modal-header-row">
+    <div class="modal-frame users-modal-custom">
+      <div class="modal-header-row" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(56, 189, 248, 0.03) 100%); border-bottom: 1px solid rgba(56, 189, 248, 0.2);">
         <div class="modal-headline-wrap">
-          <div class="modal-icon-bubble" style="background:linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(56, 189, 248, 0.15) 100%); border-color:rgba(56, 189, 248, 0.4);">
-            👥
+          <div class="modal-icon-bubble" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.3) 0%, rgba(56, 189, 248, 0.15) 100%); border-color: rgba(56, 189, 248, 0.45); color: #38BDF8;">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           </div>
           <div>
-            <h3 class="modal-headline-title">Gestión de Cuentas Técnicas</h3>
-            <p class="modal-headline-sub">Administra los técnicos con acceso al panel de control</p>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <h3 class="modal-headline-title">Gestión de Cuentas y Operadores</h3>
+              <div class="users-modal-badge" id="usersCountBadge">
+                <span class="dot"></span>
+                <span id="usersCountText">Cargando...</span>
+              </div>
+            </div>
+            <p class="modal-headline-sub">Control de credenciales y roles con acceso a la consola de soporte</p>
           </div>
         </div>
         <button type="button" class="modal-close-x" onclick="closeUsersModal()" title="Cerrar">&times;</button>
       </div>
 
       <div class="modal-body-content" style="padding: 22px 26px;">
-        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px;">
-          <div style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin-bottom: 12px;">➕ Crear Nuevo Técnico</div>
-          <form id="createUserForm" onsubmit="handleCreateUser(event)" style="display:grid; grid-template-columns: 1fr 1fr 1fr 120px; gap: 10px; align-items: end;">
-            <div>
-              <label class="input-label" style="font-size:11px;">Nombre</label>
-              <input type="text" id="newUserName" class="modal-text-input" style="padding:9px 12px; font-size:13px;" placeholder="Ej: Juan Perez" required>
+        <!-- Card: Crear Nuevo Operador -->
+        <div class="user-create-card">
+          <div class="user-create-header">
+            <div class="user-create-title">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+              <span>Registrar Nuevo Operador</span>
             </div>
-            <div>
-              <label class="input-label" style="font-size:11px;">Usuario</label>
-              <input type="text" id="newUserUsername" class="modal-text-input" style="padding:9px 12px; font-size:13px;" placeholder="Ej: jperez" required autocomplete="off">
-            </div>
-            <div>
-              <label class="input-label" style="font-size:11px;">Contraseña</label>
-              <input type="password" id="newUserPassword" class="modal-text-input" style="padding:9px 12px; font-size:13px;" placeholder="Mínimo 4 caracteres" required autocomplete="new-password">
-            </div>
-            <div>
-              <label class="input-label" style="font-size:11px;">Rol</label>
-              <select id="newUserRole" class="modal-text-input" style="padding:9px 10px; font-size:12.5px; cursor:pointer;">
-                <option value="tecnico">Técnico</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-            <div style="grid-column: 1 / -1; display:flex; justify-content:flex-end; margin-top: 4px;">
-              <button type="submit" class="btn-modal-save" id="btnSubmitUser" style="padding:8px 18px; font-size:12.5px;">
-                <span>+ Guardar Usuario</span>
-              </button>
+            <span class="user-create-tag">Credenciales encriptadas con Bcrypt</span>
+          </div>
+
+          <form id="createUserForm" onsubmit="handleCreateUser(event)">
+            <div class="user-create-grid">
+              <!-- Nombre Completo -->
+              <div class="user-field-group">
+                <label class="user-field-label" for="newUserName">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                  Nombre Completo
+                </label>
+                <div class="user-input-wrap">
+                  <input type="text" id="newUserName" placeholder="Ej: Juan Perez" required autocomplete="name">
+                  <svg class="field-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+              </div>
+
+              <!-- Nombre de Usuario -->
+              <div class="user-field-group">
+                <label class="user-field-label" for="newUserUsername">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
+                  Usuario de Acceso
+                </label>
+                <div class="user-input-wrap">
+                  <input type="text" id="newUserUsername" placeholder="Ej: jperez" required autocomplete="username">
+                  <svg class="field-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path></svg>
+                </div>
+              </div>
+
+              <!-- Contraseña -->
+              <div class="user-field-group">
+                <label class="user-field-label" for="newUserPassword">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+                  Contraseña de Seguridad
+                </label>
+                <div class="user-input-wrap">
+                  <input type="password" id="newUserPassword" placeholder="Mínimo 4 caracteres" required autocomplete="new-password">
+                  <svg class="field-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+                  <button type="button" class="btn-pwd-eye" onclick="togglePasswordVisibility('newUserPassword', this)" title="Ver / Ocultar">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Rol / Nivel -->
+              <div class="user-field-group">
+                <label class="user-field-label" for="newUserRole">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                  Privilegio / Rol
+                </label>
+                <div class="user-input-wrap">
+                  <select id="newUserRole">
+                    <option value="tecnico">Técnico de Soporte (Estándar)</option>
+                    <option value="admin">Administrador General (Acceso Total)</option>
+                  </select>
+                  <svg class="field-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+              </div>
+
+              <!-- Action Bar -->
+              <div class="user-form-actions">
+                <button type="submit" class="btn-submit-operator" id="btnSubmitUser">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                  <span>Crear y Habilitar Operador</span>
+                </button>
+              </div>
             </div>
           </form>
         </div>
 
-        <div style="margin-top: 20px;">
-          <div style="font-size: 12px; font-weight: 800; color: #94A3B8; text-transform:uppercase; letter-spacing:0.06em; margin-bottom: 10px;">
-            Cuentas Activas
+        <!-- Section: Cuentas Activas Table -->
+        <div class="users-table-card">
+          <div class="users-table-header-bar">
+            <div class="users-table-title">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Cuentas Activas en el Sistema
+            </div>
+            <span style="font-size: 11px; color: #64748B;">Sincronizado en tiempo real</span>
           </div>
-          <div style="max-height: 220px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(6,9,19,0.5);">
-            <table style="width: 100%;">
+
+          <div class="users-table-container">
+            <table class="users-modern-table">
               <thead>
                 <tr>
-                  <th style="padding: 10px 14px; font-size: 11px;">Usuario</th>
-                  <th style="padding: 10px 14px; font-size: 11px;">Nombre</th>
-                  <th style="padding: 10px 14px; font-size: 11px;">Rol</th>
-                  <th style="padding: 10px 14px; font-size: 11px; text-align:right;">Acción</th>
+                  <th style="width: 44%;">Operador / Nombre</th>
+                  <th style="width: 26%;">Rol Asignado</th>
+                  <th style="width: 18%;">Fecha Alta</th>
+                  <th style="width: 12%; text-align: right;">Acciones</th>
                 </tr>
               </thead>
               <tbody id="usersTableBody">
-                <tr><td colspan="4" style="text-align:center; padding:20px; color:#64748B;">Cargando usuarios...</td></tr>
+                <tr><td colspan="4" style="text-align:center; padding:24px; color:#64748B;">Cargando lista de operadores...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <div class="modal-footer-row">
+      <div class="modal-footer-row" style="justify-content: space-between;">
+        <div style="font-size: 12px; color: #64748B; display: flex; align-items: center; gap: 6px;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          Los técnicos solo gestionan sesiones; los administradores tienen control de usuarios.
+        </div>
         <button type="button" class="btn-modal-cancel" onclick="closeUsersModal()">Cerrar</button>
       </div>
     </div>
@@ -2311,44 +2710,93 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       }
     }
 
+    function getInitials(name) {
+      if (!name) return 'OP';
+      const parts = name.trim().split(/\s+/);
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.style.color = '#38BDF8';
+      } else {
+        input.type = 'password';
+        btn.style.color = '#64748B';
+      }
+    }
+
     async function loadUsersList() {
       const tbody = document.getElementById('usersTableBody');
+      const countText = document.getElementById('usersCountText');
       if (!tbody) return;
       try {
         const res = await fetch('api.php?action=list_users');
         const data = await res.json();
         if (data.success && data.users) {
+          if (countText) {
+            countText.innerText = `${data.users.length} ${data.users.length === 1 ? 'Operador' : 'Operadores'}`;
+          }
           if (data.users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px; color:#64748B;">No hay usuarios registrados</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:24px; color:#64748B;">No hay operadores registrados</td></tr>';
             return;
           }
           tbody.innerHTML = data.users.map(u => {
             const isAdminUser = u.role === 'admin';
-            const roleBadge = isAdminUser 
-              ? '<span style="font-size:11px; font-weight:700; color:#FBBF24; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); padding:2px 7px; border-radius:5px;">Admin</span>' 
-              : '<span style="font-size:11px; font-weight:700; color:#38BDF8; background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.3); padding:2px 7px; border-radius:5px;">Técnico</span>';
+            const roleClass = isAdminUser ? 'admin' : 'tech';
+            const initials = getInitials(u.name || u.username);
+            const roleIcon = isAdminUser 
+              ? `<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`
+              : `<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>`;
+
+            const roleBadge = `
+              <span class="user-role-badge ${roleClass}">
+                ${roleIcon}
+                ${isAdminUser ? 'Administrador' : 'Técnico'}
+              </span>
+            `;
             
             const isSelf = u.username.toLowerCase() === '<?= strtolower($currentUser['username'] ?? '') ?>';
             const deleteBtn = isSelf 
-              ? '<span style="font-size:11px; color:#64748B; font-weight:600;">(Tú)</span>' 
-              : `<button type="button" class="btn-action delete" onclick="deleteUserAccount('${escapeHtml(u.username)}')" title="Eliminar usuario">
+              ? `<span class="user-badge-self">
+                  <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                  Tú (Activo)
+                 </span>` 
+              : `<button type="button" class="btn-delete-operator" onclick="deleteUserAccount('${escapeHtml(u.username)}')" title="Eliminar operador">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                  </button>`;
 
+            const dateStr = u.created_at ? escapeHtml(u.created_at.split(' ')[0] || u.created_at) : 'Activo';
+
             return `
               <tr>
-                <td style="padding:10px 14px; font-weight:700; color:#FFFFFF;">${escapeHtml(u.username)}</td>
-                <td style="padding:10px 14px; color:#CBD5E1;">${escapeHtml(u.name)}</td>
-                <td style="padding:10px 14px;">${roleBadge}</td>
-                <td style="padding:10px 14px; text-align:right;">${deleteBtn}</td>
+                <td>
+                  <div class="user-cell-profile">
+                    <div class="user-avatar-disc ${roleClass}">${initials}</div>
+                    <div class="user-profile-info">
+                      <span class="user-profile-name">${escapeHtml(u.name || u.username)}</span>
+                      <span class="user-profile-handle">@${escapeHtml(u.username)}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>${roleBadge}</td>
+                <td style="font-size:12px; color:#94A3B8;">${dateStr}</td>
+                <td style="text-align:right;">${deleteBtn}</td>
               </tr>
             `;
           }).join('');
         } else {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px; color:#F87171;">${data.error || 'Error al cargar'}</td></tr>`;
+          if (countText) countText.innerText = "Error";
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:18px; color:#F87171;">${data.error || 'Error al cargar'}</td></tr>`;
         }
       } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:15px; color:#F87171;">Error de conexión</td></tr>';
+        if (countText) countText.innerText = "Error";
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:18px; color:#F87171;">Error de conexión</td></tr>';
       }
     }
 
@@ -2361,7 +2809,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       const btn = document.getElementById('btnSubmitUser');
 
       btn.disabled = true;
-      btn.innerText = "Creando...";
+      btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin-icon"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg> <span>Guardando...</span>`;
 
       try {
         const formData = new FormData();
@@ -2374,7 +2822,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         const res = await fetch('api.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.success) {
-          showToast(`Usuario "${u}" creado con éxito`);
+          showToast(`Operador "${u}" creado con éxito`);
           document.getElementById('createUserForm').reset();
           loadUsersList();
         } else {
@@ -2384,7 +2832,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         showToast("Error al procesar la solicitud");
       } finally {
         btn.disabled = false;
-        btn.innerText = "+ Guardar Usuario";
+        btn.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg> <span>Crear y Habilitar Operador</span>`;
       }
     }
 
