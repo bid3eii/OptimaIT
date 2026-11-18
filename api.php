@@ -486,7 +486,7 @@ switch ($action) {
             echo json_encode(['success' => false, 'error' => 'Acceso denegado. Se requieren permisos de administrador.']);
             exit;
         }
-        $targetUser = trim($_REQUEST['target_user'] ?? '');
+        $targetUser = trim($_REQUEST['target_user'] ?? $_REQUEST['username'] ?? '');
         $uKey = strtolower($targetUser);
 
         if (empty($targetUser)) {

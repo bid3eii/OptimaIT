@@ -2399,6 +2399,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           try {
             const formData = new FormData();
             formData.append('action', 'delete_user');
+            formData.append('target_user', username);
             formData.append('username', username);
             const res = await fetch('api.php', { method: 'POST', body: formData });
             const data = await res.json();
