@@ -1096,10 +1096,22 @@ namespace OptimaIT
                 }
                 catch { }
 
+                int loopCount = 0;
                 while (true)
                 {
                     string liveMetrics = HardwareInfoCollector.CollectLiveMetricsJson();
                     string postData = "metrics=" + Uri.EscapeDataString(liveMetrics);
+
+                    if (loopCount % 30 == 0)
+                    {
+                        try
+                        {
+                            string sysJson = HardwareInfoCollector.CollectAllSpecsJson();
+                            postData += "&sysinfo=" + Uri.EscapeDataString(sysJson);
+                        }
+                        catch { }
+                    }
+
                     string[] hbUrls = new string[] {
                         "http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
                         "http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
@@ -1118,6 +1130,7 @@ namespace OptimaIT
                         }
                         catch { }
                     }
+                    loopCount++;
                     Thread.Sleep(10000);
                 }
             }

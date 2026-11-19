@@ -311,20 +311,31 @@ switch ($action) {
             $sessions[$sessionId]['last_seen'] = time();
             $sessions[$sessionId]['status'] = 'online';
 
-            // Optional live metrics update
+            // Optional live metrics update and sysinfo
             $rawPost = file_get_contents('php://input');
             $metricsData = null;
+            $sysinfoData = null;
             if (!empty($_POST['metrics'])) {
                 $metricsData = is_array($_POST['metrics']) ? $_POST['metrics'] : json_decode($_POST['metrics'], true);
-            } else if (!empty($rawPost)) {
+            }
+            if (!empty($_POST['sysinfo'])) {
+                $sysinfoData = is_array($_POST['sysinfo']) ? $_POST['sysinfo'] : json_decode($_POST['sysinfo'], true);
+            }
+            if (!empty($rawPost)) {
                 $parsed = json_decode($rawPost, true);
                 if (!empty($parsed['metrics'])) {
                     $metricsData = $parsed['metrics'];
+                }
+                if (!empty($parsed['sysinfo'])) {
+                    $sysinfoData = $parsed['sysinfo'];
                 }
             }
             if ($metricsData) {
                 $metricsData['updated_at'] = date('H:i:s');
                 $sessions[$sessionId]['metrics'] = $metricsData;
+            }
+            if ($sysinfoData) {
+                $sessions[$sessionId]['sysinfo'] = $sysinfoData;
             }
 
             saveSessions($sessions);
@@ -336,21 +347,45 @@ switch ($action) {
 
     case 'save_sysinfo':
         $sessionId = trim($_REQUEST['session_id'] ?? '');
+        $rustId = trim($_REQUEST['rustdesk_id'] ?? ($_REQUEST['id'] ?? ''));
         $sessions = getSessions();
+        $targetKey = null;
         if (!empty($sessionId) && isset($sessions[$sessionId])) {
+            $targetKey = $sessionId;
+        } else if (!empty($rustId)) {
+            foreach ($sessions as $k => $v) {
+                if (($v['rustdesk_id'] ?? '') === $rustId) {
+                    $targetKey = $k;
+                    break;
+                }
+            }
+        }
+
+        if (!empty($targetKey) && isset($sessions[$targetKey])) {
             $rawPost = file_get_contents('php://input');
             $data = json_decode($rawPost, true) ?: $_POST;
             if (!empty($data['sysinfo'])) {
                 $sysinfo = is_array($data['sysinfo']) ? $data['sysinfo'] : json_decode($data['sysinfo'], true);
-                $sessions[$sessionId]['sysinfo'] = $sysinfo;
+                $sessions[$targetKey]['sysinfo'] = $sysinfo;
+                if (!empty($sysinfo['ram']) || !empty($sysinfo['disks'])) {
+                    $sessions[$targetKey]['metrics'] = [
+                        'ram_used_pct' => $sysinfo['ram']['used_pct'] ?? 0,
+                        'ram_used_gb' => $sysinfo['ram']['used_gb'] ?? 0,
+                        'ram_total_gb' => $sysinfo['ram']['total_gb'] ?? 0,
+                        'disk_used_pct' => $sysinfo['disks'][0]['used_pct'] ?? 0,
+                        'disk_free_gb' => $sysinfo['disks'][0]['free_gb'] ?? 0,
+                        'disk_total_gb' => $sysinfo['disks'][0]['total_gb'] ?? 0,
+                        'updated_at' => date('H:i:s')
+                    ];
+                }
             }
             if (!empty($data['metrics'])) {
                 $metrics = is_array($data['metrics']) ? $data['metrics'] : json_decode($data['metrics'], true);
                 $metrics['updated_at'] = date('H:i:s');
-                $sessions[$sessionId]['metrics'] = $metrics;
+                $sessions[$targetKey]['metrics'] = $metrics;
             }
-            $sessions[$sessionId]['last_seen'] = time();
-            $sessions[$sessionId]['status'] = 'online';
+            $sessions[$targetKey]['last_seen'] = time();
+            $sessions[$targetKey]['status'] = 'online';
             saveSessions($sessions);
             echo json_encode(['success' => true]);
         } else {
