@@ -1101,10 +1101,34 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     .card-spec-key { color: var(--text-dim); }
     .card-actions-grid {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
+      display: flex;
+      align-items: center;
       gap: 8px;
       margin-top: auto;
+    }
+    .card-actions-grid .btn-action {
+      height: 36px;
+    }
+    .card-actions-grid .btn-action.connect,
+    .card-actions-grid .btn-action.reconnect {
+      flex: 1;
+      min-width: 0;
+      justify-content: center;
+    }
+    .card-actions-grid .btn-action.specs {
+      padding: 0 10px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .card-actions-grid .btn-action.copy,
+    .card-actions-grid .btn-action.delete {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* Container Queries */
@@ -2729,11 +2753,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           : `<span class="status-badge inactive">Inactivo</span>`;
 
         let connectBtnGrid = s.rustdesk_id ? `
-          <button onclick="connectSession('${s.rustdesk_id}')" class="btn-action ${isOnline ? 'connect' : 'reconnect'}" style="width:100%; justify-content:center; height:36px;">
+          <button onclick="connectSession('${s.rustdesk_id}')" class="btn-action ${isOnline ? 'connect' : 'reconnect'}" style="flex:1; justify-content:center; height:36px; min-width:0;">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
             <span>Conectar</span>
           </button>
-        ` : `<div style="font-size:12px; color:var(--text-dim); text-align:center; padding:8px;">⏳ Pendiente de instalación</div>`;
+        ` : `<div style="flex:1; font-size:12px; color:var(--text-dim); text-align:center; padding:8px 0;">⏳ Pendiente de instalación</div>`;
 
         return `
           <div class="device-grid-card">
@@ -2763,14 +2787,14 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
             <div class="card-actions-grid">
               ${connectBtnGrid}
-              <button onclick="openDeviceSpecsModal('${s.session_id}')" class="btn-action specs" title="Ficha Técnica" style="height:36px; padding:0 10px;">
+              <button onclick="openDeviceSpecsModal('${s.session_id}')" class="btn-action specs" title="Ficha Técnica" style="height:36px; padding:0 10px; flex-shrink:0;">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
                 <span>Ficha</span>
               </button>
-              <button onclick="copySpecificUrl('${s.session_id}')" class="btn-action copy" title="Copiar Link" style="height:36px; padding:0 12px;">
+              <button onclick="copySpecificUrl('${s.session_id}')" class="btn-action copy" title="Copiar Link" style="height:36px; width:36px; padding:0; flex-shrink:0; justify-content:center;">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
               </button>
-              <button onclick="deleteSessionPermanently('${s.session_id}')" class="btn-action delete" title="Eliminar" style="height:36px; width:36px;">
+              <button onclick="deleteSessionPermanently('${s.session_id}')" class="btn-action delete" title="Eliminar" style="height:36px; width:36px; padding:0; flex-shrink:0; justify-content:center;">
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
               </button>
             </div>
