@@ -15,31 +15,110 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
   <title>OptimaIT - Control Center Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      try {
+        const saved = localStorage.getItem('optima_theme');
+        const theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
   <style>
-    :root {
-      --primary: #2563EB;
-      --primary-accent: #38BDF8;
-      --primary-glow: rgba(37, 99, 235, 0.4);
-      --orange: #FF6B00;
-      --orange-accent: #FFA133;
-      --orange-glow: rgba(255, 107, 0, 0.35);
-      --bg-base: #060913;
-      --bg-sidebar: #090E1A;
-      --card-bg: rgba(13, 20, 36, 0.75);
-      --card-hover: rgba(18, 28, 51, 0.85);
-      --border-subtle: rgba(255, 255, 255, 0.07);
-      --border-focus: rgba(56, 189, 248, 0.4);
-      --text-main: #FFFFFF;
+    :root, [data-theme="dark"] {
+      color-scheme: dark;
+      --bg-base: #0B0F19;
+      --bg-sidebar: #080C14;
+      --card-bg: rgba(17, 24, 39, 0.72);
+      --card-hover: rgba(26, 36, 56, 0.85);
+      --card-inner: rgba(10, 16, 28, 0.7);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(255, 255, 255, 0.35);
+      --focus-ring: rgba(255, 255, 255, 0.15);
+      
+      --text-main: #F8FAFC;
       --text-muted: #94A3B8;
       --text-dim: #64748B;
+      
+      --primary-btn-bg: #FFFFFF;
+      --primary-btn-text: #090D16;
+      --primary-btn-hover: #E2E8F0;
+      --primary-btn-shadow: 0 2px 14px rgba(255, 255, 255, 0.16);
+
+      --secondary-btn-bg: rgba(255, 255, 255, 0.06);
+      --secondary-btn-border: rgba(255, 255, 255, 0.12);
+      --secondary-btn-text: #F1F5F9;
+      --secondary-btn-hover: rgba(255, 255, 255, 0.12);
+
+      --badge-bg: rgba(255, 255, 255, 0.06);
+      --badge-border: rgba(255, 255, 255, 0.12);
+      --badge-text: #F1F5F9;
+
+      --table-header-bg: rgba(8, 12, 20, 0.6);
+      --table-row-hover: rgba(255, 255, 255, 0.035);
+      --input-bg: rgba(8, 12, 20, 0.7);
+      --modal-bg: linear-gradient(145deg, rgba(14, 20, 32, 0.98) 0%, rgba(9, 13, 22, 0.99) 100%);
+      --modal-footer-bg: rgba(0, 0, 0, 0.25);
+
+      --metric-card-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.5);
+      --metric-icon-bg: rgba(255, 255, 255, 0.08);
+      --metric-icon-color: #F8FAFC;
+
       --emerald: #10B981;
       --emerald-glow: rgba(16, 185, 129, 0.3);
       --amber: #F59E0B;
       --rose: #F43F5E;
+      --sidebar-width: 270px;
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg-base: #F8FAFC;
+      --bg-sidebar: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --card-hover: #F1F5F9;
+      --card-inner: #F8FAFC;
+      --border-subtle: rgba(15, 23, 42, 0.09);
+      --border-focus: rgba(15, 23, 42, 0.35);
+      --focus-ring: rgba(15, 23, 42, 0.1);
+
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --text-dim: #64748B;
+
+      --primary-btn-bg: #0F172A;
+      --primary-btn-text: #FFFFFF;
+      --primary-btn-hover: #1E293B;
+      --primary-btn-shadow: 0 2px 10px rgba(15, 23, 42, 0.18);
+
+      --secondary-btn-bg: #F1F5F9;
+      --secondary-btn-border: rgba(15, 23, 42, 0.12);
+      --secondary-btn-text: #0F172A;
+      --secondary-btn-hover: #E2E8F0;
+
+      --badge-bg: #F1F5F9;
+      --badge-border: rgba(15, 23, 42, 0.1);
+      --badge-text: #1E293B;
+
+      --table-header-bg: #F8FAFC;
+      --table-row-hover: rgba(15, 23, 42, 0.03);
+      --input-bg: #FFFFFF;
+      --modal-bg: #FFFFFF;
+      --modal-footer-bg: #F8FAFC;
+
+      --metric-card-shadow: 0 4px 18px -4px rgba(15, 23, 42, 0.06);
+      --metric-icon-bg: #F1F5F9;
+      --metric-icon-color: #0F172A;
+
+      --emerald: #059669;
+      --emerald-glow: rgba(5, 150, 105, 0.2);
+      --amber: #D97706;
+      --rose: #E11D48;
       --sidebar-width: 270px;
     }
 
@@ -49,18 +128,22 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       padding: 0;
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.15) rgba(6, 9, 19, 0.4);
+      scrollbar-color: var(--border-subtle) transparent;
     }
 
     body {
-      background: radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.12) 0%, transparent 45%),
-                  radial-gradient(circle at 90% 100%, rgba(255, 107, 0, 0.09) 0%, transparent 40%),
+      background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
                   var(--bg-base);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    [data-theme="light"] body {
+      background: radial-gradient(circle at 50% 0%, rgba(15, 23, 42, 0.03) 0%, transparent 50%),
+                  var(--bg-base);
     }
 
     .app-shell {
@@ -82,6 +165,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       flex-shrink: 0;
       z-index: 100;
       backdrop-filter: blur(20px);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
     }
 
     .sidebar-brand-box {
@@ -100,16 +184,17 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       height: 36px;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+      transition: opacity 0.2s ease;
     }
     .badge-enterprise {
       font-size: 10px;
       font-weight: 800;
       padding: 3px 8px;
       border-radius: 999px;
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(56, 189, 248, 0.15) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: #38BDF8;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--text-main);
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
@@ -125,9 +210,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     /* Call To Action Button */
     .btn-create-session {
-      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
-      color: #FFFFFF;
-      border: none;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+      border: 1px solid var(--border-subtle);
       padding: 13px 18px;
       border-radius: 12px;
       font-size: 13.5px;
@@ -137,15 +222,15 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       align-items: center;
       justify-content: center;
       gap: 9px;
-      box-shadow: 0 4px 18px -2px var(--orange-glow);
+      box-shadow: var(--primary-btn-shadow);
       transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       width: 100%;
       letter-spacing: 0.01em;
     }
     .btn-create-session:hover {
+      background: var(--primary-btn-hover);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px -2px rgba(255, 107, 0, 0.55);
-      filter: brightness(1.06);
+      box-shadow: 0 8px 24px -2px rgba(0, 0, 0, 0.25);
     }
 
     .nav-section-title {
@@ -181,21 +266,17 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       border: 1px solid transparent;
     }
     .nav-link:hover {
-      background: rgba(255, 255, 255, 0.04);
-      color: #FFFFFF;
+      background: var(--table-row-hover);
+      color: var(--text-main);
       transform: translateX(3px);
     }
-    .nav-link.active {
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, rgba(37, 99, 235, 0.08) 100%);
-      border-color: rgba(37, 99, 235, 0.4);
-      color: #FFFFFF;
-      font-weight: 700;
-      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
-    }
+    .nav-link.active,
     .nav-link.active.empresa {
-      background: linear-gradient(135deg, rgba(255, 107, 0, 0.16) 0%, rgba(255, 107, 0, 0.06) 100%);
-      border-color: rgba(255, 107, 0, 0.35);
-      box-shadow: 0 2px 10px rgba(255, 107, 0, 0.15);
+      background: var(--secondary-btn-bg);
+      border-color: var(--secondary-btn-border);
+      color: var(--text-main);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
     .nav-label {
       display: flex;
@@ -207,18 +288,18 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       font-weight: 700;
       padding: 2px 8px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.07);
+      background: var(--badge-bg);
       color: var(--text-muted);
     }
     .nav-link.active .nav-pill-counter {
-      background: #FFFFFF;
-      color: #0F172A;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
     }
 
     /* Relay Server Live Indicator Card */
     .relay-card {
-      background: rgba(16, 185, 129, 0.06);
-      border: 1px solid rgba(16, 185, 129, 0.22);
+      background: var(--badge-bg);
+      border: 1px solid var(--border-subtle);
       border-radius: 12px;
       padding: 12px 14px;
       margin-top: auto;
@@ -232,7 +313,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       gap: 8px;
       font-size: 11.5px;
       font-weight: 700;
-      color: #34D399;
+      color: var(--emerald);
     }
     .radar-pulse-dot {
       width: 7px;
@@ -250,7 +331,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .relay-host-text {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      color: #A7F3D0;
+      color: var(--text-muted);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -260,7 +341,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .sidebar-user-footer {
       padding: 16px 18px;
       border-top: 1px solid var(--border-subtle);
-      background: rgba(6, 9, 19, 0.6);
+      background: var(--bg-sidebar);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -275,15 +356,15 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       width: 36px;
       height: 36px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
-      color: #FFFFFF;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
       font-weight: 800;
       font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 2px 10px var(--orange-glow);
+      box-shadow: var(--primary-btn-shadow);
     }
     .user-label-group {
       display: flex;
@@ -293,7 +374,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .user-label-name {
       font-size: 13px;
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--text-main);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -303,8 +384,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       font-weight: 700;
       letter-spacing: 0.02em;
     }
-    .role-admin { color: #FBBF24; }
-    .role-tech { color: #38BDF8; }
+    .role-admin { color: #F59E0B; }
+    .role-tech { color: var(--text-muted); }
 
     .user-footer-btns {
       display: flex;
@@ -315,8 +396,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--secondary-btn-bg);
+      border: 1px solid var(--secondary-btn-border);
       color: var(--text-muted);
       cursor: pointer;
       display: flex;
@@ -325,8 +406,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.18s ease;
     }
     .btn-icon-soft:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #FFFFFF;
+      background: var(--secondary-btn-hover);
+      color: var(--text-main);
+      border-color: var(--border-focus);
       transform: translateY(-1px);
     }
     .btn-icon-soft.danger:hover {
@@ -357,7 +439,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .page-title-cluster h1 {
       font-size: 24px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: var(--text-main);
       letter-spacing: -0.02em;
     }
     .page-title-cluster p {
@@ -385,19 +467,39 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     .search-box {
       width: 100%;
-      background: rgba(13, 20, 36, 0.85);
+      background: var(--input-bg);
       border: 1px solid var(--border-subtle);
       border-radius: 12px;
       padding: 11px 14px 11px 42px;
-      color: #FFFFFF;
+      color: var(--text-main);
       font-size: 13.5px;
       outline: none;
       transition: all 0.2s;
     }
     .search-box:focus {
-      border-color: #38BDF8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
-      background: rgba(13, 20, 36, 0.98);
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      background: var(--input-bg);
+    }
+
+    .btn-theme-toggle {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: var(--secondary-btn-bg);
+      border: 1px solid var(--secondary-btn-border);
+      color: var(--text-main);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .btn-theme-toggle:hover {
+      background: var(--secondary-btn-hover);
+      border-color: var(--border-focus);
+      transform: translateY(-1px);
     }
 
     /* KPI METRIC CARDS */
@@ -417,7 +519,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       justify-content: space-between;
       backdrop-filter: blur(16px);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.5);
+      box-shadow: var(--metric-card-shadow);
       position: relative;
       overflow: hidden;
     }
@@ -432,14 +534,13 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: background 0.2s;
     }
     .metric-card:hover {
-      border-color: rgba(255, 255, 255, 0.15);
+      border-color: var(--border-focus);
       transform: translateY(-2px);
-      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.65);
     }
     .metric-card.card-online:hover::before { background: var(--emerald); }
-    .metric-card.card-empresa:hover::before { background: var(--orange); }
-    .metric-card.card-personal:hover::before { background: var(--primary); }
-    .metric-card.card-total:hover::before { background: #38BDF8; }
+    .metric-card.card-empresa:hover::before { background: var(--text-muted); }
+    .metric-card.card-personal:hover::before { background: var(--text-muted); }
+    .metric-card.card-total:hover::before { background: var(--text-muted); }
 
     .metric-meta p {
       font-size: 11.5px;
@@ -452,7 +553,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .metric-meta h3 {
       font-size: 30px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: var(--text-main);
       line-height: 1;
       letter-spacing: -0.02em;
     }
@@ -473,7 +574,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       border-radius: 20px;
       padding: 24px 28px;
       backdrop-filter: blur(20px);
-      box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.6);
+      box-shadow: var(--metric-card-shadow);
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -495,7 +596,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .active-view-heading {
       font-size: 16px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -505,8 +606,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       font-weight: 700;
       padding: 3px 9px;
       border-radius: 6px;
-      background: rgba(255, 255, 255, 0.07);
-      color: #94A3B8;
+      background: var(--badge-bg);
+      color: var(--text-muted);
     }
 
     .filter-controls-right {
@@ -521,7 +622,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(9, 14, 26, 0.7);
+      background: var(--badge-bg);
       border: 1px solid var(--border-subtle);
       border-radius: 11px;
       padding: 3px 6px 3px 12px;
@@ -529,7 +630,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .group-dropdown-select {
       background: transparent;
       border: none;
-      color: #FDBA74;
+      color: var(--text-main);
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
@@ -537,13 +638,13 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       padding: 6px 8px;
     }
     .group-dropdown-select option {
-      background: #0B111E;
-      color: #F8FAFC;
+      background: var(--bg-sidebar);
+      color: var(--text-main);
     }
     .btn-add-group-badge {
-      background: rgba(255, 107, 0, 0.15);
-      border: 1px solid rgba(255, 107, 0, 0.35);
-      color: #FB923C;
+      background: var(--secondary-btn-bg);
+      border: 1px solid var(--secondary-btn-border);
+      color: var(--text-main);
       border-radius: 7px;
       padding: 4px 9px;
       font-size: 12px;
@@ -552,8 +653,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.2s;
     }
     .btn-add-group-badge:hover {
-      background: var(--orange);
-      color: #FFFFFF;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
     }
 
     /* Status Filters */
@@ -561,7 +662,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: rgba(9, 14, 26, 0.7);
+      background: var(--badge-bg);
       border: 1px solid var(--border-subtle);
       border-radius: 11px;
       padding: 3px;
@@ -580,12 +681,13 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       gap: 6px;
       border: 1px solid transparent;
     }
-    .status-tab-btn:hover { color: #FFFFFF; }
+    .status-tab-btn:hover { color: var(--text-main); }
     .status-tab-btn.active {
-      background: rgba(37, 99, 235, 0.2);
-      color: #38BDF8;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
       font-weight: 700;
-      border-color: rgba(56, 189, 248, 0.35);
+      border-color: transparent;
+      box-shadow: var(--primary-btn-shadow);
     }
     .status-online-dot {
       width: 7px;
@@ -598,7 +700,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     /* View Switcher */
     .view-toggle-bar {
       display: inline-flex;
-      background: rgba(9, 14, 26, 0.7);
+      background: var(--badge-bg);
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
       padding: 3px;
@@ -616,10 +718,10 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.2s;
       user-select: none;
     }
-    .view-toggle-btn:hover { color: #FFFFFF; }
+    .view-toggle-btn:hover { color: var(--text-main); }
     .view-toggle-btn.active {
-      background: rgba(255, 255, 255, 0.12);
-      color: #FFFFFF;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
       font-weight: 700;
     }
 
@@ -630,12 +732,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       overflow-x: auto;
       border-radius: 14px;
       border: 1px solid var(--border-subtle);
-      background: rgba(8, 12, 22, 0.55);
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      background: var(--card-bg);
+      box-shadow: var(--metric-card-shadow);
     }
     .table-container::-webkit-scrollbar { height: 6px; }
-    .table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
-    .table-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 4px; }
+    .table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); }
+    .table-container::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 4px; }
 
     table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
     th {
@@ -643,10 +745,10 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #94A3B8;
+      color: var(--text-muted);
       padding: 15px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      background: rgba(13, 20, 36, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--table-header-bg);
       white-space: nowrap;
       position: sticky;
       top: 0;
@@ -655,13 +757,14 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     td {
       padding: 14px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid var(--border-subtle);
       font-size: 13.5px;
+      color: var(--text-main);
       vertical-align: middle;
       transition: background 0.15s ease;
       white-space: nowrap;
     }
-    tr:hover td { background: rgba(37, 99, 235, 0.05); }
+    tr:hover td { background: var(--table-row-hover); }
 
     .code-badge-pill {
       display: inline-flex;
@@ -669,9 +772,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       font-size: 12px;
-      background: rgba(37, 99, 235, 0.12);
-      border: 1px solid rgba(37, 99, 235, 0.35);
-      color: #60A5FA;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--text-main);
       padding: 4px 9px;
       border-radius: 8px;
       letter-spacing: 0.03em;
@@ -679,9 +782,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.2s;
     }
     .code-badge-pill:hover {
-      background: rgba(37, 99, 235, 0.25);
-      border-color: rgba(37, 99, 235, 0.6);
-      color: #93C5FD;
+      background: var(--secondary-btn-hover);
+      border-color: var(--border-focus);
       transform: scale(1.04);
     }
 
@@ -692,7 +794,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     .client-name-title {
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--text-main);
       font-size: 14px;
       display: flex;
       align-items: center;
@@ -701,11 +803,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .tag-installed {
       font-size: 11px;
       font-weight: 700;
-      background: rgba(255, 107, 0, 0.12);
-      color: #FB923C;
+      background: var(--badge-bg);
+      color: var(--text-main);
       padding: 2px 8px;
       border-radius: 6px;
-      border: 1px solid rgba(255, 107, 0, 0.3);
+      border: 1px solid var(--badge-border);
       display: inline-flex;
       align-items: center;
       gap: 5px;
@@ -714,9 +816,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .tag-personal {
       font-size: 11px;
       font-weight: 700;
-      color: #94A3B8;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
       padding: 2px 8px;
       border-radius: 6px;
       display: inline-flex;
@@ -727,9 +829,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     .group-pill {
       font-size: 12px;
-      background: rgba(255, 107, 0, 0.09);
-      color: #FDBA74;
-      border: 1px solid rgba(255, 107, 0, 0.25);
+      background: var(--badge-bg);
+      color: var(--text-main);
+      border: 1px solid var(--badge-border);
       padding: 3.5px 10px;
       border-radius: 7px;
       font-weight: 700;
@@ -753,29 +855,29 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .status-badge.online {
       background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34D399;
-      box-shadow: 0 0 14px rgba(16, 185, 129, 0.2);
+      color: var(--emerald);
+      box-shadow: 0 0 14px var(--emerald-glow);
     }
     .status-badge.waiting {
       background: rgba(245, 158, 11, 0.12);
       border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #FBBF24;
+      color: #F59E0B;
     }
     .status-badge.inactive {
-      background: rgba(148, 163, 184, 0.08);
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      color: #94A3B8;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--text-dim);
     }
 
     .remote-id-tag {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       font-size: 13px;
-      color: #FB923C;
-      background: rgba(255, 107, 0, 0.08);
+      color: var(--text-main);
+      background: var(--badge-bg);
       padding: 4px 10px;
       border-radius: 8px;
-      border: 1px solid rgba(255, 107, 0, 0.25);
+      border: 1px solid var(--badge-border);
       letter-spacing: 0.03em;
       display: inline-flex;
       align-items: center;
@@ -804,36 +906,34 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       user-select: none;
     }
     .btn-action.connect {
-      background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-      color: #FFFFFF;
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--primary-btn-shadow);
     }
     .btn-action.connect:hover {
+      background: var(--primary-btn-hover);
       transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.55);
-      filter: brightness(1.12);
     }
     .btn-action.reconnect {
-      background: rgba(37, 99, 235, 0.09);
-      color: #93C5FD;
-      border: 1px solid rgba(37, 99, 235, 0.35);
+      background: var(--secondary-btn-bg);
+      color: var(--text-main);
+      border: 1px solid var(--secondary-btn-border);
     }
     .btn-action.reconnect:hover {
-      background: rgba(37, 99, 235, 0.2);
-      border-color: rgba(37, 99, 235, 0.6);
-      color: #FFFFFF;
+      background: var(--secondary-btn-hover);
+      color: var(--text-main);
       transform: translateY(-1px);
     }
     .btn-action.copy {
-      background: rgba(255, 255, 255, 0.04);
-      color: #CBD5E1;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--secondary-btn-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--secondary-btn-border);
     }
     .btn-action.copy:hover {
-      background: rgba(255, 107, 0, 0.14);
-      border-color: rgba(255, 107, 0, 0.45);
-      color: #FB923C;
+      background: var(--secondary-btn-hover);
+      border-color: var(--border-focus);
+      color: var(--text-main);
       transform: translateY(-1px);
     }
     .btn-action.delete {
@@ -1053,7 +1153,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       gap: 18px;
     }
     .device-grid-card {
-      background: rgba(10, 16, 29, 0.75);
+      background: var(--card-bg);
       border: 1px solid var(--border-subtle);
       border-radius: 18px;
       padding: 22px;
@@ -1061,12 +1161,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       flex-direction: column;
       gap: 16px;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.4);
+      box-shadow: var(--metric-card-shadow);
     }
     .device-grid-card:hover {
-      border-color: rgba(255, 255, 255, 0.15);
+      border-color: var(--border-focus);
       transform: translateY(-2px);
-      box-shadow: 0 14px 30px -8px rgba(0, 0, 0, 0.6);
     }
     .card-head {
       display: flex;
@@ -1077,7 +1176,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .card-meta-name {
       font-size: 15px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: var(--text-main);
     }
     .card-meta-sub {
       display: flex;
@@ -1088,10 +1187,10 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       display: flex;
       flex-direction: column;
       gap: 9px;
-      background: rgba(6, 9, 19, 0.6);
+      background: var(--card-inner);
       border-radius: 12px;
       padding: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
     }
     .card-row-spec {
       display: flex;
@@ -1163,17 +1262,17 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     dialog.app-dialog:not([open]) { display: none; }
     dialog.app-dialog::backdrop {
-      background: rgba(2, 6, 16, 0.82);
+      background: rgba(2, 6, 16, 0.75);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
     .modal-frame {
-      background: linear-gradient(145deg, rgba(14, 22, 40, 0.98) 0%, rgba(9, 14, 26, 0.99) 100%);
-      border: 1px solid rgba(255, 107, 0, 0.35);
+      background: var(--modal-bg);
+      border: 1px solid var(--border-subtle);
       border-radius: 22px;
       width: 100%;
       max-width: 500px;
-      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 40px -5px rgba(255, 107, 0, 0.2);
+      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5);
       overflow: hidden;
       animation: dialogZoom 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -1183,31 +1282,32 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     .modal-header-row {
       padding: 20px 26px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255, 107, 0, 0.05);
+      background: var(--badge-bg);
     }
     .modal-headline-wrap { display: flex; align-items: center; gap: 12px; }
     .modal-icon-bubble {
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      background: linear-gradient(135deg, rgba(255, 107, 0, 0.25) 0%, rgba(234, 88, 12, 0.15) 100%);
-      border: 1px solid rgba(255, 107, 0, 0.4);
+      background: var(--secondary-btn-bg);
+      border: 1px solid var(--secondary-btn-border);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 20px;
+      color: var(--text-main);
       flex-shrink: 0;
     }
-    .modal-headline-title { font-size: 16.5px; font-weight: 800; color: #FFFFFF; }
-    .modal-headline-sub { font-size: 12px; color: #94A3B8; margin-top: 2px; }
+    .modal-headline-title { font-size: 16.5px; font-weight: 800; color: var(--text-main); }
+    .modal-headline-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
     .modal-close-x {
       background: transparent;
       border: none;
-      color: #94A3B8;
+      color: var(--text-muted);
       font-size: 24px;
       width: 32px;
       height: 32px;
@@ -1218,29 +1318,29 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       justify-content: center;
       transition: all 0.2s;
     }
-    .modal-close-x:hover { background: rgba(255, 255, 255, 0.08); color: #FFFFFF; }
+    .modal-close-x:hover { background: var(--secondary-btn-hover); color: var(--text-main); }
     .modal-body-content { padding: 26px; }
-    .input-label { display: block; font-size: 12.5px; font-weight: 700; color: #CBD5E1; margin-bottom: 8px; }
+    .input-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
     .modal-text-input {
       width: 100%;
-      background: rgba(6, 9, 19, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--input-bg);
+      border: 1px solid var(--border-subtle);
       border-radius: 12px;
       padding: 13px 16px;
       font-size: 14px;
-      color: #FFFFFF;
+      color: var(--text-main);
       outline: none;
       transition: all 0.2s;
     }
     .modal-text-input:focus {
-      border-color: var(--orange);
-      box-shadow: 0 0 0 3px var(--orange-glow);
-      background: rgba(6, 9, 19, 0.85);
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      background: var(--input-bg);
     }
     .modal-footer-row {
       padding: 18px 26px;
-      background: rgba(0, 0, 0, 0.3);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--modal-footer-bg);
+      border-top: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -1252,16 +1352,16 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       font-weight: 700;
       border-radius: 10px;
       cursor: pointer;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #CBD5E1;
+      background: var(--secondary-btn-bg);
+      border: 1px solid var(--secondary-btn-border);
+      color: var(--text-main);
       transition: all 0.2s;
     }
-    .btn-modal-cancel:hover { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; }
+    .btn-modal-cancel:hover { background: var(--secondary-btn-hover); color: var(--text-main); }
     .btn-modal-save {
-      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
-      color: #FFFFFF;
-      border: none;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+      border: 1px solid var(--border-subtle);
       padding: 10px 22px;
       border-radius: 10px;
       font-size: 13.5px;
@@ -1270,17 +1370,17 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 15px -2px var(--orange-glow);
+      box-shadow: var(--primary-btn-shadow);
       transition: all 0.2s;
     }
-    .btn-modal-save:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .btn-modal-save:hover { background: var(--primary-btn-hover); transform: translateY(-1px); }
 
     /* Generator Modal Components */
     .mode-toggle-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      background: rgba(6, 9, 19, 0.7);
+      background: var(--input-bg);
       padding: 5px;
       border-radius: 12px;
       border: 1px solid var(--border-subtle);
@@ -1300,37 +1400,34 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.2s;
       user-select: none;
     }
-    .mode-toggle-option.active.empresa {
-      background: linear-gradient(135deg, var(--orange) 0%, #EA580C 100%);
-      color: #FFFFFF;
-      box-shadow: 0 4px 14px var(--orange-glow);
-    }
+    .mode-toggle-option.active,
+    .mode-toggle-option.active.empresa,
     .mode-toggle-option.active.personal {
-      background: linear-gradient(135deg, var(--primary) 0%, #1D4ED8 100%);
-      color: #FFFFFF;
-      box-shadow: 0 4px 14px var(--primary-glow);
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+      box-shadow: var(--primary-btn-shadow);
     }
     .notice-box {
-      background: rgba(37, 99, 235, 0.1);
-      border: 1px solid rgba(37, 99, 235, 0.25);
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
       border-radius: 11px;
       padding: 12px 14px;
       font-size: 12.5px;
       line-height: 1.45;
-      color: #93C5FD;
+      color: var(--text-main);
       margin-bottom: 18px;
       display: flex;
       align-items: flex-start;
       gap: 8px;
     }
     .notice-box.orange {
-      background: rgba(255, 107, 0, 0.1);
-      border-color: rgba(255, 107, 0, 0.3);
-      color: #FDBA74;
+      background: var(--badge-bg);
+      border-color: var(--badge-border);
+      color: var(--text-main);
     }
     .result-link-card {
-      background: rgba(255, 107, 0, 0.08);
-      border: 1px dashed rgba(255, 107, 0, 0.4);
+      background: var(--badge-bg);
+      border: 1px dashed var(--badge-border);
       border-radius: 14px;
       padding: 16px;
       margin-top: 20px;
@@ -1343,11 +1440,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     .result-input-line input {
       flex: 1;
-      background: rgba(0,0,0,0.5);
+      background: var(--input-bg);
       border: 1px solid var(--border-subtle);
       border-radius: 9px;
       padding: 10px 14px;
-      color: #FFFFFF;
+      color: var(--text-main);
       font-size: 12.5px;
       font-family: 'JetBrains Mono', monospace;
       outline: none;
@@ -1358,16 +1455,16 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       position: fixed;
       inset: auto 26px 26px auto;
       margin: 0;
-      background: rgba(14, 22, 40, 0.96);
+      background: var(--modal-bg);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      color: #FFFFFF;
-      border: 1px solid #38BDF8;
+      color: var(--text-main);
+      border: 1px solid var(--border-focus);
       padding: 14px 24px;
       border-radius: 14px;
       font-size: 13.5px;
       font-weight: 700;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.25);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1384,8 +1481,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     /* Confirm Dialog */
     .confirm-footer-grid {
       padding: 18px 26px 22px 26px;
-      background: rgba(0, 0, 0, 0.35);
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      background: var(--modal-footer-bg);
+      border-top: 1px solid var(--border-subtle);
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
@@ -1405,11 +1502,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .btn-confirm-cancel {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: #E2E8F0;
+      background: var(--secondary-btn-bg);
+      border: 1px solid var(--secondary-btn-border);
+      color: var(--text-main);
     }
-    .btn-confirm-cancel:hover { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; }
+    .btn-confirm-cancel:hover { background: var(--secondary-btn-hover); color: var(--text-main); }
     .btn-confirm-danger {
       background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
       color: #FFFFFF;
@@ -1417,17 +1514,17 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     .btn-confirm-danger:hover { filter: brightness(1.12); transform: translateY(-1px); }
     .btn-confirm-warning {
-      background: linear-gradient(135deg, var(--orange) 0%, #EA580C 100%);
-      color: #FFFFFF;
-      box-shadow: 0 4px 18px -2px var(--orange-glow);
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+      box-shadow: var(--primary-btn-shadow);
     }
     .btn-confirm-warning:hover { filter: brightness(1.12); transform: translateY(-1px); }
 
     /* ENHANCED USERS MANAGEMENT MODAL */
     .modal-frame.users-modal-custom {
       max-width: 780px;
-      border: 1px solid rgba(56, 189, 248, 0.28);
-      box-shadow: 0 25px 65px -12px rgba(0, 0, 0, 0.9), 0 0 45px -5px rgba(37, 99, 235, 0.22);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 25px 65px -12px rgba(0, 0, 0, 0.5);
     }
     .users-modal-badge {
       display: inline-flex;
@@ -1437,24 +1534,24 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       border-radius: 20px;
       font-size: 11px;
       font-weight: 700;
-      background: rgba(37, 99, 235, 0.16);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: #38BDF8;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--text-main);
     }
     .users-modal-badge .dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #38BDF8;
-      box-shadow: 0 0 8px #38BDF8;
+      background: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald);
     }
     .user-create-card {
-      background: linear-gradient(145deg, rgba(15, 23, 42, 0.7) 0%, rgba(9, 14, 26, 0.8) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--card-inner);
+      border: 1px solid var(--border-subtle);
       border-radius: 16px;
       padding: 20px 22px;
       margin-bottom: 24px;
-      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.15);
     }
     .user-create-header {
       display: flex;
@@ -1462,7 +1559,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       justify-content: space-between;
       margin-bottom: 16px;
       padding-bottom: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--border-subtle);
     }
     .user-create-title {
       display: flex;
@@ -1470,15 +1567,15 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       gap: 8px;
       font-size: 13.5px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: var(--text-main);
       letter-spacing: -0.01em;
     }
     .user-create-title svg {
-      color: #FF6B00;
+      color: var(--text-main);
     }
     .user-create-tag {
       font-size: 11px;
-      color: #94A3B8;
+      color: var(--text-muted);
       font-weight: 500;
     }
     .user-create-grid {
@@ -1500,13 +1597,13 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .user-field-label {
       font-size: 11.5px;
       font-weight: 700;
-      color: #CBD5E1;
+      color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 6px;
     }
     .user-field-label svg {
-      color: #94A3B8;
+      color: var(--text-muted);
     }
     .user-input-wrap {
       position: relative;
@@ -1516,39 +1613,39 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .user-input-wrap .field-icon {
       position: absolute;
       left: 14px;
-      color: #64748B;
+      color: var(--text-dim);
       pointer-events: none;
       transition: color 0.2s;
     }
     .user-input-wrap input,
     .user-input-wrap select {
       width: 100%;
-      background: rgba(6, 9, 19, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--input-bg);
+      border: 1px solid var(--border-subtle);
       border-radius: 11px;
       padding: 10px 14px 10px 40px;
       font-size: 13px;
-      color: #FFFFFF;
+      color: var(--text-main);
       outline: none;
       transition: all 0.2s;
       font-family: inherit;
     }
     .user-input-wrap input:focus,
     .user-input-wrap select:focus {
-      border-color: #FF6B00;
-      background: rgba(6, 9, 19, 0.95);
-      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.25);
+      border-color: var(--border-focus);
+      background: var(--input-bg);
+      box-shadow: 0 0 0 3px var(--focus-ring);
     }
     .user-input-wrap input:focus + .field-icon,
     .user-input-wrap select:focus + .field-icon {
-      color: #FF6B00;
+      color: var(--text-main);
     }
     .btn-pwd-eye {
       position: absolute;
       right: 12px;
       background: transparent;
       border: none;
-      color: #64748B;
+      color: var(--text-dim);
       cursor: pointer;
       padding: 4px;
       display: flex;
@@ -1557,7 +1654,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transition: color 0.2s;
     }
     .btn-pwd-eye:hover {
-      color: #CBD5E1;
+      color: var(--text-main);
     }
     .user-form-actions {
       grid-column: 1 / -1;
@@ -1566,12 +1663,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       align-items: center;
       margin-top: 6px;
       padding-top: 12px;
-      border-top: 1px dashed rgba(255, 255, 255, 0.08);
+      border-top: 1px dashed var(--border-subtle);
     }
     .btn-submit-operator {
-      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
-      color: #FFFFFF;
-      border: none;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+      border: 1px solid var(--border-subtle);
       padding: 10px 22px;
       border-radius: 11px;
       font-size: 13px;
@@ -1580,13 +1677,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 16px -2px rgba(255, 107, 0, 0.45);
+      box-shadow: var(--primary-btn-shadow);
       transition: all 0.2s;
     }
     .btn-submit-operator:hover {
+      background: var(--primary-btn-hover);
       transform: translateY(-1px);
-      filter: brightness(1.1);
-      box-shadow: 0 6px 20px -2px rgba(255, 107, 0, 0.55);
     }
     .btn-submit-operator:active {
       transform: translateY(0);
@@ -1603,16 +1699,16 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     /* Active Users Table Section */
     .users-table-card {
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
       border-radius: 16px;
-      background: rgba(6, 9, 19, 0.6);
+      background: var(--card-bg);
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      box-shadow: var(--metric-card-shadow);
     }
     .users-table-header-bar {
       padding: 14px 20px;
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--table-header-bg);
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1620,7 +1716,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .users-table-title {
       font-size: 11.5px;
       font-weight: 800;
-      color: #94A3B8;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.07em;
       display: flex;
@@ -1631,7 +1727,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       max-height: 250px;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+      scrollbar-color: var(--border-subtle) transparent;
     }
     .users-modern-table {
       width: 100%;
@@ -1642,11 +1738,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       padding: 11px 18px;
       font-size: 11px;
       font-weight: 700;
-      color: #64748B;
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      background: rgba(15, 23, 42, 0.6);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--table-header-bg);
+      border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
       z-index: 2;
@@ -1654,15 +1750,15 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .users-modern-table td {
       padding: 13px 18px;
       font-size: 13px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      color: #CBD5E1;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
       vertical-align: middle;
     }
     .users-modern-table tr:last-child td {
       border-bottom: none;
     }
     .users-modern-table tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--table-row-hover);
     }
     .user-cell-profile {
       display: flex;
@@ -1682,14 +1778,14 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       letter-spacing: -0.02em;
     }
     .user-avatar-disc.admin {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #FBBF24;
+      background: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+      box-shadow: var(--primary-btn-shadow);
     }
     .user-avatar-disc.tech {
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(56, 189, 248, 0.15) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: #38BDF8;
+      background: var(--secondary-btn-bg);
+      border: 1px solid var(--secondary-btn-border);
+      color: var(--text-main);
     }
     .user-profile-info {
       display: flex;
@@ -1698,12 +1794,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     }
     .user-profile-name {
       font-weight: 700;
-      color: #FFFFFF;
+      color: var(--text-main);
       font-size: 13px;
     }
     .user-profile-handle {
       font-size: 11.5px;
-      color: #94A3B8;
+      color: var(--text-muted);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
     .user-role-badge {
@@ -1717,14 +1813,14 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       letter-spacing: 0.02em;
     }
     .user-role-badge.admin {
-      background: rgba(245, 158, 11, 0.14);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      color: #FBBF24;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--text-main);
     }
     .user-role-badge.tech {
-      background: rgba(56, 189, 248, 0.14);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: #38BDF8;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--text-muted);
     }
     .user-badge-self {
       display: inline-flex;
@@ -1734,9 +1830,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       border-radius: 8px;
       font-size: 11px;
       font-weight: 700;
-      background: rgba(148, 163, 184, 0.12);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      color: #94A3B8;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      color: var(--text-muted);
     }
     .btn-delete-operator {
       width: 32px;
@@ -1768,17 +1864,16 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       border-radius: 11px;
       font-size: 13px;
       font-weight: 700;
-      color: #38BDF8;
-      background: rgba(37, 99, 235, 0.14);
-      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--text-main);
+      background: var(--secondary-btn-bg);
+      border: 1px solid var(--secondary-btn-border);
       text-decoration: none;
       transition: all 0.2s;
     }
     .btn-download-operator-top:hover {
-      background: rgba(37, 99, 235, 0.25);
-      border-color: #38BDF8;
-      color: #FFFFFF;
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+      background: var(--secondary-btn-hover);
+      border-color: var(--border-focus);
+      color: var(--text-main);
       transform: translateY(-1px);
     }
 
@@ -1818,7 +1913,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     <aside class="app-sidebar">
       <div class="sidebar-brand-box">
         <div class="brand-logo-wrap">
-          <img src="flutter/assets/logo_dark.png?v=2" alt="OptimaIT">
+          <img id="appBrandLogo" src="flutter/assets/logo_dark.png?v=2" alt="OptimaIT">
         </div>
         <span class="badge-enterprise">PRO</span>
       </div>
@@ -1921,6 +2016,10 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <input type="text" class="search-box" placeholder="Buscar por equipo, ID, sede..." oninput="handleSearchInput(event)">
           </div>
 
+          <button type="button" class="btn-theme-toggle" id="themeToggleBtn" onclick="toggleAppTheme()" title="Cambiar Tema (Claro / Oscuro)">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </button>
+
           <a href="api.php?action=download_tech_client" class="btn-download-operator-top" title="Descargar Consola de Operador Optima IT (.exe)">
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
             <span>Consola de Operador</span>
@@ -1940,7 +2039,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <p>Clientes En Línea</p>
             <h3 id="statOnline">0</h3>
           </div>
-          <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+          <div class="metric-icon-box" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald);">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.828a5 5 0 010-7.072m7.072 0a5 5 0 010 7.072M13 12a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
           </div>
         </div>
@@ -1950,7 +2049,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <p>Equipos Empresa</p>
             <h3 id="statEmpresas">0</h3>
           </div>
-          <div class="metric-icon-box" style="background: rgba(255, 107, 0, 0.15); color: #FF6B00;">
+          <div class="metric-icon-box" style="background: var(--metric-icon-bg); color: var(--metric-icon-color);">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
           </div>
         </div>
@@ -1960,7 +2059,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <p>Personas Naturales</p>
             <h3 id="statPersonal">0</h3>
           </div>
-          <div class="metric-icon-box" style="background: rgba(37, 99, 235, 0.15); color: #38BDF8;">
+          <div class="metric-icon-box" style="background: var(--metric-icon-bg); color: var(--metric-icon-color);">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
           </div>
         </div>
@@ -1970,7 +2069,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <p>Total Registrados</p>
             <h3 id="statTotal">0</h3>
           </div>
-          <div class="metric-icon-box" style="background: rgba(148, 163, 184, 0.15); color: #94A3B8;">
+          <div class="metric-icon-box" style="background: var(--metric-icon-bg); color: var(--metric-icon-color);">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           </div>
         </div>
@@ -2107,8 +2206,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
         <div class="result-link-card" id="linkBox">
           <div style="display:flex; align-items:center; justify-content:space-between;">
-            <span style="font-size:11px; font-weight:800; color:var(--orange);" id="shareModeTitle">ENLACE GENERADO</span>
-            <span id="badgeShareType" style="font-size:10px; padding:2px 8px; border-radius:5px; font-weight:800;"></span>
+            <span style="font-size:11px; font-weight:800; color:var(--text-main);" id="shareModeTitle">ENLACE GENERADO</span>
+            <span id="badgeShareType" style="font-size:10px; padding:2px 8px; border-radius:5px; font-weight:800; border:1px solid var(--badge-border);"></span>
           </div>
           <div class="result-input-line">
             <input type="text" id="generatedUrl" readonly>
@@ -2154,9 +2253,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
   <!-- MODAL: GESTIÓN DE TÉCNICOS & ACCESOS -->
   <dialog id="usersModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
     <div class="modal-frame users-modal-custom">
-      <div class="modal-header-row" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(56, 189, 248, 0.03) 100%); border-bottom: 1px solid rgba(56, 189, 248, 0.2);">
+      <div class="modal-header-row">
         <div class="modal-headline-wrap">
-          <div class="modal-icon-bubble" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.3) 0%, rgba(56, 189, 248, 0.15) 100%); border-color: rgba(56, 189, 248, 0.45); color: #38BDF8;">
+          <div class="modal-icon-bubble">
             <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           </div>
           <div>
@@ -2356,6 +2455,34 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
   </dialog>
 
   <script>
+    function applyAppTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      try { localStorage.setItem('optima_theme', theme); } catch(e) {}
+      
+      const logo = document.getElementById('appBrandLogo');
+      if (logo) {
+        logo.src = (theme === 'light') ? 'flutter/assets/logo_light.png?v=2' : 'flutter/assets/logo_dark.png?v=2';
+      }
+
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {
+        if (theme === 'light') {
+          btn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>`;
+          btn.title = "Cambiar a Modo Oscuro";
+        } else {
+          btn.innerHTML = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+          btn.title = "Cambiar a Modo Claro";
+        }
+      }
+    }
+
+    function toggleAppTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = (current === 'dark') ? 'light' : 'dark';
+      applyAppTheme(next);
+      showToast(next === 'light' ? '☀️ Modo Claro activado' : '🌙 Modo Oscuro activado');
+    }
+
     let rawSessions = [];
     let customGroups = [];
     let currentCategory = 'empresa'; // 'empresa' | 'personal' | 'all'
@@ -2777,7 +2904,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
               ${isEmpresa ? `
               <div class="card-row-spec">
                 <span class="card-spec-key">Sede:</span>
-                <span style="color:#FDBA74; font-weight:700;">🏢 ${escapeHtml(s.group_name || 'General')}</span>
+                <span style="color:var(--text-main); font-weight:700;">🏢 ${escapeHtml(s.group_name || 'General')}</span>
               </div>` : ''}
               <div class="card-row-spec">
                 <span class="card-spec-key">ID Remoto:</span>
@@ -2823,14 +2950,14 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           if (type === 'empresa') {
             document.getElementById('shareModeTitle').innerText = 'ENLACE ASISTENCIA EMPRESA';
             document.getElementById('badgeShareType').innerText = 'EMPRESA';
-            document.getElementById('badgeShareType').style.background = 'rgba(255,107,0,0.2)';
-            document.getElementById('badgeShareType').style.color = '#FB923C';
+            document.getElementById('badgeShareType').style.background = 'var(--badge-bg)';
+            document.getElementById('badgeShareType').style.color = 'var(--text-main)';
             document.getElementById('shareExplanation').innerText = 'Descarga con elevación UAC y servicio en segundo plano que iniciará con Windows.';
           } else {
             document.getElementById('shareModeTitle').innerText = 'ENLACE PERSONA NATURAL';
             document.getElementById('badgeShareType').innerText = 'NATURAL';
-            document.getElementById('badgeShareType').style.background = 'rgba(37,99,235,0.2)';
-            document.getElementById('badgeShareType').style.color = '#93C5FD';
+            document.getElementById('badgeShareType').style.background = 'var(--badge-bg)';
+            document.getElementById('badgeShareType').style.color = 'var(--text-main)';
             document.getElementById('shareExplanation').innerText = 'Asistente temporal directo de 1 solo clic sin instalación permanente.';
           }
 
@@ -3462,12 +3589,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       } else {
         btn.className = 'btn-confirm-action btn-confirm-warning';
         if (card) {
-          card.style.borderColor = 'rgba(255, 107, 0, 0.4)';
-          card.style.boxShadow = '0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 35px -5px rgba(255, 107, 0, 0.25)';
+          card.style.borderColor = 'var(--border-focus)';
+          card.style.boxShadow = 'var(--metric-card-shadow)';
         }
         if (iconBadge) {
-          iconBadge.style.background = 'linear-gradient(135deg, rgba(255, 107, 0, 0.25) 0%, rgba(234, 88, 12, 0.15) 100%)';
-          iconBadge.style.borderColor = 'rgba(255, 107, 0, 0.45)';
+          iconBadge.style.background = 'var(--secondary-btn-bg)';
+          iconBadge.style.borderColor = 'var(--secondary-btn-border)';
         }
       }
       confirmCallback = onConfirm;
@@ -3492,7 +3619,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       }
     }
 
-    // Initialize with Empresa view
+    // Initialize Theme & View
+    applyAppTheme(document.documentElement.getAttribute('data-theme') || 'dark');
     setCategoryTab('empresa');
     setInterval(loadSessions, 3000);
     loadSessions();

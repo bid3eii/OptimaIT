@@ -13,23 +13,24 @@ if (!empty($_SESSION['optimait_user'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión - OptimaIT</title>
+  <meta name="color-scheme" content="dark light">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #3874CC;
-      --primary-hover: #295FB3;
-      --primary-glow: rgba(56, 116, 204, 0.4);
-      --orange: #E77222;
-      --orange-hover: #D06319;
-      --orange-glow: rgba(231, 114, 34, 0.45);
       --bg: #090D16;
       --surface: rgba(15, 23, 42, 0.85);
       --border: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(255, 255, 255, 0.4);
+      --border-glow: rgba(255, 255, 255, 0.1);
       --text: #F8FAFC;
       --text-muted: #94A3B8;
       --text-dim: #64748B;
+      --btn-bg: #FFFFFF;
+      --btn-text: #090D16;
+      --btn-hover: #F1F5F9;
+      --btn-shadow: rgba(255, 255, 255, 0.15);
     }
 
     * {
@@ -51,7 +52,7 @@ if (!empty($_SESSION['optimait_user'])) {
       overflow-x: hidden;
     }
 
-    /* Ambient Lighting Mesh */
+    /* Ambient Lighting Mesh - Neutral Modern */
     body::before {
       content: '';
       position: fixed;
@@ -59,7 +60,7 @@ if (!empty($_SESSION['optimait_user'])) {
       left: 15%;
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, rgba(231, 114, 34, 0.12) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
       filter: blur(80px);
       z-index: 0;
       pointer-events: none;
@@ -72,7 +73,7 @@ if (!empty($_SESSION['optimait_user'])) {
       right: 15%;
       width: 650px;
       height: 650px;
-      background: radial-gradient(circle, rgba(56, 116, 204, 0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(148, 163, 184, 0.05) 0%, transparent 70%);
       filter: blur(90px);
       z-index: 0;
       pointer-events: none;
@@ -89,7 +90,7 @@ if (!empty($_SESSION['optimait_user'])) {
     }
     .wm-icon {
       position: absolute;
-      opacity: 0.045;
+      opacity: 0.04;
       color: #94A3B8;
       transition: opacity 0.3s ease;
       display: flex;
@@ -100,13 +101,9 @@ if (!empty($_SESSION['optimait_user'])) {
       width: 100%;
       height: 100%;
     }
-    .wm-orange {
-      opacity: 0.055;
-      color: var(--orange);
-    }
-    .wm-blue {
-      opacity: 0.06;
-      color: var(--primary);
+    .wm-orange, .wm-blue {
+      opacity: 0.045;
+      color: #CBD5E1;
     }
 
     @keyframes floatA {
@@ -155,7 +152,7 @@ if (!empty($_SESSION['optimait_user'])) {
       border-radius: 28px;
       overflow: hidden;
       filter: blur(18px);
-      opacity: 0.65;
+      opacity: 0.35;
       pointer-events: none;
       z-index: 0;
     }
@@ -169,23 +166,23 @@ if (!empty($_SESSION['optimait_user'])) {
       background: conic-gradient(
         from 0deg,
         transparent 0deg,
-        transparent 65deg,
-        rgba(231, 114, 34, 0.9) 110deg,
-        rgba(56, 116, 204, 0.95) 160deg,
-        rgba(231, 114, 34, 0.8) 200deg,
+        transparent 70deg,
+        rgba(255, 255, 255, 0.5) 120deg,
+        rgba(203, 213, 225, 0.7) 160deg,
+        rgba(255, 255, 255, 0.4) 200deg,
         transparent 250deg,
         transparent 360deg
       );
-      animation: rotateBorderBeam 5s linear infinite;
+      animation: rotateBorderBeam 6s linear infinite;
     }
 
     .card-beam-border {
       position: relative;
       border-radius: 26px;
-      padding: 1.8px;
+      padding: 1.5px;
       overflow: hidden;
       box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.9),
-                  0 0 35px -5px rgba(231, 114, 34, 0.15);
+                  0 0 25px -5px rgba(255, 255, 255, 0.08);
       z-index: 1;
       width: 100%;
       box-sizing: border-box;
@@ -201,14 +198,14 @@ if (!empty($_SESSION['optimait_user'])) {
       background: conic-gradient(
         from 0deg,
         transparent 0deg,
-        transparent 65deg,
-        #E77222 110deg,
-        #3874CC 155deg,
-        #FFA24C 195deg,
-        transparent 245deg,
+        transparent 70deg,
+        rgba(255, 255, 255, 0.6) 120deg,
+        rgba(226, 232, 240, 0.9) 155deg,
+        rgba(255, 255, 255, 0.5) 190deg,
+        transparent 240deg,
         transparent 360deg
       );
-      animation: rotateBorderBeam 5s linear infinite;
+      animation: rotateBorderBeam 6s linear infinite;
       z-index: 0;
     }
 
@@ -235,7 +232,7 @@ if (!empty($_SESSION['optimait_user'])) {
 
     .logo-wrap img {
       height: 48px;
-      filter: drop-shadow(0 4px 15px rgba(231, 114, 34, 0.35));
+      filter: drop-shadow(0 4px 15px rgba(255, 255, 255, 0.1));
     }
 
     .login-header {
@@ -301,13 +298,13 @@ if (!empty($_SESSION['optimait_user'])) {
 
     .input-field:focus {
       background: rgba(8, 12, 22, 0.9);
-      border-color: var(--orange);
-      box-shadow: 0 0 0 3px var(--orange-glow), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--border-glow), inset 0 2px 4px rgba(0, 0, 0, 0.4);
     }
 
     .input-field:focus + .input-icon,
     .input-wrapper:focus-within .input-icon {
-      color: var(--orange);
+      color: #FFFFFF;
     }
 
     .toggle-pwd {
@@ -332,9 +329,9 @@ if (!empty($_SESSION['optimait_user'])) {
 
     .btn-login {
       width: 100%;
-      background: linear-gradient(135deg, var(--orange) 0%, #D06319 100%);
-      color: #FFFFFF;
-      border: none;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 14px 20px;
       border-radius: 12px;
       font-size: 14.5px;
@@ -344,16 +341,16 @@ if (!empty($_SESSION['optimait_user'])) {
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 6px 20px -3px var(--orange-glow);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 20px -3px var(--btn-shadow);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       margin-top: 8px;
       user-select: none;
     }
 
     .btn-login:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px -2px var(--orange-glow);
-      filter: brightness(1.06);
+      background: var(--btn-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px -2px rgba(255, 255, 255, 0.22);
     }
 
     .btn-login:active {
