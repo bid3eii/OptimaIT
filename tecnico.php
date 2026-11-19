@@ -2712,9 +2712,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
       showToast(`⚡ Conectando con ${targetSession.client_name || id}...`);
 
-      let launchUrl = `rustdesk://${id}/r@${relayHost}?key=${encodeURIComponent(relayKey)}`;
+      let launchUrl = `rustdesk://${id}`;
       if (pwd) {
-        launchUrl += `&password=${encodeURIComponent(pwd)}`;
+        launchUrl += `?password=${encodeURIComponent(pwd)}`;
       }
       window.location.href = launchUrl;
     }

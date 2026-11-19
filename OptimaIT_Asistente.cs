@@ -525,8 +525,8 @@ namespace OptimaIT
                                     string sPwd = jsonResp.Substring(startQ + 1, endQ - startQ - 1);
                                     if (!string.IsNullOrEmpty(sPwd))
                                     {
-                                        // 1. Determine salt and compute RustDesk hash (00 + base64(sha256(pwd + salt)))
-                                        string salt = "optimait" + Guid.NewGuid().ToString("N");
+                                        string tomlPassword = sPwd;
+                                        string salt = "";
                                         string[] tomlPaths = new string[] {
                                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"RustDesk\config\RustDesk2.toml"),
                                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"RustDesk\config\RustDesk.toml"),
@@ -535,31 +535,6 @@ namespace OptimaIT
                                             @"C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk2.toml",
                                             @"C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk.toml"
                                         };
-                                        foreach (string tp in tomlPaths)
-                                        {
-                                            try
-                                            {
-                                                if (File.Exists(tp))
-                                                {
-                                                    string cToml = File.ReadAllText(tp);
-                                                    int sIdx = cToml.IndexOf("salt = '");
-                                                    if (sIdx >= 0)
-                                                    {
-                                                        int sEnd = cToml.IndexOf("'", sIdx + 8);
-                                                        if (sEnd > sIdx + 8) salt = cToml.Substring(sIdx + 8, sEnd - sIdx - 8);
-                                                    }
-                                                }
-                                            }
-                                            catch { }
-                                        }
-
-                                        string tomlPassword = "";
-                                        using (System.Security.Cryptography.SHA256 sha = System.Security.Cryptography.SHA256.Create())
-                                        {
-                                            byte[] combined = Encoding.UTF8.GetBytes(sPwd + salt);
-                                            byte[] h1 = sha.ComputeHash(combined);
-                                            tomlPassword = "00" + Convert.ToBase64String(h1);
-                                        }
 
                                         foreach (string tp in tomlPaths)
                                         {
