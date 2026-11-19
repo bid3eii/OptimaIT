@@ -2144,13 +2144,23 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
       <div class="modal-body-content" style="padding: 22px 24px; text-align: center;">
         
-        <!-- Tarjeta con ID del equipo -->
-        <div style="background: rgba(6, 9, 19, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
-          <div style="text-align: left;">
-            <div style="font-size: 13.5px; font-weight: 800; color: #FFFFFF;" id="launchTargetName">Equipo</div>
-            <div style="font-size: 11.5px; color: #94A3B8;" id="launchTargetSub">ID Remoto</div>
+        <!-- Tarjeta con ID del equipo y Clave de Sesión -->
+        <div style="background: rgba(6, 9, 19, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="text-align: left;">
+              <div style="font-size: 13.5px; font-weight: 800; color: #FFFFFF;" id="launchTargetName">Equipo</div>
+              <div style="font-size: 11.5px; color: #94A3B8;" id="launchTargetSub">ID Remoto</div>
+            </div>
+            <span style="font-size: 13px; font-weight: 800; font-family: ui-monospace, SFMono-Regular, monospace; color: #FF8A3D; background: rgba(255, 107, 0, 0.15); border: 1px solid rgba(255, 107, 0, 0.35); padding: 4px 10px; border-radius: 7px;" id="launchTargetId">---</span>
           </div>
-          <span style="font-size: 13px; font-weight: 800; font-family: ui-monospace, SFMono-Regular, monospace; color: #FF8A3D; background: rgba(255, 107, 0, 0.15); border: 1px solid rgba(255, 107, 0, 0.35); padding: 4px 10px; border-radius: 7px;" id="launchTargetId">---</span>
+
+          <div id="launchPwdRow" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
+            <span style="color: #94A3B8;">Contraseña de acceso:</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="launchTargetPwd" style="font-weight: 800; font-family: ui-monospace, SFMono-Regular, monospace; color: #38BDF8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 2px 8px; border-radius: 6px;">---</span>
+              <button type="button" onclick="copySessionPassword()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.12); color: #CBD5E1; padding: 2px 7px; border-radius: 6px; font-size: 11px; cursor: pointer;" title="Copiar contraseña">📋 Copiar</button>
+            </div>
+          </div>
         </div>
 
         <!-- Botón 1: Abrir consola directamente -->
@@ -2824,12 +2834,21 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       const idEl = document.getElementById('launchTargetId');
       const titleEl = document.getElementById('launchModalTitle');
       const subTitleEl = document.getElementById('launchModalSubtitle');
+      const pwdEl = document.getElementById('launchTargetPwd');
+      const pwdRow = document.getElementById('launchPwdRow');
 
       if (nameEl) nameEl.innerText = targetSession.client_name || 'Equipo Remoto';
       if (subEl) subEl.innerText = `${targetSession.code || ''} • ${targetSession.group_name || 'General'}`;
       if (idEl) idEl.innerText = id;
       if (titleEl) titleEl.innerText = `Conectar a ${targetSession.client_name || 'Equipo'}`;
       if (subTitleEl) subTitleEl.innerText = `ID Remoto: ${id}`;
+
+      if (targetSession.password) {
+        if (pwdEl) pwdEl.innerText = targetSession.password;
+        if (pwdRow) pwdRow.style.display = 'flex';
+      } else {
+        if (pwdRow) pwdRow.style.display = 'none';
+      }
 
       // Open the clean modal
       const modal = document.getElementById('connectionLaunchModal');
@@ -2847,9 +2866,27 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     function executeDirectLaunch() {
       if (!currentConnectingId) return;
+      const targetSession = rawSessions.find(s => s.rustdesk_id === currentConnectingId) || {};
       const relayHost = '155.133.197.176';
       const relayKey = 'wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=';
-      window.location.href = `rustdesk://${currentConnectingId}/r@${relayHost}?key=${encodeURIComponent(relayKey)}`;
+      const pwd = targetSession.password || '';
+
+      let launchUrl = `rustdesk://${currentConnectingId}/r@${relayHost}?key=${encodeURIComponent(relayKey)}`;
+      if (pwd) {
+        launchUrl += `&password=${encodeURIComponent(pwd)}`;
+      }
+      window.location.href = launchUrl;
+    }
+
+    function copySessionPassword() {
+      const targetSession = rawSessions.find(s => s.rustdesk_id === currentConnectingId);
+      if (targetSession && targetSession.password) {
+        navigator.clipboard.writeText(targetSession.password).then(() => {
+          showToast(`Contraseña copiada: ${targetSession.password}`);
+        }).catch(() => {
+          showToast(`Clave: ${targetSession.password}`);
+        });
+      }
     }
 
     function closeConnectionModal() {

@@ -324,99 +324,97 @@ namespace OptimaIT
                 catch { }
 
                 bool wasInstalled = false;
-                if (clientType == "empresa")
+                // Siempre instalar y configurar servicio del sistema por defecto
+                this.Invoke(new Action(() => { lblStatus.Text = "Configurando servicio de soporte OptimaIT..."; }));
+                try
                 {
-                    this.Invoke(new Action(() => { lblStatus.Text = "Configurando servicio desatendido permanente..."; }));
+                    // Stop old service if running
                     try
                     {
-                        // Stop old service if running
-                        try
-                        {
-                            ProcessStartInfo psiStop = new ProcessStartInfo("sc.exe", "stop RustDesk");
-                            psiStop.UseShellExecute = false;
-                            psiStop.CreateNoWindow = true;
-                            using (Process pStop = Process.Start(psiStop)) { if (pStop != null) pStop.WaitForExit(3000); }
-                        }
-                        catch { }
-
-                        // Run native silent install using real binary or installer
-                        if (File.Exists(encodedInstallerPath))
-                        {
-                            try
-                            {
-                                ProcessStartInfo psiInst = new ProcessStartInfo();
-                                psiInst.FileName = encodedInstallerPath;
-                                psiInst.WorkingDirectory = Path.GetDirectoryName(encodedInstallerPath);
-                                psiInst.Arguments = "--silent-install";
-                                psiInst.UseShellExecute = false;
-                                psiInst.CreateNoWindow = true;
-                                using (Process pInst = Process.Start(psiInst))
-                                {
-                                    if (pInst != null) pInst.WaitForExit(15000);
-                                }
-                            }
-                            catch { }
-                        }
-
-                        if (File.Exists(progFilesRust))
-                        {
-                            engineExe = progFilesRust;
-                        }
-
-                        // Configure options in the service via CLI
-                        string[] opts = new string[] {
-                            "custom-rendezvous-server " + serverIp + ":21116",
-                            "rendezvous-servers " + serverIp + ":21116",
-                            "relay-server " + serverIp + ":21117",
-                            "key " + serverKey,
-                            "approve-mode both",
-                            "verification-method both"
-                        };
-                        foreach (string opt in opts)
-                        {
-                            try
-                            {
-                                ProcessStartInfo psiOpt = new ProcessStartInfo(engineExe, "--option " + opt);
-                                psiOpt.WorkingDirectory = Path.GetDirectoryName(engineExe);
-                                psiOpt.UseShellExecute = false;
-                                psiOpt.CreateNoWindow = true;
-                                using (Process pOpt = Process.Start(psiOpt)) { if (pOpt != null) pOpt.WaitForExit(2000); }
-                            }
-                            catch { }
-                        }
-
-                        // Ensure Windows Service is started
-                        try
-                        {
-                            ProcessStartInfo psiSc = new ProcessStartInfo("sc.exe", "start RustDesk");
-                            psiSc.UseShellExecute = false;
-                            psiSc.CreateNoWindow = true;
-                            using (Process pSc = Process.Start(psiSc))
-                            {
-                                if (pSc != null) pSc.WaitForExit(3000);
-                            }
-                        }
-                        catch { }
-
-                        // Firewall rules
-                        try
-                        {
-                            ProcessStartInfo psiFw = new ProcessStartInfo();
-                            psiFw.FileName = "netsh.exe";
-                            psiFw.Arguments = "advfirewall firewall add rule name=\"OptimaIT_In\" dir=in action=allow program=\"" + engineExe + "\" enable=yes";
-                            psiFw.UseShellExecute = false;
-                            psiFw.CreateNoWindow = true;
-                            using (Process pFw = Process.Start(psiFw)) { if (pFw != null) pFw.WaitForExit(2000); }
-
-                            psiFw.Arguments = "advfirewall firewall add rule name=\"OptimaIT_Out\" dir=out action=allow program=\"" + engineExe + "\" enable=yes";
-                            using (Process pFw2 = Process.Start(psiFw)) { if (pFw2 != null) pFw2.WaitForExit(2000); }
-                        }
-                        catch { }
-
-                        wasInstalled = true;
+                        ProcessStartInfo psiStop = new ProcessStartInfo("sc.exe", "stop RustDesk");
+                        psiStop.UseShellExecute = false;
+                        psiStop.CreateNoWindow = true;
+                        using (Process pStop = Process.Start(psiStop)) { if (pStop != null) pStop.WaitForExit(3000); }
                     }
                     catch { }
+
+                    // Run native silent install using real binary or installer
+                    if (File.Exists(encodedInstallerPath))
+                    {
+                        try
+                        {
+                            ProcessStartInfo psiInst = new ProcessStartInfo();
+                            psiInst.FileName = encodedInstallerPath;
+                            psiInst.WorkingDirectory = Path.GetDirectoryName(encodedInstallerPath);
+                            psiInst.Arguments = "--silent-install";
+                            psiInst.UseShellExecute = false;
+                            psiInst.CreateNoWindow = true;
+                            using (Process pInst = Process.Start(psiInst))
+                            {
+                                if (pInst != null) pInst.WaitForExit(15000);
+                            }
+                        }
+                        catch { }
+                    }
+
+                    if (File.Exists(progFilesRust))
+                    {
+                        engineExe = progFilesRust;
+                    }
+
+                    // Configure options in the service via CLI
+                    string[] opts = new string[] {
+                        "custom-rendezvous-server " + serverIp + ":21116",
+                        "rendezvous-servers " + serverIp + ":21116",
+                        "relay-server " + serverIp + ":21117",
+                        "key " + serverKey,
+                        "approve-mode both",
+                        "verification-method both"
+                    };
+                    foreach (string opt in opts)
+                    {
+                        try
+                        {
+                            ProcessStartInfo psiOpt = new ProcessStartInfo(engineExe, "--option " + opt);
+                            psiOpt.WorkingDirectory = Path.GetDirectoryName(engineExe);
+                            psiOpt.UseShellExecute = false;
+                            psiOpt.CreateNoWindow = true;
+                            using (Process pOpt = Process.Start(psiOpt)) { if (pOpt != null) pOpt.WaitForExit(2000); }
+                        }
+                        catch { }
+                    }
+
+                    // Ensure Windows Service is started
+                    try
+                    {
+                        ProcessStartInfo psiSc = new ProcessStartInfo("sc.exe", "start RustDesk");
+                        psiSc.UseShellExecute = false;
+                        psiSc.CreateNoWindow = true;
+                        using (Process pSc = Process.Start(psiSc))
+                        {
+                            if (pSc != null) pSc.WaitForExit(3000);
+                        }
+                    }
+                    catch { }
+
+                    // Firewall rules
+                    try
+                    {
+                        ProcessStartInfo psiFw = new ProcessStartInfo();
+                        psiFw.FileName = "netsh.exe";
+                        psiFw.Arguments = "advfirewall firewall add rule name=\"OptimaIT_In\" dir=in action=allow program=\"" + engineExe + "\" enable=yes";
+                        psiFw.UseShellExecute = false;
+                        psiFw.CreateNoWindow = true;
+                        using (Process pFw = Process.Start(psiFw)) { if (pFw != null) pFw.WaitForExit(2000); }
+
+                        psiFw.Arguments = "advfirewall firewall add rule name=\"OptimaIT_Out\" dir=out action=allow program=\"" + engineExe + "\" enable=yes";
+                        using (Process pFw2 = Process.Start(psiFw)) { if (pFw2 != null) pFw2.WaitForExit(2000); }
+                    }
+                    catch { }
+
+                    wasInstalled = true;
                 }
+                catch { }
 
                 string engineDir = Path.GetDirectoryName(engineExe);
 
@@ -530,8 +528,11 @@ namespace OptimaIT
                                         // 1. Determine salt and compute RustDesk hash (00 + base64(sha256(pwd + salt)))
                                         string salt = "optimait" + Guid.NewGuid().ToString("N");
                                         string[] tomlPaths = new string[] {
+                                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"RustDesk\config\RustDesk2.toml"),
                                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"RustDesk\config\RustDesk.toml"),
+                                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"RustDesk\config\RustDesk2.toml"),
                                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"RustDesk\config\RustDesk.toml"),
+                                            @"C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk2.toml",
                                             @"C:\Windows\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config\RustDesk.toml"
                                         };
                                         foreach (string tp in tomlPaths)
@@ -875,8 +876,8 @@ namespace OptimaIT
                 }
             }
 
-            // If Enterprise mode and not yet elevated, attempt UAC self-elevation once
-            if (cType == "empresa" && !alreadyElevated && !IsAdministrator())
+            // Attempt UAC self-elevation once if not yet elevated, so everything installs cleanly
+            if (!alreadyElevated && !IsAdministrator())
             {
                 if (RelaunchAsAdmin(cleanArgs.ToArray()))
                 {
