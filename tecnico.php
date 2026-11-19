@@ -1547,6 +1547,203 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       box-shadow: 0 0 14px rgba(239, 68, 68, 0.3);
     }
 
+    /* OPERATOR LAUNCH & DOWNLOAD COMPONENTS */
+    .btn-download-operator-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 16px;
+      border-radius: 11px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #38BDF8;
+      background: rgba(37, 99, 235, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-download-operator-top:hover {
+      background: rgba(37, 99, 235, 0.25);
+      border-color: #38BDF8;
+      color: #FFFFFF;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .modal-frame.connection-modal-custom {
+      max-width: 520px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.95), 0 0 50px -5px rgba(37, 99, 235, 0.3);
+    }
+    .launch-target-card {
+      background: rgba(6, 9, 19, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .launch-target-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .launch-target-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    .launch-target-sub {
+      font-size: 11.5px;
+      color: #94A3B8;
+    }
+    .launch-target-badge {
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      background: rgba(255, 107, 0, 0.15);
+      border: 1px solid rgba(255, 107, 0, 0.4);
+      color: #FF6B00;
+    }
+    .launch-radar-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 10px 10px;
+      text-align: center;
+    }
+    .radar-pulse-ring {
+      position: relative;
+      width: 68px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .radar-pulse-ring::before, .radar-pulse-ring::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid #38BDF8;
+      opacity: 0;
+      animation: radarPulse 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    .radar-pulse-ring::after {
+      animation-delay: 1s;
+    }
+    @keyframes radarPulse {
+      0% { transform: scale(0.6); opacity: 0.8; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .radar-core-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563EB 0%, #0284C7 100%);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+    }
+    .launch-status-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+    }
+    .launch-status-desc {
+      font-size: 12.5px;
+      color: #94A3B8;
+      max-width: 380px;
+      line-height: 1.45;
+    }
+    .launch-prompt-hint {
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      font-size: 12px;
+      color: #BAE6FD;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+    }
+    .launch-missing-box {
+      margin-top: 16px;
+      padding: 16px;
+      background: linear-gradient(145deg, rgba(255, 107, 0, 0.08) 0%, rgba(234, 88, 12, 0.04) 100%);
+      border: 1px solid rgba(255, 107, 0, 0.35);
+      border-radius: 14px;
+      text-align: left;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .launch-missing-box.active {
+      display: block;
+    }
+    .launch-missing-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #FF8A3D;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .launch-missing-text {
+      font-size: 12px;
+      color: #CBD5E1;
+      line-height: 1.45;
+    }
+    .btn-download-tech-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 11px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin-top: 12px;
+      box-shadow: 0 4px 16px -2px rgba(255, 107, 0, 0.45);
+      transition: all 0.2s;
+    }
+    .btn-download-tech-cta:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px -2px rgba(255, 107, 0, 0.6);
+    }
+    .btn-reg-helper {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: #94A3B8;
+      text-decoration: underline;
+      cursor: pointer;
+      margin-top: 10px;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .btn-reg-helper:hover {
+      color: #FDBA74;
+    }
+
     /* RESPONSIVE ADAPTATIONS */
     @media (max-width: 1080px) {
       .app-sidebar { width: 76px; }
@@ -1683,6 +1880,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input type="text" class="search-box" placeholder="Buscar por equipo, ID, sede..." oninput="handleSearchInput(event)">
           </div>
+
+          <a href="api.php?action=download_tech_client" class="btn-download-operator-top" title="Descargar Consola de Operador Optima IT (.exe)">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>Consola de Operador</span>
+          </a>
 
           <button type="button" class="btn-create-session" style="padding:11px 18px; font-size:13px; width:auto;" onclick="openSessionModal()">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
@@ -2047,6 +2249,81 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     </div>
   </dialog>
   <?php endif; ?>
+
+  <!-- MODAL: LANZADOR DE CONEXIÓN REMOTA -->
+  <dialog id="connectionLaunchModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
+    <div class="modal-frame connection-modal-custom">
+      <div class="modal-header-row" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(56, 189, 248, 0.04) 100%); border-bottom: 1px solid rgba(56, 189, 248, 0.22);">
+        <div class="modal-headline-wrap">
+          <div class="modal-icon-bubble" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.3) 0%, rgba(56, 189, 248, 0.15) 100%); border-color: rgba(56, 189, 248, 0.5); color: #38BDF8;">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </div>
+          <div>
+            <h3 class="modal-headline-title">Conexión Remota Optima IT</h3>
+            <p class="modal-headline-sub">Estableciendo enlace cifrado de soporte</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-x" onclick="closeConnectionModal()" title="Cerrar">&times;</button>
+      </div>
+
+      <div class="modal-body-content" style="padding: 22px 24px;">
+        <!-- Card: Información del Objetivo -->
+        <div class="launch-target-card">
+          <div class="launch-target-info">
+            <span class="launch-target-name" id="launchTargetName">Cargando equipo...</span>
+            <span class="launch-target-sub" id="launchTargetSub">ID Remoto de Asistencia</span>
+          </div>
+          <span class="launch-target-badge" id="launchTargetId">--- --- ---</span>
+        </div>
+
+        <!-- Radar Pulse & Estado de Lanzamiento -->
+        <div class="launch-radar-box">
+          <div class="radar-pulse-ring">
+            <div class="radar-core-icon">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path></svg>
+            </div>
+          </div>
+          <div class="launch-status-title" id="launchStatusTitle">Abriendo Consola de Control...</div>
+          <div class="launch-status-desc" id="launchStatusDesc">
+            Tu navegador solicitará confirmación. Haz clic en <strong>"Abrir"</strong> en la ventana emergente para iniciar la sesión de asistencia.
+          </div>
+
+          <div class="launch-prompt-hint" id="launchPromptHint">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Verifica la alerta superior del navegador y haz clic en <strong>Abrir</strong>.</span>
+          </div>
+        </div>
+
+        <!-- Alerta de Consola No Detectada / Descarga -->
+        <div class="launch-missing-box" id="launchMissingBox">
+          <div class="launch-missing-title">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            ¿No se abre la sesión o es la primera vez que te conectas?
+          </div>
+          <div class="launch-missing-text">
+            Para conectarte desde este equipo necesitas tener instalada la <strong>Consola Técnica de Optima IT</strong> (ejecutable preconfigurado con el servidor relay).
+          </div>
+          <a href="api.php?action=download_tech_client" class="btn-download-tech-cta">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            <span>Descargar Consola de Técnico (.exe)</span>
+          </a>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <a href="api.php?action=download_reg_branding" class="btn-reg-helper" title="Descarga archivo .reg para que en Windows aparezca como OptimaIT">
+              🛠️ Personalizar aviso para que diga "OptimaIT" (.reg)
+            </a>
+            <button type="button" class="btn-reg-helper" onclick="retryProtocolLaunch()" style="color:#38BDF8; font-weight:700;">
+              🔄 Reintentar Abrir
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer-row" style="justify-content: space-between;">
+        <button type="button" class="btn-modal-cancel" style="font-size:12px;" onclick="retryProtocolLaunch()">Reintentar</button>
+        <button type="button" class="btn-modal-cancel" onclick="closeConnectionModal()">Cerrar</button>
+      </div>
+    </div>
+  </dialog>
 
   <!-- MODAL: CONFIRMAR ACCIÓN -->
   <dialog id="confirmActionModal" class="app-dialog" style="z-index: 10005;" onclick="handleDialogBackdropClick(event)">
@@ -2665,10 +2942,97 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       });
     }
 
+    let currentConnectingId = null;
+    let launchDetectionTimer = null;
+
     function connectSession(id) {
-      showToast(`Conectando con equipo ${id}...`);
+      currentConnectingId = id;
+      const targetSession = rawSessions.find(s => s.rustdesk_id === id) || {
+        client_name: 'Equipo Remoto',
+        code: `OPT-${id.slice(0, 4)}`,
+        group_name: 'Soporte Remoto'
+      };
+
+      const nameEl = document.getElementById('launchTargetName');
+      const subEl = document.getElementById('launchTargetSub');
+      const idEl = document.getElementById('launchTargetId');
+      if (nameEl) nameEl.innerText = targetSession.client_name || 'Equipo Remoto';
+      if (subEl) subEl.innerText = `${targetSession.code || ''} • ${targetSession.group_name || 'General'}`;
+      if (idEl) idEl.innerText = id;
+
+      const missingBox = document.getElementById('launchMissingBox');
+      const statusTitle = document.getElementById('launchStatusTitle');
+      const statusDesc = document.getElementById('launchStatusDesc');
+      const hint = document.getElementById('launchPromptHint');
+
+      if (missingBox) missingBox.classList.remove('active');
+      if (statusTitle) statusTitle.innerText = "Abriendo Consola de Control...";
+      if (statusDesc) statusDesc.innerHTML = 'Tu navegador solicitará confirmación. Haz clic en <strong>"Abrir"</strong> en la ventana emergente para iniciar la sesión.';
+      if (hint) hint.style.display = 'flex';
+
+      const modal = document.getElementById('connectionLaunchModal');
+      if (modal) {
+        if (modal.showModal) modal.showModal();
+        else modal.classList.add('active');
+      }
+
       fetch(`api.php?action=mark_online&id=${encodeURIComponent(id)}`).then(() => loadSessions()).catch(() => {});
-      window.location.href = `rustdesk://${id}`;
+
+      triggerProtocolLaunch(id);
+    }
+
+    function triggerProtocolLaunch(id) {
+      if (!id) return;
+      const launchUrl = `rustdesk://${id}`;
+
+      let hasBlurred = false;
+      const onBlur = () => {
+        hasBlurred = true;
+        window.removeEventListener('blur', onBlur);
+        const statusTitle = document.getElementById('launchStatusTitle');
+        const statusDesc = document.getElementById('launchStatusDesc');
+        if (statusTitle) statusTitle.innerText = "¡Consola Técnica Lanzada!";
+        if (statusDesc) statusDesc.innerHTML = "Se ha enviado la solicitud de conexión a la consola. Puedes minimizar esta ventana.";
+      };
+      window.addEventListener('blur', onBlur);
+
+      // Launch protocol via hidden iframe or window.location
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = launchUrl;
+      document.body.appendChild(iframe);
+      setTimeout(() => { try { iframe.remove(); } catch(e){} }, 3000);
+
+      // Detection timer: if window didn't blur within 1.8s, client is likely not installed
+      if (launchDetectionTimer) clearTimeout(launchDetectionTimer);
+      launchDetectionTimer = setTimeout(() => {
+        window.removeEventListener('blur', onBlur);
+        if (!hasBlurred) {
+          const missingBox = document.getElementById('launchMissingBox');
+          const statusTitle = document.getElementById('launchStatusTitle');
+          const hint = document.getElementById('launchPromptHint');
+          if (statusTitle) statusTitle.innerText = "Consola no detectada en este equipo";
+          if (hint) hint.style.display = 'none';
+          if (missingBox) missingBox.classList.add('active');
+        }
+      }, 1800);
+    }
+
+    function retryProtocolLaunch() {
+      if (currentConnectingId) {
+        const missingBox = document.getElementById('launchMissingBox');
+        if (missingBox) missingBox.classList.remove('active');
+        triggerProtocolLaunch(currentConnectingId);
+      }
+    }
+
+    function closeConnectionModal() {
+      if (launchDetectionTimer) clearTimeout(launchDetectionTimer);
+      const modal = document.getElementById('connectionLaunchModal');
+      if (modal) {
+        if (modal.close) modal.close();
+        else modal.classList.remove('active');
+      }
     }
 
     function escapeHtml(text) {

@@ -332,6 +332,44 @@ switch ($action) {
         }
         break;
 
+    case 'download_tech_client':
+        $file = __DIR__ . '/OptimaIT.exe';
+        if (!file_exists($file)) {
+            header("HTTP/1.0 404 Not Found");
+            echo "Error: El archivo de consola técnica no está disponible en el servidor.";
+            exit;
+        }
+        $serverHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : 'optimait.155.133.197.176.sslip.io';
+        if ($serverHost === 'localhost' || $serverHost === '127.0.0.1' || $serverHost === '155.133.197.176') {
+            $serverHost = 'optimait.155.133.197.176.sslip.io';
+        }
+        $downloadName = "OptimaIT_ConsolaTecnica,host={$serverHost},key=wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=.exe";
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $downloadName . '"');
+        header('Expires: 0');
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: no-cache');
+        header('Content-Length: ' . filesize($file));
+        readfile($file);
+        exit;
+
+    case 'download_reg_branding':
+        $regContent = "Windows Registry Editor Version 5.00\r\n\r\n";
+        $regContent .= "[HKEY_CURRENT_USER\\Software\\Classes\\rustdesk]\r\n";
+        $regContent .= "@=\"OptimaIT Soporte Remoto\"\r\n";
+        $regContent .= "\"URL Protocol\"=\"\"\r\n";
+        
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="OptimaIT_Personalizar_Protocolo.reg"');
+        header('Expires: 0');
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: no-cache');
+        header('Content-Length: ' . strlen($regContent));
+        echo $regContent;
+        exit;
+
     case 'launch_connection':
         $id = preg_replace('/[^0-9]/', '', $_REQUEST['id'] ?? '');
         $pwd = trim($_REQUEST['password'] ?? '');
