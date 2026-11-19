@@ -1570,55 +1570,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       transform: translateY(-1px);
     }
 
-    .modal-frame.connection-modal-custom {
-      max-width: 440px;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.95), 0 0 45px -5px rgba(37, 99, 235, 0.3);
-    }
-    .btn-connect-launch {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-      color: #FFFFFF;
-      font-size: 14px;
-      font-weight: 800;
-      padding: 13px 20px;
-      border-radius: 12px;
-      text-decoration: none;
-      box-shadow: 0 4px 18px -2px rgba(37, 99, 235, 0.5);
-      transition: all 0.2s;
-      cursor: pointer;
-      border: none;
-    }
-    .btn-connect-launch:hover {
-      filter: brightness(1.12);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 22px -2px rgba(37, 99, 235, 0.65);
-    }
-    .btn-download-console {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      width: 100%;
-      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 100%);
-      color: #FFFFFF;
-      font-size: 13.5px;
-      font-weight: 800;
-      padding: 12px 20px;
-      border-radius: 12px;
-      text-decoration: none;
-      box-shadow: 0 4px 18px -2px rgba(255, 107, 0, 0.45);
-      transition: all 0.2s;
-    }
-    .btn-download-console:hover {
-      filter: brightness(1.1);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 22px -2px rgba(255, 107, 0, 0.6);
-    }
+
 
     /* RESPONSIVE ADAPTATIONS */
     @media (max-width: 1080px) {
@@ -2126,81 +2078,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
   </dialog>
   <?php endif; ?>
 
-  <!-- MODAL: CONEXIÓN REMOTA -->
-  <dialog id="connectionLaunchModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
-    <div class="modal-frame connection-modal-custom">
-      <div class="modal-header-row" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(56, 189, 248, 0.04) 100%); border-bottom: 1px solid rgba(56, 189, 248, 0.22);">
-        <div class="modal-headline-wrap">
-          <div class="modal-icon-bubble" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.3) 0%, rgba(56, 189, 248, 0.15) 100%); border-color: rgba(56, 189, 248, 0.5); color: #38BDF8;">
-            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-          </div>
-          <div>
-            <h3 class="modal-headline-title" id="launchModalTitle">Conectar con Equipo</h3>
-            <p class="modal-headline-sub" id="launchModalSubtitle">Soporte Técnico Remoto</p>
-          </div>
-        </div>
-        <button type="button" class="modal-close-x" onclick="closeConnectionModal()" title="Cerrar">&times;</button>
-      </div>
 
-      <div class="modal-body-content" style="padding: 22px 24px; text-align: center;">
-        
-        <!-- Tarjeta con ID del equipo y Clave de Sesión -->
-        <div style="background: rgba(6, 9, 19, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <div style="text-align: left;">
-              <div style="font-size: 13.5px; font-weight: 800; color: #FFFFFF;" id="launchTargetName">Equipo</div>
-              <div style="font-size: 11.5px; color: #94A3B8;" id="launchTargetSub">ID Remoto</div>
-            </div>
-            <span style="font-size: 13px; font-weight: 800; font-family: ui-monospace, SFMono-Regular, monospace; color: #FF8A3D; background: rgba(255, 107, 0, 0.15); border: 1px solid rgba(255, 107, 0, 0.35); padding: 4px 10px; border-radius: 7px;" id="launchTargetId">---</span>
-          </div>
-
-          <div id="launchPwdRow" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: space-between; font-size: 12px;">
-            <span style="color: #94A3B8;">Contraseña de acceso:</span>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span id="launchTargetPwd" style="font-weight: 800; font-family: ui-monospace, SFMono-Regular, monospace; color: #38BDF8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); padding: 2px 8px; border-radius: 6px;">---</span>
-              <button type="button" onclick="copySessionPassword()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.12); color: #CBD5E1; padding: 2px 7px; border-radius: 6px; font-size: 11px; cursor: pointer;" title="Copiar contraseña">📋 Copiar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Botón 1: Abrir consola directamente -->
-        <button type="button" class="btn-connect-launch" onclick="executeDirectLaunch()">
-          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-          <span>Abrir Consola y Conectar</span>
-        </button>
-
-        <!-- Divisor claro -->
-        <div style="margin: 18px 0 14px; display: flex; align-items: center; gap: 10px;">
-          <div style="flex:1; height:1px; background:rgba(255,255,255,0.08);"></div>
-          <span style="font-size: 11px; color: #64748B; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">¿No te abre en tu PC?</span>
-          <div style="flex:1; height:1px; background:rgba(255,255,255,0.08);"></div>
-        </div>
-
-        <!-- Botón 2: Descargar para quien no la tiene instalada -->
-        <a href="api.php?action=download_tech_client" class="btn-download-console">
-          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-          <span>Descargar Consola Técnica (.exe)</span>
-        </a>
-
-        <div style="margin-top: 10px; font-size: 11.5px; color: #94A3B8; line-height: 1.4;">
-          Instálala una sola vez en tu computadora para poder conectarte con 1 clic.
-        </div>
-
-        <!-- Enlace para registrar marca OptimaIT y servidor privado -->
-        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.07); display:flex; flex-direction:column; gap:6px; align-items:center;">
-          <a href="api.php?action=download_config_bat" style="font-size: 12px; font-weight:700; color: #38BDF8; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-            <span>⚡ 1 Clic: Conectar mi PC al Servidor Optima IT (.bat)</span>
-          </a>
-          <span style="font-size:11px; color:#64748B;">Configura automáticamente el servidor y nombre en Windows</span>
-        </div>
-
-      </div>
-
-      <div class="modal-footer-row">
-        <button type="button" class="btn-modal-cancel" onclick="closeConnectionModal()">Cerrar</button>
-      </div>
-    </div>
-  </dialog>
 
   <!-- MODAL: CONFIRMAR ACCIÓN -->
   <dialog id="confirmActionModal" class="app-dialog" style="z-index: 10005;" onclick="handleDialogBackdropClick(event)">
@@ -2819,82 +2697,26 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       });
     }
 
-    let currentConnectingId = null;
-
     function connectSession(id) {
-      currentConnectingId = id;
+      if (!id) return;
       const targetSession = rawSessions.find(s => s.rustdesk_id === id) || {
-        client_name: 'Equipo Remoto',
-        code: `OPT-${id.slice(0, 4)}`,
-        group_name: 'Soporte'
+        client_name: 'Equipo Remoto'
       };
 
-      const nameEl = document.getElementById('launchTargetName');
-      const subEl = document.getElementById('launchTargetSub');
-      const idEl = document.getElementById('launchTargetId');
-      const titleEl = document.getElementById('launchModalTitle');
-      const subTitleEl = document.getElementById('launchModalSubtitle');
-      const pwdEl = document.getElementById('launchTargetPwd');
-      const pwdRow = document.getElementById('launchPwdRow');
-
-      if (nameEl) nameEl.innerText = targetSession.client_name || 'Equipo Remoto';
-      if (subEl) subEl.innerText = `${targetSession.code || ''} • ${targetSession.group_name || 'General'}`;
-      if (idEl) idEl.innerText = id;
-      if (titleEl) titleEl.innerText = `Conectar a ${targetSession.client_name || 'Equipo'}`;
-      if (subTitleEl) subTitleEl.innerText = `ID Remoto: ${id}`;
-
-      if (targetSession.password) {
-        if (pwdEl) pwdEl.innerText = targetSession.password;
-        if (pwdRow) pwdRow.style.display = 'flex';
-      } else {
-        if (pwdRow) pwdRow.style.display = 'none';
-      }
-
-      // Open the clean modal
-      const modal = document.getElementById('connectionLaunchModal');
-      if (modal) {
-        if (modal.showModal) modal.showModal();
-        else modal.classList.add('active');
-      }
-
-      // Mark session online in API
-      fetch(`api.php?action=mark_online&id=${encodeURIComponent(id)}`).then(() => loadSessions()).catch(() => {});
-
-      // Launch protocol directly (native user gesture context)
-      executeDirectLaunch();
-    }
-
-    function executeDirectLaunch() {
-      if (!currentConnectingId) return;
-      const targetSession = rawSessions.find(s => s.rustdesk_id === currentConnectingId) || {};
       const relayHost = '155.133.197.176';
       const relayKey = 'wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=';
       const pwd = targetSession.password || '';
 
-      let launchUrl = `rustdesk://${currentConnectingId}/r@${relayHost}?key=${encodeURIComponent(relayKey)}`;
+      // Mark session online in API
+      fetch(`api.php?action=mark_online&id=${encodeURIComponent(id)}`).then(() => loadSessions()).catch(() => {});
+
+      showToast(`⚡ Conectando con ${targetSession.client_name || id}...`);
+
+      let launchUrl = `rustdesk://${id}/r@${relayHost}?key=${encodeURIComponent(relayKey)}`;
       if (pwd) {
         launchUrl += `&password=${encodeURIComponent(pwd)}`;
       }
       window.location.href = launchUrl;
-    }
-
-    function copySessionPassword() {
-      const targetSession = rawSessions.find(s => s.rustdesk_id === currentConnectingId);
-      if (targetSession && targetSession.password) {
-        navigator.clipboard.writeText(targetSession.password).then(() => {
-          showToast(`Contraseña copiada: ${targetSession.password}`);
-        }).catch(() => {
-          showToast(`Clave: ${targetSession.password}`);
-        });
-      }
-    }
-
-    function closeConnectionModal() {
-      const modal = document.getElementById('connectionLaunchModal');
-      if (modal) {
-        if (modal.close) modal.close();
-        else modal.classList.remove('active');
-      }
     }
 
     function escapeHtml(text) {
