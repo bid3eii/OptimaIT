@@ -2176,11 +2176,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           Instálala una sola vez en tu computadora para poder conectarte con 1 clic.
         </div>
 
-        <!-- Enlace para registrar marca OptimaIT -->
-        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.07);">
-          <a href="api.php?action=download_reg_branding" style="font-size: 11.5px; color: #38BDF8; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-            <span>🛠️ Personalizar Windows para que diga "OptimaIT" (.reg)</span>
+        <!-- Enlace para registrar marca OptimaIT y servidor privado -->
+        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.07); display:flex; flex-direction:column; gap:6px; align-items:center;">
+          <a href="api.php?action=download_config_bat" style="font-size: 12px; font-weight:700; color: #38BDF8; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+            <span>⚡ 1 Clic: Conectar mi PC al Servidor Optima IT (.bat)</span>
           </a>
+          <span style="font-size:11px; color:#64748B;">Configura automáticamente el servidor y nombre en Windows</span>
         </div>
 
       </div>
@@ -2846,7 +2847,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     function executeDirectLaunch() {
       if (!currentConnectingId) return;
-      window.location.href = `rustdesk://${currentConnectingId}`;
+      const relayHost = '155.133.197.176';
+      const relayKey = 'wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=';
+      window.location.href = `rustdesk://${currentConnectingId}/r@${relayHost}?key=${encodeURIComponent(relayKey)}`;
     }
 
     function closeConnectionModal() {

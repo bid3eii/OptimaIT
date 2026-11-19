@@ -354,6 +354,51 @@ switch ($action) {
         readfile($file);
         exit;
 
+    case 'download_config_bat':
+        $bat = "@echo off\r\n";
+        $bat .= "chcp 65001 >nul\r\n";
+        $bat .= "echo ========================================================\r\n";
+        $bat .= "echo       CONFIGURANDO CONSOLA DE TECNICO - OPTIMA IT\r\n";
+        $bat .= "echo ========================================================\r\n\r\n";
+        $bat .= "set CFG_DIR=%APPDATA%\\RustDesk\\config\r\n";
+        $bat .= "if not exist \"%CFG_DIR%\" mkdir \"%CFG_DIR%\"\r\n\r\n";
+        $bat .= "set TOML_FILE=%CFG_DIR%\\RustDesk2.toml\r\n";
+        $bat .= "set TOML_FILE_LEG=%CFG_DIR%\\RustDesk.toml\r\n\r\n";
+        $bat .= "(\r\n";
+        $bat .= "echo rendezvous_server = '155.133.197.176:21116'\r\n";
+        $bat .= "echo relay_server = '155.133.197.176:21117'\r\n";
+        $bat .= "echo nat_type = 1\r\n";
+        $bat .= "echo serial = 999999999\r\n";
+        $bat .= "echo.\r\n";
+        $bat .= "echo [options]\r\n";
+        $bat .= "echo approve-mode = 'click'\r\n";
+        $bat .= "echo verification-method = 'both'\r\n";
+        $bat .= "echo custom-rendezvous-server = '155.133.197.176:21116'\r\n";
+        $bat .= "echo rendezvous-servers = '155.133.197.176:21116'\r\n";
+        $bat .= "echo relay-server = '155.133.197.176:21117'\r\n";
+        $bat .= "echo key = 'wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU='\r\n";
+        $bat .= ") > \"%TOML_FILE%\"\r\n\r\n";
+        $bat .= "copy /y \"%TOML_FILE%\" \"%TOML_FILE_LEG%\" >nul 2>&1\r\n\r\n";
+        $bat .= "reg add \"HKCU\\Software\\Classes\\rustdesk\" /ve /d \"OptimaIT Soporte Remoto\" /f >nul 2>&1\r\n";
+        $bat .= "reg add \"HKCU\\Software\\Classes\\rustdesk\" /v \"URL Protocol\" /t REG_SZ /d \"\" /f >nul 2>&1\r\n\r\n";
+        $bat .= "echo [OK] Servidor Privado configurado: 155.133.197.176\r\n";
+        $bat .= "echo [OK] Clave de seguridad enlazada.\r\n";
+        $bat .= "echo [OK] Nombre en Windows actualizado a: OptimaIT Soporte Remoto.\r\n\r\n";
+        $bat .= "echo ========================================================\r\n";
+        $bat .= "echo  Listo! Ahora puedes conectarte a cualquier equipo con 1 clic.\r\n";
+        $bat .= "echo ========================================================\r\n";
+        $bat .= "timeout /t 5\r\n";
+
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/bat');
+        header('Content-Disposition: attachment; filename="Configurar_OptimaIT_Tecnico.bat"');
+        header('Expires: 0');
+        header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: no-cache');
+        header('Content-Length: ' . strlen($bat));
+        echo $bat;
+        exit;
+
     case 'download_reg_branding':
         $regContent = "Windows Registry Editor Version 5.00\r\n\r\n";
         $regContent .= "[HKEY_CURRENT_USER\\Software\\Classes\\rustdesk]\r\n";
