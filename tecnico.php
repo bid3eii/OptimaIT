@@ -2629,29 +2629,6 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         const isWaiting = s.status === 'waiting';
         const isEmpresa = s.client_type === 'empresa';
         const sys = s.sysinfo || null;
-        const met = s.metrics || null;
-
-        // Build clean hardware specs chips
-        let chipsHtml = '';
-        if (sys) {
-          chipsHtml += `<div class="device-mini-chips">`;
-          if (sys.ram && sys.ram.total_gb) {
-            chipsHtml += `<span class="chip-metric normal" title="Memoria RAM Total Instalada">🧠 ${sys.ram.total_gb} GB RAM</span>`;
-          }
-          if (sys.disks && sys.disks.length > 0) {
-            const d0 = sys.disks[0];
-            chipsHtml += `<span class="chip-metric normal" title="Almacenamiento: ${d0.total_gb} GB (${d0.free_gb} GB libres)">💾 ${escapeHtml(d0.name)} ${d0.total_gb} GB</span>`;
-          }
-          if (sys.serial_number && sys.serial_number !== 'N/A' && sys.serial_number !== 'Desconocido' && sys.serial_number !== 'None' && sys.serial_number !== 'No disponible') {
-            chipsHtml += `<span class="chip-metric sn" title="Número de Serie / S/N">🏷️ S/N: ${escapeHtml(sys.serial_number)}</span>`;
-          }
-          if (sys.processor) {
-            let cpuShort = sys.processor.split('@')[0].replace('Intel(R) Core(TM)', 'Intel').replace('AMD Ryzen', 'Ryzen').replace('Processor', '').replace('CPU', '').trim();
-            if (cpuShort.length > 22) cpuShort = cpuShort.substring(0, 22) + '...';
-            chipsHtml += `<span class="chip-metric cpu" title="${escapeHtml(sys.processor)}">⚡ ${escapeHtml(cpuShort)}</span>`;
-          }
-          chipsHtml += `</div>`;
-        }
 
         let badgeStatus = '';
         if (isOnline) {
@@ -2698,7 +2675,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         }
 
         const specsBtn = `
-          <button onclick="openDeviceSpecsModal('${s.session_id}')" class="btn-action specs" title="Ver ficha técnica completa, hardware y recursos">
+          <button onclick="openDeviceSpecsModal('${s.session_id}')" class="btn-action specs" title="Ver ficha técnica completa del equipo">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
             <span>Ficha</span>
           </button>
@@ -2723,11 +2700,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <td>
               <div class="client-cell">
                 <span class="client-name-title">🖥️ ${escapeHtml(s.client_name)}</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  ${tagType}
-                  ${(sys && sys.os) ? `<span style="font-size:11px; color:#64748B;">• ${escapeHtml(sys.os)}</span>` : ''}
-                </div>
-                ${chipsHtml}
+                <div>${tagType}</div>
               </div>
             </td>
             ${groupCell}
@@ -2750,23 +2723,6 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         const isOnline = s.status === 'online';
         const isEmpresa = s.client_type === 'empresa';
         const sys = s.sysinfo || null;
-        const met = s.metrics || null;
-
-        // Build mini chips for card
-        let chipsHtml = '';
-        if (sys) {
-          chipsHtml += `<div class="device-mini-chips">`;
-          if (sys.ram && sys.ram.total_gb) {
-            chipsHtml += `<span class="chip-metric normal">🧠 ${sys.ram.total_gb} GB RAM</span>`;
-          }
-          if (sys.disks && sys.disks.length > 0) {
-            chipsHtml += `<span class="chip-metric normal">💾 ${escapeHtml(sys.disks[0].name)} ${sys.disks[0].total_gb} GB</span>`;
-          }
-          if (sys.serial_number && sys.serial_number !== 'N/A' && sys.serial_number !== 'Desconocido' && sys.serial_number !== 'None' && sys.serial_number !== 'No disponible') {
-            chipsHtml += `<span class="chip-metric sn" title="S/N">🏷️ ${escapeHtml(sys.serial_number)}</span>`;
-          }
-          chipsHtml += `</div>`;
-        }
 
         let statusPill = isOnline 
           ? `<span class="status-badge online">● EN LÍNEA</span>` 
@@ -2803,20 +2759,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
                 <span class="card-spec-key">ID Remoto:</span>
                 <span class="remote-id-tag">${s.rustdesk_id || '---'}</span>
               </div>
-              ${(sys && sys.serial_number && sys.serial_number !== 'N/A') ? `
-              <div class="card-row-spec">
-                <span class="card-spec-key">S/N:</span>
-                <span style="font-family:monospace; color:#38BDF8; font-weight:700;">${escapeHtml(sys.serial_number)}</span>
-              </div>` : ''}
-              ${chipsHtml ? `
-              <div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);">
-                ${chipsHtml}
-              </div>` : ''}
             </div>
 
             <div class="card-actions-grid">
               ${connectBtnGrid}
-              <button onclick="openDeviceSpecsModal('${s.session_id}')" class="btn-action specs" title="Ficha Técnica y Recursos" style="height:36px; padding:0 10px;">
+              <button onclick="openDeviceSpecsModal('${s.session_id}')" class="btn-action specs" title="Ficha Técnica" style="height:36px; padding:0 10px;">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
                 <span>Ficha</span>
               </button>
