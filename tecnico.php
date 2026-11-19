@@ -2631,37 +2631,23 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         const sys = s.sysinfo || null;
         const met = s.metrics || null;
 
-        // Build mini telemetry chips
+        // Build clean hardware specs chips
         let chipsHtml = '';
-        if (met || sys) {
+        if (sys) {
           chipsHtml += `<div class="device-mini-chips">`;
-          if (met && met.ram_used_pct !== undefined) {
-            const ramPct = met.ram_used_pct;
-            const ramClass = ramPct > 85 ? 'danger' : (ramPct > 70 ? 'warn' : 'normal');
-            chipsHtml += `<span class="chip-metric ${ramClass}" title="Consumo de RAM en tiempo real">🧠 RAM ${ramPct}% (${met.ram_used_gb || '0'}/${met.ram_total_gb || '0'} GB)</span>`;
-          } else if (sys && sys.ram) {
-            const ramPct = sys.ram.used_pct;
-            const ramClass = ramPct > 85 ? 'danger' : (ramPct > 70 ? 'warn' : 'normal');
-            chipsHtml += `<span class="chip-metric ${ramClass}" title="Consumo de RAM">🧠 RAM ${ramPct}% (${sys.ram.used_gb}/${sys.ram.total_gb} GB)</span>`;
+          if (sys.ram && sys.ram.total_gb) {
+            chipsHtml += `<span class="chip-metric normal" title="Memoria RAM Total Instalada">🧠 ${sys.ram.total_gb} GB RAM</span>`;
           }
-
-          if (met && met.disk_used_pct !== undefined) {
-            const dPct = met.disk_used_pct;
-            const dClass = dPct > 90 ? 'danger' : (dPct > 75 ? 'warn' : 'normal');
-            chipsHtml += `<span class="chip-metric ${dClass}" title="Uso del disco principal C:">💾 C: ${dPct}% (${met.disk_free_gb || '0'} GB libres)</span>`;
-          } else if (sys && sys.disks && sys.disks.length > 0) {
+          if (sys.disks && sys.disks.length > 0) {
             const d0 = sys.disks[0];
-            const dClass = d0.used_pct > 90 ? 'danger' : (d0.used_pct > 75 ? 'warn' : 'normal');
-            chipsHtml += `<span class="chip-metric ${dClass}" title="Uso del disco ${escapeHtml(d0.name)}">💾 ${escapeHtml(d0.name)} ${d0.used_pct}%</span>`;
+            chipsHtml += `<span class="chip-metric normal" title="Almacenamiento: ${d0.total_gb} GB (${d0.free_gb} GB libres)">💾 ${escapeHtml(d0.name)} ${d0.total_gb} GB</span>`;
           }
-
-          if (sys && sys.serial_number && sys.serial_number !== 'N/A' && sys.serial_number !== 'Desconocido' && sys.serial_number !== 'None') {
+          if (sys.serial_number && sys.serial_number !== 'N/A' && sys.serial_number !== 'Desconocido' && sys.serial_number !== 'None' && sys.serial_number !== 'No disponible') {
             chipsHtml += `<span class="chip-metric sn" title="Número de Serie / S/N">🏷️ S/N: ${escapeHtml(sys.serial_number)}</span>`;
           }
-
-          if (sys && sys.processor) {
-            let cpuShort = sys.processor.split('@')[0].replace('Intel(R) Core(TM)', 'Intel').replace('AMD Ryzen', 'Ryzen').replace('Processor', '').trim();
-            if (cpuShort.length > 20) cpuShort = cpuShort.substring(0, 20) + '...';
+          if (sys.processor) {
+            let cpuShort = sys.processor.split('@')[0].replace('Intel(R) Core(TM)', 'Intel').replace('AMD Ryzen', 'Ryzen').replace('Processor', '').replace('CPU', '').trim();
+            if (cpuShort.length > 22) cpuShort = cpuShort.substring(0, 22) + '...';
             chipsHtml += `<span class="chip-metric cpu" title="${escapeHtml(sys.processor)}">⚡ ${escapeHtml(cpuShort)}</span>`;
           }
           chipsHtml += `</div>`;
@@ -2768,27 +2754,15 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
         // Build mini chips for card
         let chipsHtml = '';
-        if (met || sys) {
+        if (sys) {
           chipsHtml += `<div class="device-mini-chips">`;
-          if (met && met.ram_used_pct !== undefined) {
-            const ramPct = met.ram_used_pct;
-            const ramClass = ramPct > 85 ? 'danger' : (ramPct > 70 ? 'warn' : 'normal');
-            chipsHtml += `<span class="chip-metric ${ramClass}">🧠 RAM ${ramPct}%</span>`;
-          } else if (sys && sys.ram) {
-            const ramPct = sys.ram.used_pct;
-            const ramClass = ramPct > 85 ? 'danger' : (ramPct > 70 ? 'warn' : 'normal');
-            chipsHtml += `<span class="chip-metric ${ramClass}">🧠 RAM ${ramPct}%</span>`;
+          if (sys.ram && sys.ram.total_gb) {
+            chipsHtml += `<span class="chip-metric normal">🧠 ${sys.ram.total_gb} GB RAM</span>`;
           }
-
-          if (met && met.disk_used_pct !== undefined) {
-            const dPct = met.disk_used_pct;
-            const dClass = dPct > 90 ? 'danger' : (dPct > 75 ? 'warn' : 'normal');
-            chipsHtml += `<span class="chip-metric ${dClass}">💾 C: ${dPct}%</span>`;
-          } else if (sys && sys.disks && sys.disks.length > 0) {
-            chipsHtml += `<span class="chip-metric normal">💾 ${escapeHtml(sys.disks[0].name)} ${sys.disks[0].used_pct}%</span>`;
+          if (sys.disks && sys.disks.length > 0) {
+            chipsHtml += `<span class="chip-metric normal">💾 ${escapeHtml(sys.disks[0].name)} ${sys.disks[0].total_gb} GB</span>`;
           }
-
-          if (sys && sys.serial_number && sys.serial_number !== 'N/A' && sys.serial_number !== 'Desconocido' && sys.serial_number !== 'None') {
+          if (sys.serial_number && sys.serial_number !== 'N/A' && sys.serial_number !== 'Desconocido' && sys.serial_number !== 'None' && sys.serial_number !== 'No disponible') {
             chipsHtml += `<span class="chip-metric sn" title="S/N">🏷️ ${escapeHtml(sys.serial_number)}</span>`;
           }
           chipsHtml += `</div>`;
@@ -3069,11 +3043,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       const sys = s.sysinfo || null;
       const met = s.metrics || null;
 
-      if (met && met.updated_at) {
-        lastRep.innerText = `Actualizado a las ${met.updated_at}`;
-      } else {
-        lastRep.innerText = s.status === 'online' ? 'Sincronizado' : 'Último reporte registrado';
-      }
+      const recordedDate = (sys && sys.recorded_at) ? sys.recorded_at : (s.created_at || 'Registrado');
+      lastRep.innerText = `Ficha técnica registrada el ${recordedDate}`;
 
       if (!sys && !met) {
         bodyElem.innerHTML = `
@@ -3081,36 +3052,28 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <div style="font-size: 42px; margin-bottom: 14px;">📡</div>
             <h4 style="font-size: 16px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px;">Telemetría pendiente de sincronización</h4>
             <p style="font-size: 13px; color: #94A3B8; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.5;">
-              Este equipo aún no ha enviado sus especificaciones de hardware. La información se recolectará en tiempo real automáticamente cuando el cliente ejecute el Asistente de Optima IT.
+              Este equipo aún no ha enviado sus especificaciones de hardware. La información se registrará automáticamente en cuanto el cliente abra el Asistente de Optima IT.
             </p>
             <div style="display:inline-flex; align-items:center; gap:8px; padding: 8px 16px; border-radius: 8px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); color: #38BDF8; font-size: 12px; font-weight: 600;">
-              <span>💡 Tip:</span> Los datos de RAM, Discos, Procesador y S/N se actualizan sin demoras.
+              <span>💡 Nota:</span> Se toma una sola captura completa y precisa al iniciar.
             </div>
           </div>
         `;
       } else {
         // RAM details
-        const ramTotal = (met && met.ram_total_gb) ? met.ram_total_gb : (sys && sys.ram ? sys.ram.total_gb : 0);
-        const ramUsed = (met && met.ram_used_gb) ? met.ram_used_gb : (sys && sys.ram ? sys.ram.used_gb : 0);
+        const ramTotal = (sys && sys.ram && sys.ram.total_gb) ? sys.ram.total_gb : ((met && met.ram_total_gb) ? met.ram_total_gb : 0);
+        const ramUsed = (sys && sys.ram && sys.ram.used_gb) ? sys.ram.used_gb : ((met && met.ram_used_gb) ? met.ram_used_gb : 0);
         const ramFree = (sys && sys.ram && sys.ram.free_gb) ? sys.ram.free_gb : Math.round((ramTotal - ramUsed) * 10) / 10;
-        const ramPct = (met && met.ram_used_pct !== undefined) ? met.ram_used_pct : (sys && sys.ram ? sys.ram.used_pct : 0);
-        const ramColor = ramPct > 85 ? 'red' : (ramPct > 70 ? 'yellow' : 'green');
+        const ramPct = (sys && sys.ram && sys.ram.used_pct !== undefined) ? sys.ram.used_pct : ((met && met.ram_used_pct !== undefined) ? met.ram_used_pct : 0);
 
         // Disks details
         let disksHtml = '';
         if (sys && sys.disks && sys.disks.length > 0) {
           disksHtml = sys.disks.map((d, idx) => {
-            let dPct = d.used_pct;
-            let dFree = d.free_gb;
-            let dTotal = d.total_gb;
-            let dUsed = d.used_gb;
-            if (idx === 0 && met && met.disk_used_pct !== undefined) {
-              dPct = met.disk_used_pct;
-              if (met.disk_free_gb !== undefined) dFree = met.disk_free_gb;
-              if (met.disk_total_gb !== undefined) dTotal = met.disk_total_gb;
-              dUsed = Math.round((dTotal - dFree) * 10) / 10;
-            }
-            const dColor = dPct > 90 ? 'red' : (dPct > 75 ? 'yellow' : 'green');
+            const dPct = d.used_pct;
+            const dFree = d.free_gb;
+            const dTotal = d.total_gb;
+            const dUsed = d.used_gb;
             return `
               <div class="metric-gauge-wrap" style="margin-top: ${idx > 0 ? '12px' : '0'};">
                 <div class="gauge-top-row">
@@ -3118,21 +3081,20 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
                     <span>${escapeHtml(d.name)} (${escapeHtml(d.label || 'Disco Local')})</span>
                   </span>
-                  <span class="gauge-badge chip-metric ${dColor}">${dPct}% en uso</span>
+                  <span class="gauge-badge chip-metric normal">${dTotal} GB</span>
                 </div>
                 <div class="gauge-track">
-                  <div class="gauge-bar ${dColor}" style="width: ${Math.min(100, Math.max(0, dPct))}%;"></div>
+                  <div class="gauge-bar green" style="width: ${Math.min(100, Math.max(0, dPct))}%;"></div>
                 </div>
                 <div class="gauge-sub-row">
-                  <span>${dUsed} GB usados</span>
-                  <span>${dFree} GB libres de ${dTotal} GB</span>
+                  <span>${dUsed} GB ocupados (${dPct}%)</span>
+                  <span>${dFree} GB libres disponibles</span>
                 </div>
               </div>
             `;
           }).join('');
-        } else if (met && met.disk_used_pct !== undefined) {
-          const dPct = met.disk_used_pct;
-          const dColor = dPct > 90 ? 'red' : (dPct > 75 ? 'yellow' : 'green');
+        } else if (met && met.disk_total_gb !== undefined) {
+          const dPct = met.disk_used_pct || 0;
           disksHtml = `
             <div class="metric-gauge-wrap">
               <div class="gauge-top-row">
@@ -3140,10 +3102,10 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
                   <span>Disco C:</span>
                 </span>
-                <span class="gauge-badge chip-metric ${dColor}">${dPct}% en uso</span>
+                <span class="gauge-badge chip-metric normal">${met.disk_total_gb || 0} GB</span>
               </div>
               <div class="gauge-track">
-                <div class="gauge-bar ${dColor}" style="width: ${Math.min(100, Math.max(0, dPct))}%;"></div>
+                <div class="gauge-bar green" style="width: ${Math.min(100, Math.max(0, dPct))}%;"></div>
               </div>
               <div class="gauge-sub-row">
                 <span>${met.disk_free_gb || 0} GB libres</span>
@@ -3156,7 +3118,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         }
 
         // Hardware identification fields
-        const sn = (sys && sys.serial_number) ? sys.serial_number : 'N/A';
+        const sn = (sys && sys.serial_number && sys.serial_number !== 'No disponible') ? sys.serial_number : 'N/A';
         const prodId = (sys && sys.product_id) ? sys.product_id : 'N/A';
         const machineGuid = (sys && sys.machine_guid) ? sys.machine_guid : 'N/A';
         const cpuName = (sys && sys.processor) ? sys.processor : 'No detectado';
@@ -3170,35 +3132,35 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
         bodyElem.innerHTML = `
           <div class="specs-grid-container">
-            <!-- COLUMNA 1: CONSUMO Y RENDIMIENTO -->
+            <!-- COLUMNA 1: ESPECIFICACIONES TÉCNICAS (HARDWARE) -->
             <div style="display:flex; flex-direction:column; gap:16px;">
               <div class="spec-section-card">
                 <div class="spec-section-title">
-                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-                  <span>Consumo de Recursos en Vivo</span>
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><path d="M6 8v8m4-8v8m4-8v8m4-8v8"></path></svg>
+                  <span>Capacidad de Hardware & Memoria</span>
                 </div>
 
                 <!-- RAM GAUGE -->
                 <div class="metric-gauge-wrap" style="margin-bottom: 16px;">
                   <div class="gauge-top-row">
                     <span class="gauge-name">
-                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><path d="M6 8v8m4-8v8m4-8v8m4-8v8"></path></svg>
-                      <span>Memoria RAM</span>
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path></svg>
+                      <span>Memoria RAM Instalada</span>
                     </span>
-                    <span class="gauge-badge chip-metric ${ramColor}">${ramPct}% en uso</span>
+                    <span class="gauge-badge chip-metric normal">${ramTotal} GB</span>
                   </div>
                   <div class="gauge-track">
-                    <div class="gauge-bar ${ramColor}" style="width: ${Math.min(100, Math.max(0, ramPct))}%;"></div>
+                    <div class="gauge-bar green" style="width: ${Math.min(100, Math.max(0, ramPct))}%;"></div>
                   </div>
                   <div class="gauge-sub-row">
-                    <span>${ramUsed} GB en uso</span>
-                    <span>${ramFree} GB libres de ${ramTotal} GB</span>
+                    <span>${ramUsed} GB ocupados (${ramPct}%)</span>
+                    <span>${ramFree} GB libres disponibles</span>
                   </div>
                 </div>
 
                 <!-- DISKS GAUGE -->
                 <div style="font-size:11.5px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">
-                  Almacenamiento / Discos
+                  Unidades de Almacenamiento
                 </div>
                 ${disksHtml}
               </div>

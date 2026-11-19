@@ -119,32 +119,134 @@ namespace OptimaIT
 
             try
             {
-                object oName = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", null);
-                object oVer = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion", null);
-                os = (oName != null ? oName.ToString() : Environment.OSVersion.ToString());
-                if (oVer != null && !string.IsNullOrEmpty(oVer.ToString())) os += " (" + oVer.ToString() + ")";
-                os += Environment.Is64BitOperatingSystem ? " 64-bit" : " 32-bit";
+                // Access 64-bit Registry directly to prevent 32-bit Wow6432Node redirection
+                RegistryView regView = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32;
+                using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, regView))
+                {
+                    // 1. Exact Windows OS Name & Build
+                    using (RegistryKey winKey = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"))
+                    {
+                        if (winKey != null)
+                        {
+                            object oProd = winKey.GetValue("ProductName");
+                            object oVer = winKey.GetValue("DisplayVersion");
+                            object oBuild = winKey.GetValue("CurrentBuild");
+                            object oPid = winKey.GetValue("ProductId");
 
-                object oPid = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductId", null);
-                if (oPid != null) prodId = oPid.ToString();
+                            string osName = oProd != null ? oProd.ToString().Trim() : "Windows";
+                            string buildStr = oBuild != null ? oBuild.ToString().Trim() : "";
+                            int buildNum = 0;
+                            int.TryParse(buildStr, out buildNum);
 
-                object oGuid = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography", "MachineGuid", null);
-                if (oGuid != null) machineGuid = oGuid.ToString();
+                            // Windows 11 compatibility fix: Microsoft keeps "Windows 10" in ProductName when build >= 22000
+                            if (buildNum >= 22000 && osName.StartsWith("Windows 10", StringComparison.OrdinalIgnoreCase))
+                            {
+                                osName = "Windows 11" + osName.Substring("Windows 10".Length);
+                            }
 
-                object oCpu = Registry.GetValue(@"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\CentralProcessor\0", "ProcessorNameString", null);
-                if (oCpu != null) cpu = oCpu.ToString().Trim();
+                            string verStr = oVer != null ? oVer.ToString().Trim() : "";
+                            if (!string.IsNullOrEmpty(verStr))
+                            {
+                                os = osName + " (" + verStr + ")";
+                            }
+                            else
+                            {
+                                os = osName;
+                            }
+                            os += Environment.Is64BitOperatingSystem ? " 64-bit" : " 32-bit";
 
-                object oMfg = Registry.GetValue(@"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS", "SystemManufacturer", null);
-                if (oMfg != null) mfg = oMfg.ToString().Trim();
+                            if (oPid != null && !string.IsNullOrEmpty(oPid.ToString().Trim()))
+                            {
+                                prodId = oPid.ToString().Trim();
+                            }
+                        }
+                    }
 
-                object oModel = Registry.GetValue(@"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS", "SystemProductName", null);
-                if (oModel != null) model = oModel.ToString().Trim();
+                    // 2. Machine GUID
+                    using (RegistryKey cryptoKey = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Cryptography"))
+                    {
+                        if (cryptoKey != null)
+                        {
+                            object oGuid = cryptoKey.GetValue("MachineGuid");
+                            if (oGuid != null) machineGuid = oGuid.ToString().Trim();
+                        }
+                    }
+
+                    // 3. CPU Processor Model
+                    using (RegistryKey cpuKey = baseKey.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0"))
+                    {
+                        if (cpuKey != null)
+                        {
+                            object oCpu = cpuKey.GetValue("ProcessorNameString");
+                            if (oCpu != null) cpu = oCpu.ToString().Trim();
+                        }
+                    }
+
+                    // 4. System Manufacturer & Model
+                    using (RegistryKey biosKey = baseKey.OpenSubKey(@"HARDWARE\DESCRIPTION\System\BIOS"))
+                    {
+                        if (biosKey != null)
+                        {
+                            object oMfg = biosKey.GetValue("SystemManufacturer");
+                            object oModel = biosKey.GetValue("SystemProductName");
+                            if (oMfg != null) mfg = oMfg.ToString().Trim();
+                            if (oModel != null) model = oModel.ToString().Trim();
+
+                            if (string.IsNullOrEmpty(mfg) || mfg.IndexOf("System manufacturer", StringComparison.OrdinalIgnoreCase) >= 0 || mfg.IndexOf("Default", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                object bMfg = biosKey.GetValue("BaseBoardManufacturer");
+                                if (bMfg != null && !string.IsNullOrEmpty(bMfg.ToString().Trim())) mfg = bMfg.ToString().Trim();
+                            }
+                            if (string.IsNullOrEmpty(model) || model.IndexOf("System Product Name", StringComparison.OrdinalIgnoreCase) >= 0 || model.IndexOf("Default", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                object bModel = biosKey.GetValue("BaseBoardProduct");
+                                if (bModel != null && !string.IsNullOrEmpty(bModel.ToString().Trim())) model = bModel.ToString().Trim();
+                            }
+                        }
+                    }
+                }
             }
             catch { }
+
+            // Secondary CIM fallback if Manufacturer or Model is still generic
+            if (string.IsNullOrEmpty(mfg) || mfg.IndexOf("System manufacturer", StringComparison.OrdinalIgnoreCase) >= 0 || mfg.IndexOf("Default", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                try
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo("powershell.exe", "-NoProfile -Command \"(Get-CimInstance Win32_ComputerSystem).Manufacturer\"");
+                    psi.UseShellExecute = false;
+                    psi.RedirectStandardOutput = true;
+                    psi.CreateNoWindow = true;
+                    using (Process p = Process.Start(psi))
+                    {
+                        string outStr = p.StandardOutput.ReadToEnd().Trim();
+                        if (p.WaitForExit(3000) && !string.IsNullOrEmpty(outStr)) mfg = outStr;
+                    }
+                }
+                catch { }
+            }
+
+            if (string.IsNullOrEmpty(model) || model.IndexOf("System Product Name", StringComparison.OrdinalIgnoreCase) >= 0 || model.IndexOf("Default", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                try
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo("powershell.exe", "-NoProfile -Command \"(Get-CimInstance Win32_ComputerSystem).Model\"");
+                    psi.UseShellExecute = false;
+                    psi.RedirectStandardOutput = true;
+                    psi.CreateNoWindow = true;
+                    using (Process p = Process.Start(psi))
+                    {
+                        string outStr = p.StandardOutput.ReadToEnd().Trim();
+                        if (p.WaitForExit(3000) && !string.IsNullOrEmpty(outStr)) model = outStr;
+                    }
+                }
+                catch { }
+            }
 
             if (string.IsNullOrEmpty(cpu)) cpu = "Procesador x86/x64";
             if (string.IsNullOrEmpty(mfg)) mfg = "Equipo Windows";
             if (string.IsNullOrEmpty(model)) model = "PC / Portátil";
+            if (string.IsNullOrEmpty(os)) os = Environment.OSVersion.ToString();
 
             string serialNumber = GetSerialNumber();
 
@@ -210,6 +312,7 @@ namespace OptimaIT
             sb.Append("\"model\":\"" + EscapeJson(model) + "\",");
             sb.Append("\"processor\":\"" + EscapeJson(cpu) + "\",");
             sb.Append("\"cpu_cores\":" + Environment.ProcessorCount + ",");
+            sb.Append("\"recorded_at\":\"" + DateTime.Now.ToString("dd/MM/yyyy HH:mm") + "\",");
             sb.Append("\"ram\":{");
             sb.Append("\"total_gb\":" + totalRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
             sb.Append("\"used_gb\":" + usedRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
@@ -224,50 +327,7 @@ namespace OptimaIT
 
         public static string CollectLiveMetricsJson()
         {
-            double totalRamGb = 0;
-            double freeRamGb = 0;
-            double usedRamGb = 0;
-            int ramPct = 0;
-            try
-            {
-                MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
-                if (GlobalMemoryStatusEx(memStatus))
-                {
-                    totalRamGb = Math.Round((double)memStatus.ullTotalPhys / (1024 * 1024 * 1024), 1);
-                    freeRamGb = Math.Round((double)memStatus.ullAvailPhys / (1024 * 1024 * 1024), 1);
-                    usedRamGb = Math.Round(totalRamGb - freeRamGb, 1);
-                    ramPct = (int)memStatus.dwMemoryLoad;
-                }
-            }
-            catch { }
-
-            double diskTotal = 0;
-            double diskFree = 0;
-            double diskUsed = 0;
-            int diskPct = 0;
-            try
-            {
-                DriveInfo cDrive = new DriveInfo("C");
-                if (cDrive.IsReady)
-                {
-                    diskTotal = Math.Round((double)cDrive.TotalSize / (1024 * 1024 * 1024), 1);
-                    diskFree = Math.Round((double)cDrive.TotalFreeSpace / (1024 * 1024 * 1024), 1);
-                    diskUsed = Math.Round(diskTotal - diskFree, 1);
-                    diskPct = (diskTotal > 0) ? (int)Math.Round((diskUsed / diskTotal) * 100) : 0;
-                }
-            }
-            catch { }
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append("{");
-            sb.Append("\"ram_used_pct\":" + ramPct + ",");
-            sb.Append("\"ram_used_gb\":" + usedRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
-            sb.Append("\"ram_total_gb\":" + totalRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
-            sb.Append("\"disk_used_pct\":" + diskPct + ",");
-            sb.Append("\"disk_free_gb\":" + diskFree.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
-            sb.Append("\"disk_total_gb\":" + diskTotal.ToString(System.Globalization.CultureInfo.InvariantCulture));
-            sb.Append("}");
-            return sb.ToString();
+            return "{}";
         }
     }
 
@@ -920,18 +980,16 @@ namespace OptimaIT
                         MessageBox.Show("¡OptimaIT se ha instalado correctamente en este equipo!\n\nEl servicio de acceso corporativo permanente ha quedado configurado y se iniciará automáticamente al encender Windows.", "OptimaIT - Instalación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
-                    // Heartbeat Timer with Live Telemetry
+                    // Heartbeat Timer - lightweight ping every 30 seconds
                     timer = new System.Windows.Forms.Timer();
-                    timer.Interval = 8000;
+                    timer.Interval = 30000;
                     timer.Tick += (s, ev) =>
                     {
                         try
                         {
-                            string liveMetrics = HardwareInfoCollector.CollectLiveMetricsJson();
                             using (WebClient wc = new WebClient())
                             {
-                                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                                wc.UploadStringAsync(new Uri(serverUrl + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sessionId)), "POST", "metrics=" + Uri.EscapeDataString(liveMetrics));
+                                wc.DownloadStringAsync(new Uri(serverUrl + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sessionId)));
                             }
                         }
                         catch { }
@@ -1096,26 +1154,25 @@ namespace OptimaIT
                 }
                 catch { }
 
-                int loopCount = 0;
+                // 1. Send hardware specs snapshot once at start
+                try
+                {
+                    string sysJson = HardwareInfoCollector.CollectAllSpecsJson();
+                    using (WebClient wcSys = new WebClient())
+                    {
+                        wcSys.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                        wcSys.UploadString("http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId), "POST", "sysinfo=" + Uri.EscapeDataString(sysJson));
+                    }
+                }
+                catch { }
+
+                // 2. Ultra-lightweight presence ping every 30 seconds (no hardware queries!)
                 while (true)
                 {
-                    string liveMetrics = HardwareInfoCollector.CollectLiveMetricsJson();
-                    string postData = "metrics=" + Uri.EscapeDataString(liveMetrics);
-
-                    if (loopCount % 30 == 0)
-                    {
-                        try
-                        {
-                            string sysJson = HardwareInfoCollector.CollectAllSpecsJson();
-                            postData += "&sysinfo=" + Uri.EscapeDataString(sysJson);
-                        }
-                        catch { }
-                    }
-
+                    Thread.Sleep(30000);
                     string[] hbUrls = new string[] {
                         "http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
-                        "http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
-                        "https://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId)
+                        "http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId)
                     };
                     foreach (string hUrl in hbUrls)
                     {
@@ -1123,15 +1180,12 @@ namespace OptimaIT
                         {
                             using (WebClient wc = new WebClient())
                             {
-                                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                                wc.UploadString(hUrl, "POST", postData);
+                                wc.DownloadString(hUrl);
                                 break;
                             }
                         }
                         catch { }
                     }
-                    loopCount++;
-                    Thread.Sleep(10000);
                 }
             }
 
