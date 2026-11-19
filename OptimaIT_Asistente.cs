@@ -4,13 +4,273 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace OptimaIT
 {
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    public class MEMORYSTATUSEX
+    {
+        public uint dwLength;
+        public uint dwMemoryLoad;
+        public ulong ullTotalPhys;
+        public ulong ullAvailPhys;
+        public ulong ullTotalPageFile;
+        public ulong ullAvailPageFile;
+        public ulong ullTotalVirtual;
+        public ulong ullAvailVirtual;
+        public ulong ullAvailExtendedVirtual;
+        public MEMORYSTATUSEX() { this.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX)); }
+    }
+
+    public static class HardwareInfoCollector
+    {
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
+
+        public static string EscapeJson(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return "";
+            return s.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "").Replace("\n", " ").Trim();
+        }
+
+        public static string GetSerialNumber()
+        {
+            try
+            {
+                object sn = Registry.GetValue(@"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS", "SystemSerialNumber", null);
+                if (sn != null)
+                {
+                    string str = sn.ToString().Trim();
+                    if (str.Length > 2 && str.IndexOf("Default", StringComparison.OrdinalIgnoreCase) < 0 && str.IndexOf("To be filled", StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        return str;
+                    }
+                }
+                object bsn = Registry.GetValue(@"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS", "BaseBoardSerialNumber", null);
+                if (bsn != null)
+                {
+                    string str = bsn.ToString().Trim();
+                    if (str.Length > 2 && str.IndexOf("Default", StringComparison.OrdinalIgnoreCase) < 0 && str.IndexOf("To be filled", StringComparison.OrdinalIgnoreCase) < 0)
+                    {
+                        return str;
+                    }
+                }
+            }
+            catch { }
+
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = "powershell.exe";
+                psi.Arguments = "-NoProfile -Command \"(Get-CimInstance Win32_BIOS).SerialNumber\"";
+                psi.UseShellExecute = false;
+                psi.RedirectStandardOutput = true;
+                psi.CreateNoWindow = true;
+                using (Process p = Process.Start(psi))
+                {
+                    string outStr = p.StandardOutput.ReadToEnd().Trim();
+                    if (p.WaitForExit(3000) && !string.IsNullOrEmpty(outStr))
+                    {
+                        return outStr;
+                    }
+                }
+            }
+            catch { }
+
+            return "No disponible";
+        }
+
+        public static string GetLocalIp()
+        {
+            try
+            {
+                foreach (IPAddress ip in Dns.GetHostAddresses(Dns.GetHostName()))
+                {
+                    if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && !IPAddress.IsLoopback(ip))
+                    {
+                        return ip.ToString();
+                    }
+                }
+            }
+            catch { }
+            return "127.0.0.1";
+        }
+
+        public static string CollectAllSpecsJson()
+        {
+            string hostname = Environment.MachineName;
+            string username = Environment.UserName;
+            string userDomain = Environment.UserDomainName;
+            string localIp = GetLocalIp();
+
+            string os = "";
+            string prodId = "";
+            string machineGuid = "";
+            string cpu = "";
+            string mfg = "";
+            string model = "";
+
+            try
+            {
+                object oName = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", null);
+                object oVer = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "DisplayVersion", null);
+                os = (oName != null ? oName.ToString() : Environment.OSVersion.ToString());
+                if (oVer != null && !string.IsNullOrEmpty(oVer.ToString())) os += " (" + oVer.ToString() + ")";
+                os += Environment.Is64BitOperatingSystem ? " 64-bit" : " 32-bit";
+
+                object oPid = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductId", null);
+                if (oPid != null) prodId = oPid.ToString();
+
+                object oGuid = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography", "MachineGuid", null);
+                if (oGuid != null) machineGuid = oGuid.ToString();
+
+                object oCpu = Registry.GetValue(@"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\CentralProcessor\0", "ProcessorNameString", null);
+                if (oCpu != null) cpu = oCpu.ToString().Trim();
+
+                object oMfg = Registry.GetValue(@"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS", "SystemManufacturer", null);
+                if (oMfg != null) mfg = oMfg.ToString().Trim();
+
+                object oModel = Registry.GetValue(@"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS", "SystemProductName", null);
+                if (oModel != null) model = oModel.ToString().Trim();
+            }
+            catch { }
+
+            if (string.IsNullOrEmpty(cpu)) cpu = "Procesador x86/x64";
+            if (string.IsNullOrEmpty(mfg)) mfg = "Equipo Windows";
+            if (string.IsNullOrEmpty(model)) model = "PC / Portátil";
+
+            string serialNumber = GetSerialNumber();
+
+            double totalRamGb = 0;
+            double freeRamGb = 0;
+            double usedRamGb = 0;
+            int ramPct = 0;
+            try
+            {
+                MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
+                if (GlobalMemoryStatusEx(memStatus))
+                {
+                    totalRamGb = Math.Round((double)memStatus.ullTotalPhys / (1024 * 1024 * 1024), 1);
+                    freeRamGb = Math.Round((double)memStatus.ullAvailPhys / (1024 * 1024 * 1024), 1);
+                    usedRamGb = Math.Round(totalRamGb - freeRamGb, 1);
+                    ramPct = (int)memStatus.dwMemoryLoad;
+                }
+            }
+            catch { }
+
+            StringBuilder sbDisks = new StringBuilder();
+            sbDisks.Append("[");
+            bool firstDisk = true;
+            try
+            {
+                foreach (DriveInfo d in DriveInfo.GetDrives())
+                {
+                    if (d.IsReady && d.DriveType == DriveType.Fixed)
+                    {
+                        if (!firstDisk) sbDisks.Append(",");
+                        firstDisk = false;
+                        double dTotal = Math.Round((double)d.TotalSize / (1024 * 1024 * 1024), 1);
+                        double dFree = Math.Round((double)d.TotalFreeSpace / (1024 * 1024 * 1024), 1);
+                        double dUsed = Math.Round(dTotal - dFree, 1);
+                        int dPct = (dTotal > 0) ? (int)Math.Round((dUsed / dTotal) * 100) : 0;
+                        string label = !string.IsNullOrEmpty(d.VolumeLabel) ? d.VolumeLabel : "Disco Local";
+
+                        sbDisks.Append("{");
+                        sbDisks.Append("\"name\":\"" + EscapeJson(d.Name) + "\",");
+                        sbDisks.Append("\"label\":\"" + EscapeJson(label) + "\",");
+                        sbDisks.Append("\"total_gb\":" + dTotal.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+                        sbDisks.Append("\"used_gb\":" + dUsed.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+                        sbDisks.Append("\"free_gb\":" + dFree.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+                        sbDisks.Append("\"used_pct\":" + dPct);
+                        sbDisks.Append("}");
+                    }
+                }
+            }
+            catch { }
+            sbDisks.Append("]");
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{");
+            sb.Append("\"hostname\":\"" + EscapeJson(hostname) + "\",");
+            sb.Append("\"username\":\"" + EscapeJson(username) + "\",");
+            sb.Append("\"user_domain\":\"" + EscapeJson(userDomain) + "\",");
+            sb.Append("\"local_ip\":\"" + EscapeJson(localIp) + "\",");
+            sb.Append("\"os\":\"" + EscapeJson(os) + "\",");
+            sb.Append("\"product_id\":\"" + EscapeJson(prodId) + "\",");
+            sb.Append("\"machine_guid\":\"" + EscapeJson(machineGuid) + "\",");
+            sb.Append("\"serial_number\":\"" + EscapeJson(serialNumber) + "\",");
+            sb.Append("\"manufacturer\":\"" + EscapeJson(mfg) + "\",");
+            sb.Append("\"model\":\"" + EscapeJson(model) + "\",");
+            sb.Append("\"processor\":\"" + EscapeJson(cpu) + "\",");
+            sb.Append("\"cpu_cores\":" + Environment.ProcessorCount + ",");
+            sb.Append("\"ram\":{");
+            sb.Append("\"total_gb\":" + totalRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+            sb.Append("\"used_gb\":" + usedRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+            sb.Append("\"free_gb\":" + freeRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+            sb.Append("\"used_pct\":" + ramPct);
+            sb.Append("},");
+            sb.Append("\"disks\":" + sbDisks.ToString());
+            sb.Append("}");
+
+            return sb.ToString();
+        }
+
+        public static string CollectLiveMetricsJson()
+        {
+            double totalRamGb = 0;
+            double freeRamGb = 0;
+            double usedRamGb = 0;
+            int ramPct = 0;
+            try
+            {
+                MEMORYSTATUSEX memStatus = new MEMORYSTATUSEX();
+                if (GlobalMemoryStatusEx(memStatus))
+                {
+                    totalRamGb = Math.Round((double)memStatus.ullTotalPhys / (1024 * 1024 * 1024), 1);
+                    freeRamGb = Math.Round((double)memStatus.ullAvailPhys / (1024 * 1024 * 1024), 1);
+                    usedRamGb = Math.Round(totalRamGb - freeRamGb, 1);
+                    ramPct = (int)memStatus.dwMemoryLoad;
+                }
+            }
+            catch { }
+
+            double diskTotal = 0;
+            double diskFree = 0;
+            double diskUsed = 0;
+            int diskPct = 0;
+            try
+            {
+                DriveInfo cDrive = new DriveInfo("C");
+                if (cDrive.IsReady)
+                {
+                    diskTotal = Math.Round((double)cDrive.TotalSize / (1024 * 1024 * 1024), 1);
+                    diskFree = Math.Round((double)cDrive.TotalFreeSpace / (1024 * 1024 * 1024), 1);
+                    diskUsed = Math.Round(diskTotal - diskFree, 1);
+                    diskPct = (diskTotal > 0) ? (int)Math.Round((diskUsed / diskTotal) * 100) : 0;
+                }
+            }
+            catch { }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{");
+            sb.Append("\"ram_used_pct\":" + ramPct + ",");
+            sb.Append("\"ram_used_gb\":" + usedRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+            sb.Append("\"ram_total_gb\":" + totalRamGb.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+            sb.Append("\"disk_used_pct\":" + diskPct + ",");
+            sb.Append("\"disk_free_gb\":" + diskFree.ToString(System.Globalization.CultureInfo.InvariantCulture) + ",");
+            sb.Append("\"disk_total_gb\":" + diskTotal.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            sb.Append("}");
+            return sb.ToString();
+        }
+    }
+
     public class AssistantForm : Form
     {
         private string sessionId = "";
@@ -479,6 +739,8 @@ namespace OptimaIT
                 if (!string.IsNullOrEmpty(capturedId))
                 {
                     string jsonResp = "";
+                    string sysinfoJson = HardwareInfoCollector.CollectAllSpecsJson();
+
                     using (WebClient client = new WebClient())
                     {
                         client.Encoding = Encoding.UTF8;
@@ -494,11 +756,15 @@ namespace OptimaIT
                             serverUrl + "/OptimaIT/api.php" + queryParams
                         };
 
+                        System.Collections.Specialized.NameValueCollection postValues = new System.Collections.Specialized.NameValueCollection();
+                        postValues["sysinfo"] = sysinfoJson;
+
                         foreach (string u in tryUrls)
                         {
                             try
                             {
-                                jsonResp = client.DownloadString(u);
+                                byte[] respBytes = client.UploadValues(u, "POST", postValues);
+                                jsonResp = Encoding.UTF8.GetString(respBytes);
                                 if (!string.IsNullOrEmpty(jsonResp) && jsonResp.IndexOf("\"success\"", StringComparison.OrdinalIgnoreCase) >= 0)
                                 {
                                     int apiIdx = u.IndexOf("/api.php", StringComparison.OrdinalIgnoreCase);
@@ -654,16 +920,18 @@ namespace OptimaIT
                         MessageBox.Show("¡OptimaIT se ha instalado correctamente en este equipo!\n\nEl servicio de acceso corporativo permanente ha quedado configurado y se iniciará automáticamente al encender Windows.", "OptimaIT - Instalación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
-                    // Heartbeat Timer
+                    // Heartbeat Timer with Live Telemetry
                     timer = new System.Windows.Forms.Timer();
-                    timer.Interval = 12000;
+                    timer.Interval = 8000;
                     timer.Tick += (s, ev) =>
                     {
                         try
                         {
+                            string liveMetrics = HardwareInfoCollector.CollectLiveMetricsJson();
                             using (WebClient wc = new WebClient())
                             {
-                                wc.DownloadStringAsync(new Uri(serverUrl + "/api.php?action=heartbeat&session_id=" + sessionId));
+                                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                                wc.UploadStringAsync(new Uri(serverUrl + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sessionId)), "POST", "metrics=" + Uri.EscapeDataString(liveMetrics));
                             }
                         }
                         catch { }
@@ -830,6 +1098,8 @@ namespace OptimaIT
 
                 while (true)
                 {
+                    string liveMetrics = HardwareInfoCollector.CollectLiveMetricsJson();
+                    string postData = "metrics=" + Uri.EscapeDataString(liveMetrics);
                     string[] hbUrls = new string[] {
                         "http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
                         "http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
@@ -841,13 +1111,14 @@ namespace OptimaIT
                         {
                             using (WebClient wc = new WebClient())
                             {
-                                wc.DownloadString(hUrl);
+                                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                                wc.UploadString(hUrl, "POST", postData);
                                 break;
                             }
                         }
                         catch { }
                     }
-                    Thread.Sleep(12000);
+                    Thread.Sleep(10000);
                 }
             }
 

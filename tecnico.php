@@ -857,6 +857,194 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       color: #FB7185;
       transform: scale(1.08);
     }
+    .btn-action.specs {
+      background: rgba(16, 185, 129, 0.1);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .btn-action.specs:hover {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: #34D399;
+      color: #FFFFFF;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 12px rgba(16, 185, 129, 0.35);
+    }
+
+    .device-mini-chips {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .chip-metric {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2.5px 7px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      letter-spacing: -0.01em;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94A3B8;
+    }
+    .chip-metric.normal {
+      color: #34D399;
+      background: rgba(16, 185, 129, 0.09);
+      border-color: rgba(16, 185, 129, 0.28);
+    }
+    .chip-metric.warn {
+      color: #FBBF24;
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.32);
+    }
+    .chip-metric.danger {
+      color: #F87171;
+      background: rgba(239, 68, 68, 0.14);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+    .chip-metric.sn {
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.09);
+      border-color: rgba(56, 189, 248, 0.28);
+    }
+    .chip-metric.cpu {
+      color: #CBD5E1;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* SPECS MODAL & TELEMETRY STYLES */
+    .modal-frame.specs-modal-custom {
+      max-width: 740px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      box-shadow: 0 25px 70px -10px rgba(0, 0, 0, 0.95), 0 0 50px -5px rgba(16, 185, 129, 0.2);
+    }
+    .specs-grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 680px) {
+      .specs-grid-container { grid-template-columns: 1fr; }
+    }
+    .spec-section-card {
+      background: rgba(6, 9, 19, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .spec-section-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .metric-gauge-wrap {
+      margin-bottom: 14px;
+    }
+    .metric-gauge-wrap:last-child {
+      margin-bottom: 0;
+    }
+    .gauge-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    .gauge-name {
+      color: #FFFFFF;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .gauge-badge {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-weight: 800;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+    .gauge-track {
+      width: 100%;
+      height: 9px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+    .gauge-bar {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .gauge-bar.green { background: linear-gradient(90deg, #10B981, #34D399); }
+    .gauge-bar.yellow { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+    .gauge-bar.red { background: linear-gradient(90deg, #EF4444, #F87171); }
+    .gauge-sub-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #64748B;
+      margin-top: 4px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .spec-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 12.5px;
+    }
+    .spec-item-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .spec-item-key {
+      color: #94A3B8;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .spec-item-val {
+      color: #FFFFFF;
+      font-weight: 700;
+      text-align: right;
+      max-width: 60%;
+      word-break: break-all;
+    }
+    .spec-copy-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 11.5px;
+      color: #38BDF8;
+    }
+    .spec-copy-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      cursor: pointer;
+      padding: 0;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+    }
+    .spec-copy-btn:hover { color: #FFFFFF; }
 
     /* GRID CARDS VIEW */
     .cards-grid-wrap {
@@ -2080,6 +2268,42 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
 
 
+  <!-- MODAL: FICHA TÉCNICA Y TELEMETRÍA DEL EQUIPO -->
+  <dialog id="deviceSpecsModal" class="app-dialog" onclick="handleDialogBackdropClick(event)">
+    <div class="modal-frame specs-modal-custom">
+      <div class="modal-header-row" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(56, 189, 248, 0.05) 100%); border-bottom: 1px solid rgba(16, 185, 129, 0.25);">
+        <div class="modal-headline-wrap">
+          <div class="modal-icon-bubble" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.45); color: #34D399;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+          </div>
+          <div>
+            <h3 class="modal-headline-title" id="specModalTitle">Ficha Técnica y Hardware</h3>
+            <p class="modal-headline-sub" id="specModalSubtitle">Supervisión de hardware y consumo en tiempo real</p>
+          </div>
+        </div>
+        <button type="button" class="modal-close-x" onclick="closeDeviceSpecsModal()" title="Cerrar">&times;</button>
+      </div>
+
+      <div class="modal-body-content" id="specModalBody" style="padding: 22px 24px; max-height: 72vh; overflow-y: auto;">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <div class="modal-footer-row" style="justify-content: space-between;">
+        <div id="specModalFooterMeta" style="font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 8px;">
+          <span class="status-badge online" style="font-size:10px; padding:2px 8px;">● EN VIVO</span>
+          <span id="specModalLastReport">Sincronizado</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn-action connect" id="specModalConnectBtn">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span>Conectar por Control Remoto</span>
+          </button>
+          <button type="button" class="btn-modal-cancel" onclick="closeDeviceSpecsModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
   <!-- MODAL: CONFIRMAR ACCIÓN -->
   <dialog id="confirmActionModal" class="app-dialog" style="z-index: 10005;" onclick="handleDialogBackdropClick(event)">
     <div class="modal-frame" style="max-width: 440px; border-color: rgba(239, 68, 68, 0.4); box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.85), 0 0 40px -5px rgba(239, 68, 68, 0.25);">
@@ -2404,6 +2628,44 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         const isOnline = s.status === 'online';
         const isWaiting = s.status === 'waiting';
         const isEmpresa = s.client_type === 'empresa';
+        const sys = s.sysinfo || null;
+        const met = s.metrics || null;
+
+        // Build mini telemetry chips
+        let chipsHtml = '';
+        if (met || sys) {
+          chipsHtml += `<div class="device-mini-chips">`;
+          if (met && met.ram_used_pct !== undefined) {
+            const ramPct = met.ram_used_pct;
+            const ramClass = ramPct > 85 ? 'danger' : (ramPct > 70 ? 'warn' : 'normal');
+            chipsHtml += `<span class="chip-metric ${ramClass}" title="Consumo de RAM en tiempo real">🧠 RAM ${ramPct}% (${met.ram_used_gb || '0'}/${met.ram_total_gb || '0'} GB)</span>`;
+          } else if (sys && sys.ram) {
+            const ramPct = sys.ram.used_pct;
+            const ramClass = ramPct > 85 ? 'danger' : (ramPct > 70 ? 'warn' : 'normal');
+            chipsHtml += `<span class="chip-metric ${ramClass}" title="Consumo de RAM">🧠 RAM ${ramPct}% (${sys.ram.used_gb}/${sys.ram.total_gb} GB)</span>`;
+          }
+
+          if (met && met.disk_used_pct !== undefined) {
+            const dPct = met.disk_used_pct;
+            const dClass = dPct > 90 ? 'danger' : (dPct > 75 ? 'warn' : 'normal');
+            chipsHtml += `<span class="chip-metric ${dClass}" title="Uso del disco principal C:">💾 C: ${dPct}% (${met.disk_free_gb || '0'} GB libres)</span>`;
+          } else if (sys && sys.disks && sys.disks.length > 0) {
+            const d0 = sys.disks[0];
+            const dClass = d0.used_pct > 90 ? 'danger' : (d0.used_pct > 75 ? 'warn' : 'normal');
+            chipsHtml += `<span class="chip-metric ${dClass}" title="Uso del disco ${escapeHtml(d0.name)}">💾 ${escapeHtml(d0.name)} ${d0.used_pct}%</span>`;
+          }
+
+          if (sys && sys.serial_number && sys.serial_number !== 'N/A' && sys.serial_number !== 'Desconocido' && sys.serial_number !== 'None') {
+            chipsHtml += `<span class="chip-metric sn" title="Número de Serie / S/N">🏷️ S/N: ${escapeHtml(sys.serial_number)}</span>`;
+          }
+
+          if (sys && sys.processor) {
+            let cpuShort = sys.processor.split('@')[0].replace('Intel(R) Core(TM)', 'Intel').replace('AMD Ryzen', 'Ryzen').replace('Processor', '').trim();
+            if (cpuShort.length > 20) cpuShort = cpuShort.substring(0, 20) + '...';
+            chipsHtml += `<span class="chip-metric cpu" title="${escapeHtml(sys.processor)}">⚡ ${escapeHtml(cpuShort)}</span>`;
+          }
+          chipsHtml += `</div>`;
+        }
 
         let badgeStatus = '';
         if (isOnline) {
@@ -2449,6 +2711,13 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           }
         }
 
+        const specsBtn = `
+          <button onclick="openDeviceSpecsModal('${s.session_id}')" class="btn-action specs" title="Ver ficha técnica completa, hardware y recursos">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+            <span>Ficha</span>
+          </button>
+        `;
+
         const copyBtn = `
           <button onclick="copySpecificUrl('${s.session_id}')" class="btn-action copy" title="Copiar enlace de descarga para este equipo">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
@@ -2468,7 +2737,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <td>
               <div class="client-cell">
                 <span class="client-name-title">🖥️ ${escapeHtml(s.client_name)}</span>
-                <div>${tagType}</div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  ${tagType}
+                  ${(sys && sys.os) ? `<span style="font-size:11px; color:#64748B;">• ${escapeHtml(sys.os)}</span>` : ''}
+                </div>
+                ${chipsHtml}
               </div>
             </td>
             ${groupCell}
@@ -2476,6 +2749,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
             <td>${idDisplay}</td>
             <td style="text-align:right;">
               <div class="row-actions-cluster">
+                ${specsBtn}
                 ${connectBtn}
                 ${copyBtn}
                 ${deleteBtn}
@@ -2489,6 +2763,37 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       gridContainer.innerHTML = list.map(s => {
         const isOnline = s.status === 'online';
         const isEmpresa = s.client_type === 'empresa';
+        const sys = s.sysinfo || null;
+        const met = s.metrics || null;
+
+        // Build mini chips for card
+        let chipsHtml = '';
+        if (met || sys) {
+          chipsHtml += `<div class="device-mini-chips">`;
+          if (met && met.ram_used_pct !== undefined) {
+            const ramPct = met.ram_used_pct;
+            const ramClass = ramPct > 85 ? 'danger' : (ramPct > 70 ? 'warn' : 'normal');
+            chipsHtml += `<span class="chip-metric ${ramClass}">🧠 RAM ${ramPct}%</span>`;
+          } else if (sys && sys.ram) {
+            const ramPct = sys.ram.used_pct;
+            const ramClass = ramPct > 85 ? 'danger' : (ramPct > 70 ? 'warn' : 'normal');
+            chipsHtml += `<span class="chip-metric ${ramClass}">🧠 RAM ${ramPct}%</span>`;
+          }
+
+          if (met && met.disk_used_pct !== undefined) {
+            const dPct = met.disk_used_pct;
+            const dClass = dPct > 90 ? 'danger' : (dPct > 75 ? 'warn' : 'normal');
+            chipsHtml += `<span class="chip-metric ${dClass}">💾 C: ${dPct}%</span>`;
+          } else if (sys && sys.disks && sys.disks.length > 0) {
+            chipsHtml += `<span class="chip-metric normal">💾 ${escapeHtml(sys.disks[0].name)} ${sys.disks[0].used_pct}%</span>`;
+          }
+
+          if (sys && sys.serial_number && sys.serial_number !== 'N/A' && sys.serial_number !== 'Desconocido' && sys.serial_number !== 'None') {
+            chipsHtml += `<span class="chip-metric sn" title="S/N">🏷️ ${escapeHtml(sys.serial_number)}</span>`;
+          }
+          chipsHtml += `</div>`;
+        }
+
         let statusPill = isOnline 
           ? `<span class="status-badge online">● EN LÍNEA</span>` 
           : `<span class="status-badge inactive">Inactivo</span>`;
@@ -2524,10 +2829,23 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
                 <span class="card-spec-key">ID Remoto:</span>
                 <span class="remote-id-tag">${s.rustdesk_id || '---'}</span>
               </div>
+              ${(sys && sys.serial_number && sys.serial_number !== 'N/A') ? `
+              <div class="card-row-spec">
+                <span class="card-spec-key">S/N:</span>
+                <span style="font-family:monospace; color:#38BDF8; font-weight:700;">${escapeHtml(sys.serial_number)}</span>
+              </div>` : ''}
+              ${chipsHtml ? `
+              <div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);">
+                ${chipsHtml}
+              </div>` : ''}
             </div>
 
             <div class="card-actions-grid">
               ${connectBtnGrid}
+              <button onclick="openDeviceSpecsModal('${s.session_id}')" class="btn-action specs" title="Ficha Técnica y Recursos" style="height:36px; padding:0 10px;">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                <span>Ficha</span>
+              </button>
               <button onclick="copySpecificUrl('${s.session_id}')" class="btn-action copy" title="Copiar Link" style="height:36px; padding:0 12px;">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
               </button>
@@ -2723,6 +3041,281 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       const div = document.createElement('div');
       div.innerText = text || '';
       return div.innerHTML;
+    }
+
+    function openDeviceSpecsModal(sessionId) {
+      const s = rawSessions.find(x => x.session_id === sessionId);
+      if (!s) return;
+
+      const modal = document.getElementById('deviceSpecsModal');
+      const titleElem = document.getElementById('specModalTitle');
+      const subElem = document.getElementById('specModalSubtitle');
+      const bodyElem = document.getElementById('specModalBody');
+      const connBtn = document.getElementById('specModalConnectBtn');
+      const lastRep = document.getElementById('specModalLastReport');
+
+      titleElem.innerText = `Ficha Técnica: ${s.client_name}`;
+      subElem.innerText = `Código: ${s.session_id} • ID RustDesk: ${s.rustdesk_id || 'Pendiente'}`;
+
+      if (connBtn) {
+        if (s.rustdesk_id) {
+          connBtn.style.display = 'inline-flex';
+          connBtn.onclick = () => connectSession(s.rustdesk_id);
+        } else {
+          connBtn.style.display = 'none';
+        }
+      }
+
+      const sys = s.sysinfo || null;
+      const met = s.metrics || null;
+
+      if (met && met.updated_at) {
+        lastRep.innerText = `Actualizado a las ${met.updated_at}`;
+      } else {
+        lastRep.innerText = s.status === 'online' ? 'Sincronizado' : 'Último reporte registrado';
+      }
+
+      if (!sys && !met) {
+        bodyElem.innerHTML = `
+          <div style="text-align:center; padding: 40px 20px;">
+            <div style="font-size: 42px; margin-bottom: 14px;">📡</div>
+            <h4 style="font-size: 16px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px;">Telemetría pendiente de sincronización</h4>
+            <p style="font-size: 13px; color: #94A3B8; max-width: 440px; margin: 0 auto 20px auto; line-height: 1.5;">
+              Este equipo aún no ha enviado sus especificaciones de hardware. La información se recolectará en tiempo real automáticamente cuando el cliente ejecute el Asistente de Optima IT.
+            </p>
+            <div style="display:inline-flex; align-items:center; gap:8px; padding: 8px 16px; border-radius: 8px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); color: #38BDF8; font-size: 12px; font-weight: 600;">
+              <span>💡 Tip:</span> Los datos de RAM, Discos, Procesador y S/N se actualizan sin demoras.
+            </div>
+          </div>
+        `;
+      } else {
+        // RAM details
+        const ramTotal = (met && met.ram_total_gb) ? met.ram_total_gb : (sys && sys.ram ? sys.ram.total_gb : 0);
+        const ramUsed = (met && met.ram_used_gb) ? met.ram_used_gb : (sys && sys.ram ? sys.ram.used_gb : 0);
+        const ramFree = (sys && sys.ram && sys.ram.free_gb) ? sys.ram.free_gb : Math.round((ramTotal - ramUsed) * 10) / 10;
+        const ramPct = (met && met.ram_used_pct !== undefined) ? met.ram_used_pct : (sys && sys.ram ? sys.ram.used_pct : 0);
+        const ramColor = ramPct > 85 ? 'red' : (ramPct > 70 ? 'yellow' : 'green');
+
+        // Disks details
+        let disksHtml = '';
+        if (sys && sys.disks && sys.disks.length > 0) {
+          disksHtml = sys.disks.map((d, idx) => {
+            let dPct = d.used_pct;
+            let dFree = d.free_gb;
+            let dTotal = d.total_gb;
+            let dUsed = d.used_gb;
+            if (idx === 0 && met && met.disk_used_pct !== undefined) {
+              dPct = met.disk_used_pct;
+              if (met.disk_free_gb !== undefined) dFree = met.disk_free_gb;
+              if (met.disk_total_gb !== undefined) dTotal = met.disk_total_gb;
+              dUsed = Math.round((dTotal - dFree) * 10) / 10;
+            }
+            const dColor = dPct > 90 ? 'red' : (dPct > 75 ? 'yellow' : 'green');
+            return `
+              <div class="metric-gauge-wrap" style="margin-top: ${idx > 0 ? '12px' : '0'};">
+                <div class="gauge-top-row">
+                  <span class="gauge-name">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                    <span>${escapeHtml(d.name)} (${escapeHtml(d.label || 'Disco Local')})</span>
+                  </span>
+                  <span class="gauge-badge chip-metric ${dColor}">${dPct}% en uso</span>
+                </div>
+                <div class="gauge-track">
+                  <div class="gauge-bar ${dColor}" style="width: ${Math.min(100, Math.max(0, dPct))}%;"></div>
+                </div>
+                <div class="gauge-sub-row">
+                  <span>${dUsed} GB usados</span>
+                  <span>${dFree} GB libres de ${dTotal} GB</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else if (met && met.disk_used_pct !== undefined) {
+          const dPct = met.disk_used_pct;
+          const dColor = dPct > 90 ? 'red' : (dPct > 75 ? 'yellow' : 'green');
+          disksHtml = `
+            <div class="metric-gauge-wrap">
+              <div class="gauge-top-row">
+                <span class="gauge-name">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                  <span>Disco C:</span>
+                </span>
+                <span class="gauge-badge chip-metric ${dColor}">${dPct}% en uso</span>
+              </div>
+              <div class="gauge-track">
+                <div class="gauge-bar ${dColor}" style="width: ${Math.min(100, Math.max(0, dPct))}%;"></div>
+              </div>
+              <div class="gauge-sub-row">
+                <span>${met.disk_free_gb || 0} GB libres</span>
+                <span>Total: ${met.disk_total_gb || 0} GB</span>
+              </div>
+            </div>
+          `;
+        } else {
+          disksHtml = `<div style="font-size:12px; color:#64748B;">No hay información de almacenamiento disponible</div>`;
+        }
+
+        // Hardware identification fields
+        const sn = (sys && sys.serial_number) ? sys.serial_number : 'N/A';
+        const prodId = (sys && sys.product_id) ? sys.product_id : 'N/A';
+        const machineGuid = (sys && sys.machine_guid) ? sys.machine_guid : 'N/A';
+        const cpuName = (sys && sys.processor) ? sys.processor : 'No detectado';
+        const cpuCores = (sys && sys.cpu_cores) ? sys.cpu_cores : '---';
+        const osName = (sys && sys.os) ? sys.os : 'Windows';
+        const mfg = (sys && sys.manufacturer) ? sys.manufacturer : '---';
+        const modelName = (sys && sys.model) ? sys.model : '---';
+        const hostName = (sys && sys.hostname) ? sys.hostname : s.client_name;
+        const userName = (sys && sys.username) ? ((sys.user_domain ? sys.user_domain + '\\' : '') + sys.username) : '---';
+        const localIp = (sys && sys.local_ip) ? sys.local_ip : (s.ip || '---');
+
+        bodyElem.innerHTML = `
+          <div class="specs-grid-container">
+            <!-- COLUMNA 1: CONSUMO Y RENDIMIENTO -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div class="spec-section-card">
+                <div class="spec-section-title">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                  <span>Consumo de Recursos en Vivo</span>
+                </div>
+
+                <!-- RAM GAUGE -->
+                <div class="metric-gauge-wrap" style="margin-bottom: 16px;">
+                  <div class="gauge-top-row">
+                    <span class="gauge-name">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><path d="M6 8v8m4-8v8m4-8v8m4-8v8"></path></svg>
+                      <span>Memoria RAM</span>
+                    </span>
+                    <span class="gauge-badge chip-metric ${ramColor}">${ramPct}% en uso</span>
+                  </div>
+                  <div class="gauge-track">
+                    <div class="gauge-bar ${ramColor}" style="width: ${Math.min(100, Math.max(0, ramPct))}%;"></div>
+                  </div>
+                  <div class="gauge-sub-row">
+                    <span>${ramUsed} GB en uso</span>
+                    <span>${ramFree} GB libres de ${ramTotal} GB</span>
+                  </div>
+                </div>
+
+                <!-- DISKS GAUGE -->
+                <div style="font-size:11.5px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">
+                  Almacenamiento / Discos
+                </div>
+                ${disksHtml}
+              </div>
+
+              <div class="spec-section-card">
+                <div class="spec-section-title">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                  <span>Procesador & CPU</span>
+                </div>
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Modelo CPU:</span>
+                  <span class="spec-item-val" style="color:#F8FAFC;">${escapeHtml(cpuName)}</span>
+                </div>
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Núcleos / Hilos:</span>
+                  <span class="spec-item-val" style="color:#38BDF8;">${cpuCores} núcleos lógicos</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- COLUMNA 2: IDENTIFICACIÓN DEL EQUIPO -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <div class="spec-section-card">
+                <div class="spec-section-title">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <span>Identificación & Licencias</span>
+                </div>
+
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Número de Serie (S/N):</span>
+                  <span class="spec-item-val">
+                    ${sn !== 'N/A' ? `
+                      <span class="spec-copy-box">
+                        <span>${escapeHtml(sn)}</span>
+                        <button class="spec-copy-btn" onclick="doClipboardCopy('${escapeHtml(sn)}', '¡Número de Serie copiado!')" title="Copiar S/N">
+                          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                      </span>
+                    ` : '<span style="color:#64748B;">No reportado</span>'}
+                  </span>
+                </div>
+
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Product ID (Windows):</span>
+                  <span class="spec-item-val">
+                    ${prodId !== 'N/A' ? `
+                      <span class="spec-copy-box">
+                        <span style="font-size:11px;">${escapeHtml(prodId)}</span>
+                        <button class="spec-copy-btn" onclick="doClipboardCopy('${escapeHtml(prodId)}', '¡Product ID copiado!')" title="Copiar Product ID">
+                          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                      </span>
+                    ` : '<span style="color:#64748B;">No reportado</span>'}
+                  </span>
+                </div>
+
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Machine GUID:</span>
+                  <span class="spec-item-val">
+                    ${machineGuid !== 'N/A' ? `
+                      <span class="spec-copy-box" style="font-size:10px;">
+                        <span>${escapeHtml(machineGuid)}</span>
+                        <button class="spec-copy-btn" onclick="doClipboardCopy('${escapeHtml(machineGuid)}', '¡Machine GUID copiado!')" title="Copiar Machine GUID">
+                          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
+                      </span>
+                    ` : '<span style="color:#64748B;">---</span>'}
+                  </span>
+                </div>
+              </div>
+
+              <div class="spec-section-card">
+                <div class="spec-section-title">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                  <span>Sistema & Entorno</span>
+                </div>
+
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Sistema Operativo:</span>
+                  <span class="spec-item-val" style="color:#34D399;">${escapeHtml(osName)}</span>
+                </div>
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Fabricante:</span>
+                  <span class="spec-item-val">${escapeHtml(mfg)}</span>
+                </div>
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Modelo:</span>
+                  <span class="spec-item-val">${escapeHtml(modelName)}</span>
+                </div>
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Nombre del Equipo:</span>
+                  <span class="spec-item-val" style="color:#38BDF8;">${escapeHtml(hostName)}</span>
+                </div>
+                <div class="spec-item-row">
+                  <span class="spec-item-key">Usuario Activo:</span>
+                  <span class="spec-item-val">${escapeHtml(userName)}</span>
+                </div>
+                <div class="spec-item-row">
+                  <span class="spec-item-key">IP Local:</span>
+                  <span class="spec-item-val" style="font-family:monospace; color:#A7F3D0;">${escapeHtml(localIp)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (modal.showModal) modal.showModal();
+      else modal.classList.add('active');
+    }
+
+    function closeDeviceSpecsModal() {
+      const modal = document.getElementById('deviceSpecsModal');
+      if (modal) {
+        if (modal.close) modal.close();
+        else modal.classList.remove('active');
+      }
     }
 
     function logoutUser() {

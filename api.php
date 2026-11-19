@@ -222,7 +222,19 @@ switch ($action) {
             echo json_encode(['success' => false, 'error' => 'Faltan parámetros']);
             exit;
         }
-        
+
+        // Parse sysinfo if provided
+        $sysinfo = null;
+        $rawPost = file_get_contents('php://input');
+        if (!empty($_POST['sysinfo'])) {
+            $sysinfo = is_array($_POST['sysinfo']) ? $_POST['sysinfo'] : json_decode($_POST['sysinfo'], true);
+        } else if (!empty($rawPost)) {
+            $parsed = json_decode($rawPost, true);
+            if (!empty($parsed['sysinfo'])) {
+                $sysinfo = $parsed['sysinfo'];
+            }
+        }
+
         $sessions = getSessions();
         if (isset($sessions[$sessionId])) {
             $sessions[$sessionId]['rustdesk_id'] = $rustdeskId;
@@ -232,6 +244,20 @@ switch ($action) {
                 $sessions[$sessionId]['installed'] = true;
             }
             $sessions[$sessionId]['client_ip'] = $_SERVER['REMOTE_ADDR'] ?? '';
+            if ($sysinfo) {
+                $sessions[$sessionId]['sysinfo'] = $sysinfo;
+                if (!empty($sysinfo['ram']) || !empty($sysinfo['disks'])) {
+                    $sessions[$sessionId]['metrics'] = [
+                        'ram_used_pct' => $sysinfo['ram']['used_pct'] ?? 0,
+                        'ram_used_gb' => $sysinfo['ram']['used_gb'] ?? 0,
+                        'ram_total_gb' => $sysinfo['ram']['total_gb'] ?? 0,
+                        'disk_used_pct' => $sysinfo['disks'][0]['used_pct'] ?? 0,
+                        'disk_free_gb' => $sysinfo['disks'][0]['free_gb'] ?? 0,
+                        'disk_total_gb' => $sysinfo['disks'][0]['total_gb'] ?? 0,
+                        'updated_at' => date('H:i:s')
+                    ];
+                }
+            }
             saveSessions($sessions);
             echo json_encode([
                 'success' => true, 
@@ -243,7 +269,7 @@ switch ($action) {
             $password = 'Optima' . rand(1000, 9999);
             $sessions[$sessionId] = [
                 'session_id' => $sessionId,
-                'client_name' => 'Cliente Directo',
+                'client_name' => $sysinfo['hostname'] ?? 'Cliente Directo',
                 'client_type' => 'personal',
                 'group_name' => 'Personas Naturales',
                 'password' => $password,
@@ -251,8 +277,23 @@ switch ($action) {
                 'rustdesk_id' => $rustdeskId,
                 'created_at' => date('H:i:s'),
                 'last_seen' => time(),
-                'installed' => $installed
+                'installed' => $installed,
+                'client_ip' => $_SERVER['REMOTE_ADDR'] ?? ''
             ];
+            if ($sysinfo) {
+                $sessions[$sessionId]['sysinfo'] = $sysinfo;
+                if (!empty($sysinfo['ram']) || !empty($sysinfo['disks'])) {
+                    $sessions[$sessionId]['metrics'] = [
+                        'ram_used_pct' => $sysinfo['ram']['used_pct'] ?? 0,
+                        'ram_used_gb' => $sysinfo['ram']['used_gb'] ?? 0,
+                        'ram_total_gb' => $sysinfo['ram']['total_gb'] ?? 0,
+                        'disk_used_pct' => $sysinfo['disks'][0]['used_pct'] ?? 0,
+                        'disk_free_gb' => $sysinfo['disks'][0]['free_gb'] ?? 0,
+                        'disk_total_gb' => $sysinfo['disks'][0]['total_gb'] ?? 0,
+                        'updated_at' => date('H:i:s')
+                    ];
+                }
+            }
             saveSessions($sessions);
             echo json_encode([
                 'success' => true, 
@@ -269,10 +310,51 @@ switch ($action) {
         if (isset($sessions[$sessionId])) {
             $sessions[$sessionId]['last_seen'] = time();
             $sessions[$sessionId]['status'] = 'online';
+
+            // Optional live metrics update
+            $rawPost = file_get_contents('php://input');
+            $metricsData = null;
+            if (!empty($_POST['metrics'])) {
+                $metricsData = is_array($_POST['metrics']) ? $_POST['metrics'] : json_decode($_POST['metrics'], true);
+            } else if (!empty($rawPost)) {
+                $parsed = json_decode($rawPost, true);
+                if (!empty($parsed['metrics'])) {
+                    $metricsData = $parsed['metrics'];
+                }
+            }
+            if ($metricsData) {
+                $metricsData['updated_at'] = date('H:i:s');
+                $sessions[$sessionId]['metrics'] = $metricsData;
+            }
+
             saveSessions($sessions);
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false]);
+        }
+        break;
+
+    case 'save_sysinfo':
+        $sessionId = trim($_REQUEST['session_id'] ?? '');
+        $sessions = getSessions();
+        if (!empty($sessionId) && isset($sessions[$sessionId])) {
+            $rawPost = file_get_contents('php://input');
+            $data = json_decode($rawPost, true) ?: $_POST;
+            if (!empty($data['sysinfo'])) {
+                $sysinfo = is_array($data['sysinfo']) ? $data['sysinfo'] : json_decode($data['sysinfo'], true);
+                $sessions[$sessionId]['sysinfo'] = $sysinfo;
+            }
+            if (!empty($data['metrics'])) {
+                $metrics = is_array($data['metrics']) ? $data['metrics'] : json_decode($data['metrics'], true);
+                $metrics['updated_at'] = date('H:i:s');
+                $sessions[$sessionId]['metrics'] = $metrics;
+            }
+            $sessions[$sessionId]['last_seen'] = time();
+            $sessions[$sessionId]['status'] = 'online';
+            saveSessions($sessions);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Sesión no encontrada']);
         }
         break;
 
