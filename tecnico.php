@@ -1921,11 +1921,6 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       </div>
 
       <div class="sidebar-scroll">
-        <button type="button" class="btn-create-session" onclick="openSessionModal()">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-          <span>Nueva Sesión</span>
-        </button>
-
         <div>
           <div class="nav-section-title">
             <span>Vistas de Equipos</span>
@@ -2766,7 +2761,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
         let emptyMsg = "No hay registros en esta sección.";
         if (currentCategory === 'empresa') {
           emptyMsg = currentGroupFilter === 'all' 
-            ? "No hay equipos empresariales registrados aún. Haz clic en '+ Nueva Sesión' para instalar el primer equipo."
+            ? "No hay equipos empresariales registrados aún. Haz clic en '+ Generar Enlace' para instalar el primer equipo."
             : `No hay equipos asignados a la sede "${escapeHtml(currentGroupFilter)}".`;
         } else if (currentCategory === 'personal') {
           emptyMsg = "No hay asistencias temporales activas.";

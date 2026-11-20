@@ -1002,6 +1002,9 @@ namespace OptimaIT
                         {
                             using (WebClient wc = new WebClient())
                             {
+                                wc.Proxy = null;
+                                wc.Headers[HttpRequestHeader.Host] = "optimait.155.133.197.176.sslip.io";
+                                wc.Headers[HttpRequestHeader.UserAgent] = "OptimaIT-Agent";
                                 wc.DownloadStringAsync(new Uri(serverUrl + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sessionId)));
                             }
                         }
@@ -1193,6 +1196,9 @@ namespace OptimaIT
                         {
                             using (WebClient wc = new WebClient())
                             {
+                                wc.Proxy = null;
+                                wc.Headers[HttpRequestHeader.Host] = "optimait.155.133.197.176.sslip.io";
+                                wc.Headers[HttpRequestHeader.UserAgent] = "OptimaIT-Agent";
                                 wc.DownloadString(hUrl);
                                 break;
                             }

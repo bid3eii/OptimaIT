@@ -133,17 +133,51 @@ switch ($action) {
         $cleaned = [];
         $hasChanges = false;
 
-        // Auto-detect active RustDesk client connections to hbbs (port 21116)
+        // Auto-detect active RustDesk client connections to hbbs (ports 21115, 21116, 21117)
         $establishedIps = [];
         $netOut = [];
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             @exec('netstat -ano -p tcp | findstr 21116 | findstr ESTABLISHED', $netOut);
+            foreach ($netOut as $nLine) {
+                if (preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTABLISHED/', $nLine, $m)) {
+                    $establishedIps[$m[1]] = true;
+                }
+            }
         } else {
+            // 1. Native Linux kernel socket table parsing (100% reliable inside Docker container)
+            $tcpFiles = ['/proc/net/tcp', '/proc/net/tcp6'];
+            foreach ($tcpFiles as $tFile) {
+                if (file_exists($tFile) && is_readable($tFile)) {
+                    $lines = @file($tFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                    if ($lines) {
+                        foreach ($lines as $line) {
+                            $parts = preg_split('/\s+/', trim($line));
+                            if (count($parts) >= 4) {
+                                $local = explode(':', $parts[1] ?? '');
+                                $rem = explode(':', $parts[2] ?? '');
+                                $state = $parts[3] ?? '';
+                                $localPortHex = strtoupper($local[1] ?? '');
+                                // 21115 (527B), 21116 (527C), 21117 (527D)
+                                if (in_array($localPortHex, ['527B', '527C', '527D']) && $state === '01') {
+                                    $hexIp = $rem[0] ?? '';
+                                    if (strlen($hexIp) === 8) {
+                                        $ip = long2ip(hexdec(implode('', array_reverse(str_split($hexIp, 2)))));
+                                        if ($ip && $ip !== '0.0.0.0' && $ip !== '127.0.0.1') {
+                                            $establishedIps[$ip] = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // 2. Fallback to ss or netstat if available
             @exec('ss -nt 2>/dev/null | grep :21116 | grep ESTAB || netstat -tn 2>/dev/null | grep :21116 | grep ESTABLISHED', $netOut);
-        }
-        foreach ($netOut as $nLine) {
-            if (preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTAB/', $nLine, $m) || preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTABLISHED/', $nLine, $m)) {
-                $establishedIps[$m[1]] = true;
+            foreach ($netOut as $nLine) {
+                if (preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTAB/', $nLine, $m) || preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTABLISHED/', $nLine, $m)) {
+                    $establishedIps[$m[1]] = true;
+                }
             }
         }
 
@@ -170,8 +204,8 @@ switch ($action) {
                         $hasChanges = true;
                     }
                     $s['last_seen'] = $now;
-                } else if ($s['status'] === 'online' && ($now - $lastActivity > 90)) {
-                    // Si el equipo no tiene socket activo y no ha reportado heartbeat en más de 90s, se marca inactivo
+                } else if ($s['status'] === 'online' && ($now - $lastActivity > 180)) {
+                    // Si el equipo no tiene socket activo y no ha reportado heartbeat en más de 3 minutos, se marca inactivo
                     $s['status'] = 'idle';
                     $hasChanges = true;
                 }
