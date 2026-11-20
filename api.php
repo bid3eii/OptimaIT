@@ -58,6 +58,37 @@ function getSessions() {
     return is_array($data) ? $data : [];
 }
 
+function getClientPublicIp() {
+    $headers = [
+        'HTTP_CF_CONNECTING_IP',
+        'HTTP_X_REAL_IP',
+        'HTTP_X_FORWARDED_FOR',
+        'HTTP_CLIENT_IP',
+        'REMOTE_ADDR'
+    ];
+    foreach ($headers as $header) {
+        if (!empty($_SERVER[$header])) {
+            $ips = explode(',', $_SERVER[$header]);
+            foreach ($ips as $ip) {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $ip;
+                }
+            }
+        }
+    }
+    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        return trim($parts[0]);
+    }
+    return $_SERVER['REMOTE_ADDR'] ?? '';
+}
+
+function isPrivateNetworkIp($ip) {
+    if (empty($ip)) return true;
+    return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+}
+
 function saveSessions($sessions) {
     global $dataFile;
     file_put_contents($dataFile, json_encode($sessions, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
@@ -185,12 +216,13 @@ switch ($action) {
             $lastActivity = $s['last_seen'] ?? 0;
             if ($now - $lastActivity < 86400 * 30) { // Retain 30 days for inventory
                 $clientIp = $s['client_ip'] ?? '';
+                $isEnterprise = (!empty($s['installed']) || ($s['client_type'] ?? '') === 'empresa');
 
                 // If remote machine has an active socket to hbbs, it is definitely online!
-                $isSocketConnected = !empty($clientIp) && isset($establishedIps[$clientIp]);
+                $isSocketConnected = !empty($clientIp) && !isPrivateNetworkIp($clientIp) && isset($establishedIps[$clientIp]);
                 
-                // If there's only 1 session with an ID and 1 active IP, automatically link it
-                if (!$isSocketConnected && empty($clientIp) && count($establishedIps) === 1 && !empty($s['rustdesk_id'])) {
+                // If stored IP is empty or private (Docker proxy 10.x, 172.x, 192.168.x) and there are active sockets to hbbs
+                if (!$isSocketConnected && (empty($clientIp) || isPrivateNetworkIp($clientIp)) && count($establishedIps) > 0 && !empty($s['rustdesk_id'])) {
                     $singleIp = array_keys($establishedIps)[0];
                     $s['client_ip'] = $singleIp;
                     $clientIp = $singleIp;
@@ -204,8 +236,22 @@ switch ($action) {
                         $hasChanges = true;
                     }
                     $s['last_seen'] = $now;
+                } else if ($isEnterprise) {
+                    // Equipos Corporativos (Desatendidos / Auto-Inicio):
+                    // Se mantienen EN LÍNEA mientras tengan actividad en las últimas horas (ventana de 45 minutos)
+                    if ($now - $lastActivity > 2700) {
+                        if ($s['status'] !== 'idle') {
+                            $s['status'] = 'idle';
+                            $hasChanges = true;
+                        }
+                    } else {
+                        if ($s['status'] !== 'online') {
+                            $s['status'] = 'online';
+                            $hasChanges = true;
+                        }
+                    }
                 } else if ($s['status'] === 'online' && ($now - $lastActivity > 180)) {
-                    // Si el equipo no tiene socket activo y no ha reportado heartbeat en más de 3 minutos, se marca inactivo
+                    // Clientes temporales: si pasan más de 3 minutos sin heartbeat, se marca inactivo
                     $s['status'] = 'idle';
                     $hasChanges = true;
                 }
@@ -277,7 +323,12 @@ switch ($action) {
             if ($installed) {
                 $sessions[$sessionId]['installed'] = true;
             }
-            $sessions[$sessionId]['client_ip'] = $_SERVER['REMOTE_ADDR'] ?? '';
+            $detectedIp = getClientPublicIp();
+            if (!empty($detectedIp) && !isPrivateNetworkIp($detectedIp)) {
+                $sessions[$sessionId]['client_ip'] = $detectedIp;
+            } else if (empty($sessions[$sessionId]['client_ip'])) {
+                $sessions[$sessionId]['client_ip'] = $detectedIp;
+            }
             if ($sysinfo) {
                 $sessions[$sessionId]['sysinfo'] = $sysinfo;
                 if (!empty($sysinfo['ram']) || !empty($sysinfo['disks'])) {
@@ -312,7 +363,7 @@ switch ($action) {
                 'created_at' => date('H:i:s'),
                 'last_seen' => time(),
                 'installed' => $installed,
-                'client_ip' => $_SERVER['REMOTE_ADDR'] ?? ''
+                'client_ip' => getClientPublicIp()
             ];
             if ($sysinfo) {
                 $sessions[$sessionId]['sysinfo'] = $sysinfo;
@@ -344,6 +395,11 @@ switch ($action) {
         if (isset($sessions[$sessionId])) {
             $sessions[$sessionId]['last_seen'] = time();
             $sessions[$sessionId]['status'] = 'online';
+
+            $detectedIp = getClientPublicIp();
+            if (!empty($detectedIp) && !isPrivateNetworkIp($detectedIp)) {
+                $sessions[$sessionId]['client_ip'] = $detectedIp;
+            }
 
             // Optional live metrics update and sysinfo
             $rawPost = file_get_contents('php://input');
