@@ -13,6 +13,8 @@ if (!empty($_SESSION['optimait_user'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión - OptimaIT</title>
+  <link rel="icon" type="image/png" href="res/32x32.png">
+  <link rel="shortcut icon" href="favicon.ico">
   <meta name="color-scheme" content="dark light">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

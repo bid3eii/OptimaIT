@@ -28,7 +28,7 @@ if (isset($_GET['descargar'])) {
     if ($serverHost === 'localhost' || $serverHost === '127.0.0.1' || $serverHost === '155.133.197.176') {
         $serverHost = 'optimait.155.133.197.176.sslip.io';
     }
-    $downloadName = "{$prefix}_{$sessionId},host={$serverHost},key=wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=.exe";
+    $downloadName = "{$prefix}_{$sessionId}.exe";
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="' . $downloadName . '"');
@@ -46,6 +46,8 @@ if (isset($_GET['descargar'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OptimaIT - Asistencia Remota para <?php echo htmlspecialchars($clientName); ?></title>
+  <link rel="icon" type="image/png" href="res/32x32.png">
+  <link rel="shortcut icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
