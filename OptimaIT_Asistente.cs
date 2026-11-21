@@ -864,8 +864,6 @@ namespace OptimaIT
                                     string sPwd = jsonResp.Substring(startQ + 1, endQ - startQ - 1);
                                     if (!string.IsNullOrEmpty(sPwd))
                                     {
-                                        string tomlPassword = sPwd;
-                                        string salt = "";
                                         string[] tomlPaths = new string[] {
                                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"RustDesk\config\RustDesk2.toml"),
                                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"RustDesk\config\RustDesk.toml"),
@@ -883,45 +881,38 @@ namespace OptimaIT
                                                 {
                                                     string cToml = File.ReadAllText(tp);
                                                     string[] lines = cToml.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                                                    bool pwdReplaced = false;
-                                                    bool saltReplaced = false;
+                                                    List<string> cleanLines = new List<string>();
                                                     for (int li = 0; li < lines.Length; li++)
                                                     {
-                                                        if (lines[li].TrimStart().StartsWith("password ="))
+                                                        string tr = lines[li].TrimStart();
+                                                        // Limpiar contraseñas en texto plano no hasheadas para no corromper la configuración
+                                                        if (tr.StartsWith("password = 'Optima") || tr.StartsWith("salt = ''"))
                                                         {
-                                                            lines[li] = "password = '" + tomlPassword + "'";
-                                                            pwdReplaced = true;
+                                                            continue;
                                                         }
-                                                        else if (lines[li].TrimStart().StartsWith("salt ="))
-                                                        {
-                                                            lines[li] = "salt = '" + salt + "'";
-                                                            saltReplaced = true;
-                                                        }
+                                                        cleanLines.Add(lines[li]);
                                                     }
-                                                    string newContent = string.Join("\r\n", lines);
-                                                    if (!pwdReplaced) newContent += "\r\npassword = '" + tomlPassword + "'";
-                                                    if (!saltReplaced) newContent += "\r\nsalt = '" + salt + "'";
-                                                    File.WriteAllText(tp, newContent + "\r\n");
-                                                }
-                                                else if (Directory.Exists(Path.GetDirectoryName(tp)))
-                                                {
-                                                    File.WriteAllText(tp, "password = '" + tomlPassword + "'\r\nsalt = '" + salt + "'\r\n");
+                                                    File.WriteAllText(tp, string.Join("\r\n", cleanLines.ToArray()) + "\r\n");
                                                 }
                                             }
                                             catch { }
                                         }
 
-                                        // 2. Also invoke CLI to update running service memory
-                                        ProcessStartInfo psiPwd = new ProcessStartInfo();
-                                        psiPwd.FileName = engineExe;
-                                        psiPwd.WorkingDirectory = engineDir;
-                                        psiPwd.Arguments = "--password \"" + sPwd + "\"";
-                                        psiPwd.UseShellExecute = false;
-                                        psiPwd.CreateNoWindow = true;
-                                        using (Process pPwd = Process.Start(psiPwd))
+                                        // 2. Establecer contraseña permanente mediante el mecanismo CLI nativo de RustDesk
+                                        try
                                         {
-                                            if (pPwd != null) pPwd.WaitForExit(3000);
+                                            ProcessStartInfo psiPwd = new ProcessStartInfo();
+                                            psiPwd.FileName = engineExe;
+                                            psiPwd.WorkingDirectory = engineDir;
+                                            psiPwd.Arguments = "--password \"" + sPwd + "\"";
+                                            psiPwd.UseShellExecute = false;
+                                            psiPwd.CreateNoWindow = true;
+                                            using (Process pPwd = Process.Start(psiPwd))
+                                            {
+                                                if (pPwd != null) pPwd.WaitForExit(3000);
+                                            }
                                         }
+                                        catch { }
                                     }
                                 }
                             }

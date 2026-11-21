@@ -3099,10 +3099,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
       showToast(`⚡ Conectando con ${targetSession.client_name || id}...`);
 
+      // Lanzar conexión directa a la sesión por ID sin enviar parámetro de contraseña erróneo,
+      // evitando la molesta ventana de 'Contraseña incorrecta' en la consola del técnico
       let launchUrl = `rustdesk://${id}`;
-      if (pwd) {
-        launchUrl += `?password=${encodeURIComponent(pwd)}`;
-      }
       window.location.href = launchUrl;
     }
 
