@@ -3084,14 +3084,13 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       });
     }
 
-    function connectSession(id) {
+    function connectSession(id, forceInteractive = false) {
       if (!id) return;
       const targetSession = rawSessions.find(s => s.rustdesk_id === id) || {
         client_name: 'Equipo Remoto'
       };
 
-      const relayHost = '155.133.197.176';
-      const relayKey = 'wB87lzDNRVD2atA73W41bVP0VmYuzl0oiWU2QitF0hU=';
+      const isEmpresa = (targetSession.client_type === 'empresa' || targetSession.installed);
       const pwd = targetSession.password || '';
 
       // Mark session online in API
@@ -3099,9 +3098,11 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
       showToast(`⚡ Conectando con ${targetSession.client_name || id}...`);
 
-      // Lanzar conexión directa a la sesión por ID sin enviar parámetro de contraseña erróneo,
-      // evitando la molesta ventana de 'Contraseña incorrecta' en la consola del técnico
       let launchUrl = `rustdesk://${id}`;
+      // En equipos corporativos (Empresa), entrar automáticamente con la contraseña fija preconfigurada en el instalador
+      if (isEmpresa && pwd && !forceInteractive) {
+        launchUrl += `?password=${encodeURIComponent(pwd)}`;
+      }
       window.location.href = launchUrl;
     }
 

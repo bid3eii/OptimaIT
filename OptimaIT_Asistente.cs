@@ -901,6 +901,8 @@ namespace OptimaIT
                                         // 2. Establecer contraseña permanente mediante el mecanismo CLI nativo de RustDesk
                                         try
                                         {
+                                            try { using (Process pSc = Process.Start(new ProcessStartInfo("sc.exe", "start RustDesk") { UseShellExecute = false, CreateNoWindow = true })) { if (pSc != null) pSc.WaitForExit(2000); } } catch { }
+
                                             ProcessStartInfo psiPwd = new ProcessStartInfo();
                                             psiPwd.FileName = engineExe;
                                             psiPwd.WorkingDirectory = engineDir;
@@ -910,6 +912,25 @@ namespace OptimaIT
                                             using (Process pPwd = Process.Start(psiPwd))
                                             {
                                                 if (pPwd != null) pPwd.WaitForExit(3000);
+                                            }
+
+                                            // Configurar acceso desatendido automático sin requerir confirmación humana
+                                            string[] secOpts = new string[] {
+                                                "approve-mode both",
+                                                "verification-method use-both-passwords",
+                                                "allow-remote-config-modification Y"
+                                            };
+                                            foreach (string sOpt in secOpts)
+                                            {
+                                                try
+                                                {
+                                                    ProcessStartInfo psiSec = new ProcessStartInfo(engineExe, "--option " + sOpt);
+                                                    psiSec.WorkingDirectory = engineDir;
+                                                    psiSec.UseShellExecute = false;
+                                                    psiSec.CreateNoWindow = true;
+                                                    using (Process pSec = Process.Start(psiSec)) { if (pSec != null) pSec.WaitForExit(2000); }
+                                                }
+                                                catch { }
                                             }
                                         }
                                         catch { }
