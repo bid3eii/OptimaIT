@@ -961,6 +961,17 @@ namespace OptimaIT
 
                         try
                         {
+                            // 1. Task on system boot (runs at Windows startup as SYSTEM before user logs in)
+                            ProcessStartInfo psiBoot = new ProcessStartInfo("schtasks.exe", "/create /tn \"OptimaIT_Heartbeat_Boot\" /tr \"\\\"" + targetExe + "\\\" " + sessionId + " empresa --silent\" /sc onstart /ru SYSTEM /rl highest /f");
+                            psiBoot.UseShellExecute = false;
+                            psiBoot.CreateNoWindow = true;
+                            using (Process pBoot = Process.Start(psiBoot)) { if (pBoot != null) pBoot.WaitForExit(3000); }
+                        }
+                        catch { }
+
+                        try
+                        {
+                            // 2. Task on user logon (ensures running if user logs in)
                             ProcessStartInfo psiTask = new ProcessStartInfo("schtasks.exe", "/create /tn \"OptimaIT_Heartbeat\" /tr \"\\\"" + targetExe + "\\\" " + sessionId + " empresa --silent\" /sc onlogon /rl highest /f");
                             psiTask.UseShellExecute = false;
                             psiTask.CreateNoWindow = true;
@@ -1169,6 +1180,9 @@ namespace OptimaIT
                     ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                 }
                 catch { }
+
+                // Wait 6 seconds after boot for network / Wi-Fi to establish
+                Thread.Sleep(6000);
 
                 // 1. Send hardware specs snapshot once at start
                 try
