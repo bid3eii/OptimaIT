@@ -1016,9 +1016,9 @@ namespace OptimaIT
                         MessageBox.Show("¡OptimaIT se ha instalado correctamente en este equipo!\n\nEl servicio de acceso corporativo permanente ha quedado configurado y se iniciará automáticamente al encender Windows.", "OptimaIT - Instalación Exitosa", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
 
-                    // Heartbeat Timer - lightweight ping every 30 seconds
+                    // Heartbeat Timer - lightweight ping every 3 seconds for fast presence detection
                     timer = new System.Windows.Forms.Timer();
-                    timer.Interval = 30000;
+                    timer.Interval = 3000;
                     timer.Tick += (s, ev) =>
                     {
                         try
@@ -1026,7 +1026,6 @@ namespace OptimaIT
                             using (WebClient wc = new WebClient())
                             {
                                 wc.Proxy = null;
-                                wc.Headers[HttpRequestHeader.Host] = "optimait.155.133.197.176.sslip.io";
                                 wc.Headers[HttpRequestHeader.UserAgent] = "OptimaIT-Agent";
                                 wc.DownloadStringAsync(new Uri(serverUrl + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sessionId)));
                             }
@@ -1231,7 +1230,7 @@ namespace OptimaIT
                         }
                         catch { }
                     }
-                    Thread.Sleep(30000);
+                    Thread.Sleep(3000);
                 }
             }
 

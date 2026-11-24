@@ -256,11 +256,21 @@ switch ($action) {
 
                 if ($hasDirectHbbsResult) {
                     if ($peerOnlineMap[$rId] === true) {
-                        if ($s['status'] !== 'online') {
-                            $s['status'] = 'online';
-                            $hasChanges = true;
+                        // Si el cliente envía latidos HTTP pero lleva más de 10 segundos sin responder
+                        // (por ejemplo: apagó el Wi-Fi o suspendió), marcar INACTIVO de inmediato a los 10s
+                        $hasActiveHeartbeatAgent = !empty($s['last_heartbeat']);
+                        if ($hasActiveHeartbeatAgent && ($now - $s['last_heartbeat'] > 10)) {
+                            if ($s['status'] !== 'idle' && $s['status'] !== 'closed') {
+                                $s['status'] = 'idle';
+                                $hasChanges = true;
+                            }
+                        } else {
+                            if ($s['status'] !== 'online') {
+                                $s['status'] = 'online';
+                                $hasChanges = true;
+                            }
+                            $s['last_seen'] = $now;
                         }
-                        $s['last_seen'] = $now;
                     } else {
                         if ($s['status'] !== 'idle' && $s['status'] !== 'closed') {
                             $s['status'] = 'idle';
@@ -268,8 +278,8 @@ switch ($action) {
                         }
                     }
                 } else {
-                    // Respaldo por pulsos (heartbeat) si hbbs no responde
-                    $timeoutSeconds = 120;
+                    // Respaldo por pulsos (heartbeat) si hbbs no responde (ventana de 10 segundos)
+                    $timeoutSeconds = 10;
                     if ($now - $lastActivity > $timeoutSeconds) {
                         if ($s['status'] !== 'idle' && $s['status'] !== 'closed') {
                             $s['status'] = 'idle';
@@ -422,6 +432,7 @@ switch ($action) {
         $sessions = getSessions();
         if (isset($sessions[$sessionId])) {
             $sessions[$sessionId]['last_seen'] = time();
+            $sessions[$sessionId]['last_heartbeat'] = time();
             $sessions[$sessionId]['status'] = 'online';
 
             $detectedIp = getClientPublicIp();
