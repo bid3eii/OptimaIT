@@ -108,6 +108,80 @@ function saveCustomGroups($groups) {
     file_put_contents($groupsFile, json_encode(array_values(array_unique($groups)), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
 }
 
+/**
+ * Consulta en tiempo real al servidor de encuentro (hbbs) en el puerto 21115
+ * el estado exacto de presencia (Online / Offline) de los IDs de RustDesk.
+ */
+function queryRustDeskOnlinePeers(array $peerIds): array {
+    $cleanIds = [];
+    foreach ($peerIds as $p) {
+        $p = trim((string)$p);
+        if (!empty($p) && preg_match('/^[0-9]+$/', $p)) {
+            $cleanIds[] = $p;
+        }
+    }
+    if (empty($cleanIds)) return [];
+
+    $idBytes = 'optima-probe';
+    $peersPayload = '';
+    foreach ($cleanIds as $pid) {
+        $peersPayload .= chr(0x12) . chr(strlen($pid)) . $pid;
+    }
+    $onlineReq = chr(0x0a) . chr(strlen($idBytes)) . $idBytes . $peersPayload;
+    $reqLen = strlen($onlineReq);
+
+    // Encode varint length for reqLen
+    $lenBytes = '';
+    $tempLen = $reqLen;
+    while ($tempLen > 0x7f) {
+        $lenBytes .= chr(($tempLen & 0x7f) | 0x80);
+        $tempLen >>= 7;
+    }
+    $lenBytes .= chr($tempLen);
+
+    // Protobuf field 23 wire type 2: (23 << 3) | 2 = 186 = 0xba, 0x01
+    $msg = chr(0xba) . chr(0x01) . $lenBytes . $onlineReq;
+    $msgLen = strlen($msg);
+    $hdr = ($msgLen <= 0x3f) ? chr($msgLen << 2) : pack('v', ($msgLen << 2) | 1);
+
+    // En Docker o VPS, probar localhost primero y luego la IP pública
+    $hosts = ['127.0.0.1', '155.133.197.176'];
+    $resp = null;
+    foreach ($hosts as $h) {
+        $fp = @fsockopen($h, 21115, $errno, $errstr, 0.4);
+        if ($fp) {
+            stream_set_timeout($fp, 0, 400000); // 400ms timeout
+            fwrite($fp, $hdr . $msg);
+            $resp = fread($fp, 1024);
+            fclose($fp);
+            if (!empty($resp) && strlen($resp) >= 6) {
+                break;
+            }
+        }
+    }
+
+    if (empty($resp) || strlen($resp) < 6) return [];
+
+    // Decodificar respuesta: campo 24 (OnlineResponse) -> campo 1 (states: bytes)
+    $idx = strpos($resp, chr(0x0a), 2);
+    if ($idx === false || $idx + 1 >= strlen($resp)) return [];
+    $statesLen = ord($resp[$idx + 1]);
+    $states = substr($resp, $idx + 2, $statesLen);
+
+    $results = [];
+    foreach ($cleanIds as $i => $pid) {
+        $byteIndex = intdiv($i, 8);
+        if ($byteIndex < strlen($states)) {
+            $byteVal = ord($states[$byteIndex]);
+            $bitMask = 0x80 >> ($i % 8);
+            $results[$pid] = ($byteVal & $bitMask) !== 0;
+        } else {
+            $results[$pid] = false;
+        }
+    }
+    return $results;
+}
+
 $action = $_REQUEST['action'] ?? '';
 
 switch ($action) {
@@ -164,23 +238,48 @@ switch ($action) {
         $cleaned = [];
         $hasChanges = false;
 
+        // Recolectar IDs de RustDesk registrados para consultar su presencia en tiempo real con hbbs
+        $peerIdsToQuery = [];
+        foreach ($sessions as $s) {
+            $rId = trim((string)($s['rustdesk_id'] ?? ''));
+            if (!empty($rId) && preg_match('/^[0-9]+$/', $rId)) {
+                $peerIdsToQuery[] = $rId;
+            }
+        }
+        $peerOnlineMap = !empty($peerIdsToQuery) ? queryRustDeskOnlinePeers($peerIdsToQuery) : [];
+
         foreach ($sessions as $id => $s) {
             $lastActivity = $s['last_seen'] ?? 0;
             if ($now - $lastActivity < 86400 * 30) { // Retener 30 días para inventario
-                // Umbral de presencia en tiempo real:
-                // El agente cliente envía un pulso (heartbeat) cada 30 segundos.
-                // Si pasan más de 120 segundos (2 minutos = 4 pulsos perdidos), el equipo se marca INACTIVO.
-                $timeoutSeconds = 120;
+                $rId = trim((string)($s['rustdesk_id'] ?? ''));
+                $hasDirectHbbsResult = isset($peerOnlineMap[$rId]);
 
-                if ($now - $lastActivity > $timeoutSeconds) {
-                    if ($s['status'] !== 'idle' && $s['status'] !== 'closed') {
-                        $s['status'] = 'idle';
-                        $hasChanges = true;
+                if ($hasDirectHbbsResult) {
+                    if ($peerOnlineMap[$rId] === true) {
+                        if ($s['status'] !== 'online') {
+                            $s['status'] = 'online';
+                            $hasChanges = true;
+                        }
+                        $s['last_seen'] = $now;
+                    } else {
+                        if ($s['status'] !== 'idle' && $s['status'] !== 'closed') {
+                            $s['status'] = 'idle';
+                            $hasChanges = true;
+                        }
                     }
                 } else {
-                    if ($s['status'] !== 'online' && !empty($s['rustdesk_id'])) {
-                        $s['status'] = 'online';
-                        $hasChanges = true;
+                    // Respaldo por pulsos (heartbeat) si hbbs no responde
+                    $timeoutSeconds = 120;
+                    if ($now - $lastActivity > $timeoutSeconds) {
+                        if ($s['status'] !== 'idle' && $s['status'] !== 'closed') {
+                            $s['status'] = 'idle';
+                            $hasChanges = true;
+                        }
+                    } else {
+                        if ($s['status'] !== 'online' && !empty($s['rustdesk_id'])) {
+                            $s['status'] = 'online';
+                            $hasChanges = true;
+                        }
                     }
                 }
 

