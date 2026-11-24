@@ -447,51 +447,8 @@ if (isset($_GET['descargar'])) {
       color: #FFFFFF;
     }
 
-    /* Live Status Pill */
-    .status-container {
-      margin-top: 22px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--text-muted);
-      padding: 7px 18px;
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 999px;
-      border: 1px solid var(--border);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--amber);
-      box-shadow: 0 0 10px var(--amber);
-      animation: pulseWarning 2s infinite;
-    }
-
-    .status-dot.active-online {
-      background: var(--emerald);
-      box-shadow: 0 0 10px var(--emerald);
-      animation: pulseGreen 2s infinite;
-    }
-
-    @keyframes pulseWarning {
-      0% { transform: scale(0.95); opacity: 0.6; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.6; }
-    }
-
-    @keyframes pulseGreen {
-      0% { transform: scale(0.95); opacity: 0.7; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.7; }
-    }
-
     .security-guarantee {
-      margin-top: 18px;
+      margin-top: 22px;
       font-size: 11.8px;
       color: var(--text-dim);
       display: inline-flex;
@@ -653,12 +610,6 @@ if (isset($_GET['descargar'])) {
           </div>
         </div>
 
-        <!-- Live Status Indicator -->
-        <div class="status-container">
-          <div class="status-dot" id="liveDot"></div>
-          <span id="liveText">Esperando apertura del asistente...</span>
-        </div>
-
         <!-- Security Guarantee -->
         <div class="security-guarantee">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
@@ -669,34 +620,5 @@ if (isset($_GET['descargar'])) {
     </div>
   </div>
 
-  <script>
-    const sessionId = "<?php echo addslashes($sessionId); ?>";
-
-    async function checkStatus() {
-      try {
-        const res = await fetch(`api.php?action=list_sessions`);
-        const data = await res.json();
-        if (data.success) {
-          const current = (data.sessions || []).find(s => s.session_id === sessionId);
-          if (current) {
-            if (current.status === 'online') {
-              const dot = document.getElementById('liveDot');
-              const txt = document.getElementById('liveText');
-              dot.className = 'status-dot active-online';
-              txt.innerText = '¡En línea con el técnico! Su sesión está activa.';
-              txt.style.color = '#34D399';
-            } else if (current.status === 'closed') {
-              const dot = document.getElementById('liveDot');
-              const txt = document.getElementById('liveText');
-              dot.style.background = '#94A3B8';
-              txt.innerText = 'Sesión finalizada. Gracias por utilizar OptimaIT.';
-            }
-          }
-        }
-      } catch (e) { }
-    }
-
-    setInterval(checkStatus, 2500);
-  </script>
 </body>
 </html>
