@@ -164,97 +164,26 @@ switch ($action) {
         $cleaned = [];
         $hasChanges = false;
 
-        // Auto-detect active RustDesk client connections to hbbs (ports 21115, 21116, 21117)
-        $establishedIps = [];
-        $netOut = [];
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            @exec('netstat -ano -p tcp | findstr 21116 | findstr ESTABLISHED', $netOut);
-            foreach ($netOut as $nLine) {
-                if (preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTABLISHED/', $nLine, $m)) {
-                    $establishedIps[$m[1]] = true;
-                }
-            }
-        } else {
-            // 1. Native Linux kernel socket table parsing (100% reliable inside Docker container)
-            $tcpFiles = ['/proc/net/tcp', '/proc/net/tcp6'];
-            foreach ($tcpFiles as $tFile) {
-                if (file_exists($tFile) && is_readable($tFile)) {
-                    $lines = @file($tFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                    if ($lines) {
-                        foreach ($lines as $line) {
-                            $parts = preg_split('/\s+/', trim($line));
-                            if (count($parts) >= 4) {
-                                $local = explode(':', $parts[1] ?? '');
-                                $rem = explode(':', $parts[2] ?? '');
-                                $state = $parts[3] ?? '';
-                                $localPortHex = strtoupper($local[1] ?? '');
-                                // 21115 (527B), 21116 (527C), 21117 (527D)
-                                if (in_array($localPortHex, ['527B', '527C', '527D']) && $state === '01') {
-                                    $hexIp = $rem[0] ?? '';
-                                    if (strlen($hexIp) === 8) {
-                                        $ip = long2ip(hexdec(implode('', array_reverse(str_split($hexIp, 2)))));
-                                        if ($ip && $ip !== '0.0.0.0' && $ip !== '127.0.0.1') {
-                                            $establishedIps[$ip] = true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            // 2. Fallback to ss or netstat if available
-            @exec('ss -nt 2>/dev/null | grep :21116 | grep ESTAB || netstat -tn 2>/dev/null | grep :21116 | grep ESTABLISHED', $netOut);
-            foreach ($netOut as $nLine) {
-                if (preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTAB/', $nLine, $m) || preg_match('/:\d+\s+([0-9.]+):\d+\s+ESTABLISHED/', $nLine, $m)) {
-                    $establishedIps[$m[1]] = true;
-                }
-            }
-        }
-
         foreach ($sessions as $id => $s) {
             $lastActivity = $s['last_seen'] ?? 0;
-            if ($now - $lastActivity < 86400 * 30) { // Retain 30 days for inventory
-                $clientIp = $s['client_ip'] ?? '';
-                $isEnterprise = (!empty($s['installed']) || ($s['client_type'] ?? '') === 'empresa');
+            if ($now - $lastActivity < 86400 * 30) { // Retener 30 días para inventario
+                // Umbral de presencia en tiempo real:
+                // El agente cliente envía un pulso (heartbeat) cada 30 segundos.
+                // Si pasan más de 120 segundos (2 minutos = 4 pulsos perdidos), el equipo se marca INACTIVO.
+                $timeoutSeconds = 120;
 
-                // If remote machine has an active socket to hbbs, it is definitely online!
-                $isSocketConnected = !empty($clientIp) && !isPrivateNetworkIp($clientIp) && isset($establishedIps[$clientIp]);
-                
-                // If stored IP is empty or private (Docker proxy 10.x, 172.x, 192.168.x) and there are active sockets to hbbs
-                if (!$isSocketConnected && (empty($clientIp) || isPrivateNetworkIp($clientIp)) && count($establishedIps) > 0 && !empty($s['rustdesk_id'])) {
-                    $singleIp = array_keys($establishedIps)[0];
-                    $s['client_ip'] = $singleIp;
-                    $clientIp = $singleIp;
-                    $isSocketConnected = true;
-                    $hasChanges = true;
-                }
-
-                if ($isSocketConnected) {
-                    if ($s['status'] !== 'online') {
+                if ($now - $lastActivity > $timeoutSeconds) {
+                    if ($s['status'] !== 'idle' && $s['status'] !== 'closed') {
+                        $s['status'] = 'idle';
+                        $hasChanges = true;
+                    }
+                } else {
+                    if ($s['status'] !== 'online' && !empty($s['rustdesk_id'])) {
                         $s['status'] = 'online';
                         $hasChanges = true;
                     }
-                    $s['last_seen'] = $now;
-                } else if ($isEnterprise) {
-                    // Equipos Corporativos (Desatendidos / Auto-Inicio):
-                    // Se mantienen EN LÍNEA mientras tengan actividad en las últimas horas (ventana de 45 minutos)
-                    if ($now - $lastActivity > 2700) {
-                        if ($s['status'] !== 'idle') {
-                            $s['status'] = 'idle';
-                            $hasChanges = true;
-                        }
-                    } else {
-                        if ($s['status'] !== 'online') {
-                            $s['status'] = 'online';
-                            $hasChanges = true;
-                        }
-                    }
-                } else if ($s['status'] === 'online' && ($now - $lastActivity > 180)) {
-                    // Clientes temporales: si pasan más de 3 minutos sin heartbeat, se marca inactivo
-                    $s['status'] = 'idle';
-                    $hasChanges = true;
                 }
+
                 // Backwards compatibility defaults
                 if (empty($s['client_type'])) {
                     $s['client_type'] = 'personal';
