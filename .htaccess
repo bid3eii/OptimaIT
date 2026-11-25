@@ -1,0 +1,4 @@
+RewriteEngine On
+
+# Permitir descargas directas desde la carpeta montada data/descargas
+RewriteRule ^descargas/(.*)$ data/descargas/$1 [L]
