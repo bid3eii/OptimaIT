@@ -495,13 +495,46 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
     }
     .btn-theme-toggle:hover {
       background: var(--secondary-btn-hover);
       border-color: var(--border-focus);
-      transform: translateY(-1px);
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    }
+    .btn-theme-toggle:active {
+      transform: scale(0.92);
+    }
+    .btn-theme-toggle svg {
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+    }
+    .btn-theme-toggle:hover svg {
+      transform: rotate(22deg) scale(1.08);
+    }
+    .btn-theme-toggle.theme-animating svg {
+      animation: themeIconSpin 0.52s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes themeIconSpin {
+      0% {
+        transform: scale(0.25) rotate(-140deg);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.25) rotate(22deg);
+        opacity: 1;
+      }
+      75% {
+        transform: scale(0.95) rotate(-6deg);
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
     }
 
     /* KPI METRIC CARDS */
@@ -732,10 +765,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
       container-type: inline-size;
       container-name: tableContainer;
       overflow-x: auto;
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid var(--border-subtle);
       background: var(--card-bg);
-      box-shadow: var(--metric-card-shadow);
+      box-shadow: 0 12px 36px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      position: relative;
+      transition: all 0.25s ease;
     }
     .table-container::-webkit-scrollbar { height: 6px; }
     .table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); }
@@ -743,30 +778,32 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
     table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
     th {
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--text-muted);
-      padding: 15px 20px;
+      padding: 16px 20px;
       border-bottom: 1px solid var(--border-subtle);
       background: var(--table-header-bg);
       white-space: nowrap;
       position: sticky;
       top: 0;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
       z-index: 2;
     }
     td {
-      padding: 14px 20px;
+      padding: 15px 20px;
       border-bottom: 1px solid var(--border-subtle);
       font-size: 13.5px;
       color: var(--text-main);
       vertical-align: middle;
-      transition: background 0.15s ease;
+      transition: background 0.18s ease, transform 0.18s ease;
       white-space: nowrap;
     }
-    tr:hover td { background: var(--table-row-hover); }
+    tr:hover td { 
+      background: var(--table-row-hover); 
+    }
 
     .code-badge-pill {
       display: inline-flex;
@@ -889,8 +926,8 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     .row-actions-cluster {
       display: inline-flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 7px;
+      justify-content: center;
+      gap: 8px;
     }
     .btn-action {
       height: 33px;
@@ -2119,12 +2156,12 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           <table>
             <thead>
               <tr id="tableHeaderRow">
-                <th style="width:115px;">Código</th>
+                <th style="width:115px; text-align:center;">Código</th>
                 <th>Cliente / Equipo</th>
-                <th id="thColGrupo" style="width:160px;">Sede / Grupo</th>
-                <th style="width:125px;">Estado</th>
-                <th style="width:145px;">ID Remoto</th>
-                <th style="text-align:right; width:260px;">Acciones</th>
+                <th id="thColGrupo" style="width:160px; text-align:center;">Sede / Grupo</th>
+                <th style="width:130px; text-align:center;">Estado</th>
+                <th style="width:145px; text-align:center;">ID Remoto</th>
+                <th style="text-align:center; width:290px;">Acciones</th>
               </tr>
             </thead>
             <tbody id="sessionsBody">
@@ -2476,6 +2513,17 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     function toggleAppTheme() {
       const current = document.documentElement.getAttribute('data-theme') || 'dark';
       const next = (current === 'dark') ? 'light' : 'dark';
+      
+      const btn = document.getElementById('themeToggleBtn');
+      if (btn) {
+        btn.classList.remove('theme-animating');
+        void btn.offsetWidth; // Forzar reflow para reiniciar la animación
+        btn.classList.add('theme-animating');
+        setTimeout(() => {
+          btn.classList.remove('theme-animating');
+        }, 550);
+      }
+
       applyAppTheme(next);
       showToast(next === 'light' ? '☀️ Modo Claro activado' : '🌙 Modo Oscuro activado');
     }
@@ -2792,7 +2840,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
           : `<span class="tag-personal">👤 Temporal</span>`;
 
         const groupCell = !isPersonalView ? `
-          <td>
+          <td style="text-align:center;">
             <span class="group-pill">
               🏢 ${escapeHtml(s.group_name || 'General')}
             </span>
@@ -2844,7 +2892,7 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
 
         return `
           <tr>
-            <td><span class="code-badge-pill" onclick="copySpecificUrl('${s.session_id}')" title="Clic para copiar enlace">${s.session_id}</span></td>
+            <td style="text-align:center;"><span class="code-badge-pill" onclick="copySpecificUrl('${s.session_id}')" title="Clic para copiar enlace">${s.session_id}</span></td>
             <td>
               <div class="client-cell">
                 <span class="client-name-title">🖥️ ${escapeHtml(s.client_name)}</span>
@@ -2852,9 +2900,9 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
               </div>
             </td>
             ${groupCell}
-            <td>${badgeStatus}</td>
-            <td>${idDisplay}</td>
-            <td style="text-align:right;">
+            <td style="text-align:center;">${badgeStatus}</td>
+            <td style="text-align:center;">${idDisplay}</td>
+            <td style="text-align:center;">
               <div class="row-actions-cluster">
                 ${specsBtn}
                 ${connectBtn}
