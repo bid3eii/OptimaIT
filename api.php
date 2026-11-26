@@ -1,5 +1,17 @@
 <?php
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+    || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) 
+    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
 if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => '',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
     session_start();
 }
 
@@ -10,6 +22,7 @@ header('Access-Control-Allow-Methods: GET, POST');
 $dataFile = __DIR__ . '/data/sessions.json';
 $groupsFile = __DIR__ . '/data/groups.json';
 $usersFile = __DIR__ . '/data/users.json';
+$loginAttemptsFile = __DIR__ . '/data/login_attempts.json';
 
 function getUsers() {
     global $usersFile;
@@ -46,6 +59,111 @@ function getUsers() {
 function saveUsers($users) {
     global $usersFile;
     file_put_contents($usersFile, json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+}
+
+/**
+ * Obtiene el usuario autenticado verificando que siga existiendo activamente en data/users.json.
+ * Si el usuario fue eliminado por un administrador, la sesión se destruye al instante.
+ */
+function getAuthenticatedUser() {
+    if (empty($_SESSION['optimait_user']['username'])) {
+        return null;
+    }
+    $users = getUsers();
+    $uKey = strtolower($_SESSION['optimait_user']['username']);
+    if (!isset($users[$uKey])) {
+        // El usuario fue eliminado del archivo de usuarios: destruir sesión
+        unset($_SESSION['optimait_user']);
+        session_destroy();
+        return null;
+    }
+    // Sincronizar datos por si cambiaron de nombre o rol
+    $_SESSION['optimait_user']['name'] = $users[$uKey]['name'] ?? $_SESSION['optimait_user']['name'];
+    $_SESSION['optimait_user']['role'] = $users[$uKey]['role'] ?? $_SESSION['optimait_user']['role'];
+    return $_SESSION['optimait_user'];
+}
+
+/**
+ * Exige que el operador tenga una sesión activa y válida.
+ * Si no está autenticado o su usuario fue eliminado, devuelve 401 Unauthorized y aborta.
+ */
+function requireAuth() {
+    $user = getAuthenticatedUser();
+    if (!$user) {
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'auth_error' => true,
+            'error' => 'Sesión no válida o expirada. Por favor inicie sesión nuevamente.'
+        ]);
+        exit;
+    }
+    return $user;
+}
+
+/**
+ * Exige que el operador autenticado tenga rol de administrador.
+ */
+function requireAdmin() {
+    $user = requireAuth();
+    if (($user['role'] ?? '') !== 'admin') {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Acceso denegado. Se requieren permisos de administrador.'
+        ]);
+        exit;
+    }
+    return $user;
+}
+
+/**
+ * Previene ataques de fuerza bruta en el login limitando intentos por IP
+ */
+function checkLoginRateLimit($ip) {
+    global $loginAttemptsFile;
+    if (!file_exists($loginAttemptsFile)) return true;
+    $attempts = json_decode(file_get_contents($loginAttemptsFile), true);
+    if (!is_array($attempts) || empty($attempts[$ip])) return true;
+    
+    $ipData = $attempts[$ip];
+    $count = $ipData['count'] ?? 0;
+    $lastAttempt = $ipData['last_attempt'] ?? 0;
+    
+    // Bloquear por 2 minutos (120s) si hay 5 o más fallos
+    if ($count >= 5 && (time() - $lastAttempt < 120)) {
+        return false;
+    }
+    return true;
+}
+
+function recordLoginAttempt($ip, $success) {
+    global $loginAttemptsFile;
+    $attempts = [];
+    if (file_exists($loginAttemptsFile)) {
+        $attempts = json_decode(file_get_contents($loginAttemptsFile), true) ?: [];
+    }
+    $now = time();
+    // Limpieza de IPs con más de 1 hora de inactividad
+    foreach ($attempts as $k => $v) {
+        if ($now - ($v['last_attempt'] ?? 0) > 3600) {
+            unset($attempts[$k]);
+        }
+    }
+    if ($success) {
+        unset($attempts[$ip]);
+    } else {
+        $prevCount = $attempts[$ip]['count'] ?? 0;
+        $prevTime = $attempts[$ip]['last_attempt'] ?? 0;
+        if ($now - $prevTime > 120) {
+            $prevCount = 0;
+        }
+        $attempts[$ip] = [
+            'count' => $prevCount + 1,
+            'last_attempt' => $now
+        ];
+    }
+    file_put_contents($loginAttemptsFile, json_encode($attempts, JSON_PRETTY_PRINT), LOCK_EX);
 }
 
 function getSessions() {
@@ -186,6 +304,7 @@ $action = $_REQUEST['action'] ?? '';
 
 switch ($action) {
     case 'create_session':
+        requireAuth();
         $clientName = trim($_REQUEST['client_name'] ?? 'Cliente');
         if (empty($clientName)) {
             $clientName = 'Cliente ' . rand(100, 999);
@@ -233,6 +352,7 @@ switch ($action) {
         break;
 
     case 'list_sessions':
+        requireAuth();
         $sessions = getSessions();
         $now = time();
         $cleaned = [];
@@ -320,6 +440,7 @@ switch ($action) {
         break;
 
     case 'add_group':
+        requireAuth();
         $name = trim($_REQUEST['group_name'] ?? '');
         if (!empty($name)) {
             $groups = getCustomGroups();
@@ -523,6 +644,7 @@ switch ($action) {
         break;
 
     case 'mark_online':
+        requireAuth();
         $sessionId = trim($_REQUEST['session_id'] ?? '');
         $id = preg_replace('/[^0-9]/', '', $_REQUEST['id'] ?? '');
         $sessions = getSessions();
@@ -548,6 +670,7 @@ switch ($action) {
         break;
 
     case 'close_session':
+        requireAuth();
         $sessionId = trim($_REQUEST['session_id'] ?? '');
         $deletePermanent = isset($_REQUEST['delete']) && $_REQUEST['delete'] === '1';
         $sessions = getSessions();
@@ -566,6 +689,7 @@ switch ($action) {
         break;
 
     case 'reopen_session':
+        requireAuth();
         $sessionId = trim($_REQUEST['session_id'] ?? '');
         $sessions = getSessions();
         if (isset($sessions[$sessionId])) {
@@ -601,6 +725,7 @@ switch ($action) {
         exit;
 
     case 'download_config_bat':
+        requireAuth();
         $bat = "@echo off\r\n";
         $bat .= "chcp 65001 >nul\r\n";
         $bat .= "echo ========================================================\r\n";
@@ -646,6 +771,7 @@ switch ($action) {
         exit;
 
     case 'download_reg_branding':
+        requireAuth();
         $regContent = "Windows Registry Editor Version 5.00\r\n\r\n";
         $regContent .= "[HKEY_CURRENT_USER\\Software\\Classes\\rustdesk]\r\n";
         $regContent .= "@=\"OptimaIT Soporte Remoto\"\r\n";
@@ -662,6 +788,7 @@ switch ($action) {
         exit;
 
     case 'launch_connection':
+        requireAuth();
         $id = preg_replace('/[^0-9]/', '', $_REQUEST['id'] ?? '');
         $pwd = trim($_REQUEST['password'] ?? '');
         $mode = trim($_REQUEST['mode'] ?? '--connect');
@@ -698,6 +825,15 @@ switch ($action) {
         break;
 
     case 'login':
+        $ip = getClientPublicIp();
+        if (!checkLoginRateLimit($ip)) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Demasiados intentos fallidos. Por seguridad, espere 2 minutos antes de reintentar.'
+            ]);
+            exit;
+        }
+
         $username = trim($_REQUEST['username'] ?? '');
         $password = $_REQUEST['password'] ?? '';
         
@@ -716,6 +852,11 @@ switch ($action) {
                     $users[$uKey]['password'] = password_hash($password, PASSWORD_DEFAULT);
                     saveUsers($users);
                 }
+
+                // Prevenir fijación de sesión regenerando ID de cookie de sesión
+                session_regenerate_id(true);
+                recordLoginAttempt($ip, true);
+
                 $_SESSION['optimait_user'] = [
                     'username' => $user['username'],
                     'name' => $user['name'] ?? $user['username'],
@@ -728,6 +869,7 @@ switch ($action) {
                 exit;
             }
         }
+        recordLoginAttempt($ip, false);
         echo json_encode(['success' => false, 'error' => 'Usuario o contraseña incorrectos']);
         break;
 
@@ -738,11 +880,12 @@ switch ($action) {
         break;
 
     case 'get_current_user':
-        if (!empty($_SESSION['optimait_user'])) {
+        $user = getAuthenticatedUser();
+        if ($user) {
             echo json_encode([
                 'success' => true,
                 'logged_in' => true,
-                'user' => $_SESSION['optimait_user']
+                'user' => $user
             ]);
         } else {
             echo json_encode([
@@ -753,10 +896,7 @@ switch ($action) {
         break;
 
     case 'list_users':
-        if (empty($_SESSION['optimait_user']) || ($_SESSION['optimait_user']['role'] ?? '') !== 'admin') {
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado. Se requieren permisos de administrador.']);
-            exit;
-        }
+        requireAdmin();
         $users = getUsers();
         $list = [];
         foreach ($users as $u) {
@@ -771,10 +911,7 @@ switch ($action) {
         break;
 
     case 'create_user':
-        if (empty($_SESSION['optimait_user']) || ($_SESSION['optimait_user']['role'] ?? '') !== 'admin') {
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado. Se requieren permisos de administrador.']);
-            exit;
-        }
+        requireAdmin();
         $newUsername = trim($_REQUEST['new_username'] ?? '');
         $newName = trim($_REQUEST['new_name'] ?? '');
         $newPassword = $_REQUEST['new_password'] ?? '';
@@ -811,10 +948,7 @@ switch ($action) {
         break;
 
     case 'delete_user':
-        if (empty($_SESSION['optimait_user']) || ($_SESSION['optimait_user']['role'] ?? '') !== 'admin') {
-            echo json_encode(['success' => false, 'error' => 'Acceso denegado. Se requieren permisos de administrador.']);
-            exit;
-        }
+        $admin = requireAdmin();
         $targetUser = trim($_REQUEST['target_user'] ?? $_REQUEST['username'] ?? '');
         $uKey = strtolower($targetUser);
 
@@ -823,7 +957,7 @@ switch ($action) {
             exit;
         }
 
-        if ($uKey === strtolower($_SESSION['optimait_user']['username'] ?? '')) {
+        if ($uKey === strtolower($admin['username'] ?? '')) {
             echo json_encode(['success' => false, 'error' => 'No puedes eliminar tu propia cuenta']);
             exit;
         }

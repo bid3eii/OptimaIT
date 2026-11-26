@@ -1,11 +1,41 @@
 <?php
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+    || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) 
+    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
 if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => '',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
     session_start();
 }
-if (empty($_SESSION['optimait_user'])) {
-    header('Location: login.php');
+
+$usersFile = __DIR__ . '/data/users.json';
+$isValidUser = false;
+
+if (!empty($_SESSION['optimait_user']['username']) && file_exists($usersFile)) {
+    $allUsers = json_decode(file_get_contents($usersFile), true);
+    $uKey = strtolower($_SESSION['optimait_user']['username']);
+    if (is_array($allUsers) && isset($allUsers[$uKey])) {
+        $isValidUser = true;
+        // Mantener sincronizado el rol y nombre si el admin los actualizó
+        $_SESSION['optimait_user']['name'] = $allUsers[$uKey]['name'] ?? $_SESSION['optimait_user']['name'];
+        $_SESSION['optimait_user']['role'] = $allUsers[$uKey]['role'] ?? $_SESSION['optimait_user']['role'];
+    }
+}
+
+if (!$isValidUser) {
+    unset($_SESSION['optimait_user']);
+    session_destroy();
+    header('Location: login.php?msg=session_expired');
     exit;
 }
+
 $currentUser = $_SESSION['optimait_user'];
 $isAdmin = ($currentUser['role'] ?? '') === 'admin';
 $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])[0] : '155.133.197.176';
@@ -2657,7 +2687,15 @@ $relayHost = !empty($_SERVER['HTTP_HOST']) ? explode(':', $_SERVER['HTTP_HOST'])
     async function loadSessions() {
       try {
         const res = await fetch('api.php?action=list_sessions');
+        if (res.status === 401) {
+          window.location.href = 'login.php?msg=session_expired';
+          return;
+        }
         const data = await res.json();
+        if (data.auth_error) {
+          window.location.href = 'login.php?msg=session_expired';
+          return;
+        }
         if (data.success) {
           rawSessions = data.sessions || [];
           customGroups = data.groups || ['Sucursales', 'Oficina Central', 'Soporte VIP'];

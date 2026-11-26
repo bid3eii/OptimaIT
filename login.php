@@ -1,10 +1,31 @@
 <?php
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+    || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) 
+    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+
 if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => '',
+        'secure' => $isHttps,
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
     session_start();
 }
-if (!empty($_SESSION['optimait_user'])) {
-    header('Location: tecnico.php');
-    exit;
+
+$usersFile = __DIR__ . '/data/users.json';
+if (!empty($_SESSION['optimait_user']['username']) && file_exists($usersFile)) {
+    $allUsers = json_decode(file_get_contents($usersFile), true);
+    $uKey = strtolower($_SESSION['optimait_user']['username']);
+    if (is_array($allUsers) && isset($allUsers[$uKey])) {
+        header('Location: tecnico.php');
+        exit;
+    } else {
+        unset($_SESSION['optimait_user']);
+        session_destroy();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -482,6 +503,13 @@ if (!empty($_SESSION['optimait_user'])) {
           <h1>Centro de Control</h1>
           <p>Inicia sesión para gestionar el soporte técnico remoto</p>
         </div>
+
+        <?php if (isset($_GET['msg']) && $_GET['msg'] === 'session_expired'): ?>
+        <div class="error-alert" style="display: flex; background: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.35); color: #FDA4AF; margin-bottom: 20px;">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <span>Su sesión ha expirado o su cuenta fue desactivada por el administrador.</span>
+        </div>
+        <?php endif; ?>
 
         <div id="errorAlert" class="error-alert">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
